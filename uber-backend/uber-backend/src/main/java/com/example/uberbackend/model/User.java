@@ -1,5 +1,6 @@
 package com.example.uberbackend.model;
 import com.example.uberbackend.model.enums.AccountStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,11 +10,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name="my_user")
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
-    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -28,20 +28,8 @@ public class User {
     private String profileImage;
     private DrivingStatus drivingStatus;
     private AccountStatus accountStatus;
-
-    public User(String email, String password, String name, String surname, String city, String phoneNumber, Boolean activeAccount, Boolean blocked, String profileImage, DrivingStatus drivingStatus, AccountStatus accountStatus) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.city = city;
-        this.phoneNumber = phoneNumber;
-        this.activeAccount = activeAccount;
-        this.blocked = blocked;
-        this.profileImage = profileImage;
-        this.drivingStatus = drivingStatus;
-        this.accountStatus = accountStatus;
-    }
+    @ManyToOne
+    private Role role;
 
     @Override
     public boolean equals(Object o) {
