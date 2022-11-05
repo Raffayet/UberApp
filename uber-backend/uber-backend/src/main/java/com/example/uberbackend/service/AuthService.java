@@ -29,12 +29,11 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     @Value("${jwt.secret}")
     private String secret;
     private final static int FIVE_MINUTES = 5 * 60 * 1000;
     private final static int ONE_WEEK = 7 * 24 * 60 * 1000;
-
-
     private final  UserService userService;
 
     public Collection<SimpleGrantedAuthority> getAuthorityClaimsFromJWT(String authorizationHeader) {
