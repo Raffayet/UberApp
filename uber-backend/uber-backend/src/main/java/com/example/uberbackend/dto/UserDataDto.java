@@ -28,7 +28,7 @@ public class UserDataDto {
         this.name = user.getName();
         this.surname = user.getSurname();
         this.email = user.getEmail();
-        this.role = user.getRole().getRole();
+        this.role = user.getRole().getName();
         this.profileImage = user.getProfileImage();
         this.city = user.getCity();
         this.phoneNumber = user.getPhoneNumber();
