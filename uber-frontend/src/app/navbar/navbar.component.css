@@ -1,0 +1,21 @@
+*{
+    font-family: Nunito;
+}
+
+.navbar{
+    transition: 0.35s;
+    width: 100%;
+    background-color: #191970;
+    text-align: center;
+    justify-items: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.navbar a {
+    padding: 100px;
+    text-decoration: none;
+    font-size: 25px;
+    vertical-align: center;
+    color: white;
+}
