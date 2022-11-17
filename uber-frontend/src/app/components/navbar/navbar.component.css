@@ -10,6 +10,7 @@
     justify-items: center;
     padding-top: 20px;
     padding-bottom: 20px;
+    position: fixed;
 }
 
 .navbar a {
@@ -18,4 +19,8 @@
     font-size: 25px;
     vertical-align: center;
     color: white;
+}
+
+.navbar a:hover{
+    color: lightgray;
 }

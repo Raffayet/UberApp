@@ -9,7 +9,7 @@
     display: flex;
     padding-top: 12%;
     padding-bottom: 15%;
-    background-image: url("../../images/login-background.jpg");
+    background-image: url("../../../images/login-background.jpg");
 }
 
 .login-window{
@@ -63,7 +63,7 @@
 }
 
 .login-window .login-container .button-container .login-button{
-    margin-bottom: 120px;
+    margin-bottom: 160px;
     background-color: #191970;
     color: white;
     font-weight: 800;
@@ -78,6 +78,7 @@
     opacity: 0.75;
     background-color: cornflowerblue;
 }
+
 
 
 

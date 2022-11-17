@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators,FormControl,FormGroup } from '@angular/forms';
 import { FormsModule } from "@angular/forms";
 import {PasswordModule} from 'primeng/password';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,9 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   submitted = false;
 
-  constructor() { }
+  constructor(private loginService: LoginService) {
+
+  }
   
   ngOnInit() {
       this.loginForm = new FormGroup({
@@ -26,7 +29,8 @@ export class LoginComponent implements OnInit {
   
   onSubmit() { 
       this.submitted = true;
-      alert(JSON.stringify(this.loginForm.value));
+      console.log(this.loginForm.controls)
+      this.loginService.logIn()
   }
 
 }
