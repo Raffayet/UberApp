@@ -1,8 +1,10 @@
 package com.example.uberbackend.dto;
+import lombok.*;
 
-import lombok.Data;
-
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginDto {
     private String email;
     private String password;

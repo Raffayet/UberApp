@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   
   ngOnInit() {
       this.loginForm = new FormGroup({
-          'username': new FormControl('', Validators.required),
+          'email': new FormControl('', Validators.required),
           'password': new FormControl('', Validators.required)
       });
   }
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   onSubmit() { 
       this.submitted = true;
       console.log(this.loginForm.controls)
-      this.loginService.logIn()
+      this.loginService.logIn(this.loginForm)
   }
 
 }

@@ -1,8 +1,11 @@
 package com.example.uberbackend.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthResponseDto {
 
     private String accessToken;
