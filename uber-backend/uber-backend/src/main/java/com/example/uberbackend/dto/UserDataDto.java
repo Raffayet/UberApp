@@ -4,11 +4,10 @@ import com.example.uberbackend.model.enums.AccountStatus;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDataDto {
     private long id;
     private String name;

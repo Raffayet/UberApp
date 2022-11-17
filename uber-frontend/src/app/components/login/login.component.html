@@ -1,0 +1,15 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="login-form">
+    <div class="login-window">
+        <div class="login-container">
+            <label class="username-label" for="float-input">Email</label>
+            <input id="float-input" type="text" pInputText placeholder="Email" formControlName="email" required=""> 
+
+            <label class="password-label">Password</label>
+            <input class="password-field" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
+
+            <div class="button-container">
+                <button class="login-button" pButton type="submit" label="Submit" [disabled]="!loginForm.valid" clickable>Log In</button>
+            </div>
+        </div>
+    </div>
+</form>
