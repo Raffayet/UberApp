@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Validators,FormControl,FormGroup } from '@angular/forms';
-import { FormsModule } from "@angular/forms";
-import {PasswordModule} from 'primeng/password';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { LoginService } from 'src/app/services/login.service';
 
 @Component({
@@ -14,9 +12,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   submitted = false;
 
-  constructor(private loginService: LoginService) {
-
-  }
+  constructor(private loginService: LoginService) {}
   
   ngOnInit() {
       this.loginForm = new FormGroup({
