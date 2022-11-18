@@ -2,7 +2,7 @@
 .navbar{
     transition: 0.35s;
     width: 100%;
-    background-color: #191970;
+    background-color: black;
     text-align: center;
     justify-items: center;
     padding-top: 20px;
@@ -13,7 +13,7 @@
 .navbar a {
     padding: 100px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 18px;
     vertical-align: center;
     color: white;
 }
