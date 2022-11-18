@@ -7,10 +7,23 @@
 
             <label class="password-label">Password</label>
             <input class="password-field" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
-
             <div class="button-container">
                 <button class="login-button" pButton type="submit" label="Submit" [disabled]="!loginForm.valid" clickable>Log In</button>
             </div>
         </div>
+    </div>
+    <div class="alternative-login-container">
+        <h1 class="google-login-header">Alternative</h1>
+        <button class="alternative-button">
+            <i class="pi pi-google"></i>
+            <label class="google-label">Log In with Google</label>
+        </button>
+        <hr width="80%">
+        <button class="alternative-button">
+            <span>
+                <i class="pi pi-facebook"></i>
+                <label class="facebook-label">Log In with Facebook</label>
+            </span>
+        </button>
     </div>
 </form>
