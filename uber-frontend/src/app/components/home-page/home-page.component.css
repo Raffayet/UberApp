@@ -2,19 +2,35 @@
     width: 100%;
     height: 100%;
     justify-content: center;
-    text-align: center;
     display: flex;
     background-image: url("../../../images/home-page-bg.webp");
     background-size: cover;
-    
+    background-repeat: no-repeat;    
 }
 
 .formContainer{
     width: 35%;
     height: 50%;
-    margin-top: 10%;
-    /* justify-content: center;
-    text-align: center;
-    display: flex; */
+    margin-top: 10%;    
     background-color: #F9F9F9;
+    padding: 3%;
+}
+
+.mapContainer{
+    width: 35%;
+    height: 50%;
+    margin-top: 10%;
+    background-color: #F9F9F9;
+}
+
+h1{
+    font-size: 2.5rem;
+    margin-top: -1rem;
+    margin-bottom: 3rem;
+    font-weight: bold;
+}
+
+.example-form{
+    text-align: left;
+    margin-bottom: 2rem;
 }

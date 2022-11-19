@@ -12,13 +12,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import { MapComponent } from './components/map/map.component';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     LoginComponent,
-    HomePageComponent
+    HomePageComponent,
+    MapComponent,
+    GeocodingComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +37,10 @@ import {MatInputModule} from '@angular/material/input';
     BrowserAnimationsModule,
     MatSlideToggleModule,
     MatButtonModule,
-    MatInputModule
+    MatInputModule,
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatAutocompleteModule
   ],
   providers: [],
   bootstrap: [AppComponent]
