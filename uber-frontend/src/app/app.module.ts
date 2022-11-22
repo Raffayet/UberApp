@@ -16,6 +16,8 @@ import { MapComponent } from './components/map/map.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { Router } from '@angular/router';
 
 
 @NgModule({
@@ -25,7 +27,8 @@ import { GeocodingComponent } from './components/map/geocoding/geocoding.compone
     LoginComponent,
     HomePageComponent,
     MapComponent,
-    GeocodingComponent
+    GeocodingComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
