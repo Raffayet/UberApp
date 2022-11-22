@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="user-container">
+        <div class="user-profile">
+            <div class="user-pic"> </div>
+            <div class="user-name">User Name</div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="user-list">
+            <mat-list *ngIf="onlineUsers">
+                <mat-list-item *ngFor="let user of onlineUsers ">
+                    <mat-icon mat-list-icon color="primary">account_circle</mat-icon>
+                    <div mat-line>{{user}}</div>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </div>
+    <div class="message-container">
+        <mat-list>
+            <mat-list-item *ngFor="let chat of adminChat">
+                <!-- "chat.isSender == true ? 'sender-message-body': 'receiver-message-body'" -->
+                <div mat-line>
+                    <div class="user-icon">
+                        <mat-icon mat-list-icon color="primary">portrait</mat-icon>
+                    </div>
+                    <div class="message-text">
+                        <div class="user-date-label"><span> Username Pera </span> 9.18 am</div>
+                        <div class="message">Pozdrav poruka</div>
+                    </div>
+                </div>
+            </mat-list-item>
+        </mat-list>
+
+        <div class="input-container">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Message</mat-label>
+                    <input matInput placeholder="Placeholder" class="chat-input" [(ngModel)]="message">
+                </mat-form-field>
+            </div>
+            <div class="button-container">
+                <button mat-mini-fab color="primary" (click)="handleMessage()">
+                    <mat-icon>send</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</div> 
