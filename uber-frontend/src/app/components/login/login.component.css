@@ -165,3 +165,25 @@
 .link-container-forgot-password{
     margin-bottom: 30px;
 }
+
+
+/* 
+pogresan unos */
+
+.login-window .login-container .password-field-error{
+    border: 1px solid red;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 40px;
+    border-radius: 0 !important;
+    background-color: rgb(243, 241, 241);
+}
+
+.login-window .login-container #float-input-error{
+    border: 1px solid red;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 20px;
+    font-size: 16px;
+    background-color: rgb(243, 241, 241);
+}

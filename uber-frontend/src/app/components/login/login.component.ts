@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { catchError, lastValueFrom, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent implements OnInit {
   success = false;
   res = '';
 
-  constructor(private loginService: LoginService) {}
+  constructor(private loginService: LoginService, private router: Router) {}
   
   ngOnInit() {
       this.loginForm = new FormGroup({
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit {
   }
   
   get formFields() { return this.loginForm.controls; }
-  
+
   onSubmit() { 
       this.submitted = true;
 
@@ -36,6 +37,7 @@ export class LoginComponent implements OnInit {
           next: (res) => {
             console.log('uspesno');
             this.success = true;
+            this.router.navigateByUrl('/dashboard');
           },
           error: (err) => {
             this.success = false;
