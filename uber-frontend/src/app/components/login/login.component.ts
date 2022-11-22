@@ -1,5 +1,7 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
+import { catchError, lastValueFrom, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
 
 @Component({
@@ -11,6 +13,8 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   submitted = false;
+  success = false;
+  res = '';
 
   constructor(private loginService: LoginService) {}
   
@@ -25,8 +29,21 @@ export class LoginComponent implements OnInit {
   
   onSubmit() { 
       this.submitted = true;
-      console.log(this.loginForm.controls)
-      this.loginService.logIn(this.loginForm)
+
+        this.loginService.logIn(this.loginForm, this.success)
+        .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
+        .subscribe({
+          next: (res) => {
+            console.log('uspesno');
+            this.success = true;
+          },
+          error: (err) => {
+            this.success = false;
+          },
+        });
+
+      // let data = await lastValueFrom(response);
+      // console.log(data)
   }
 
 }

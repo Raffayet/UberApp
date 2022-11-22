@@ -40,7 +40,7 @@
 .login-window .login-container .password-field{
     padding: 12px;
     height: 60px !important;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     border-radius: 0 !important;
     background-color: rgb(243, 241, 241);
     border: 0;
@@ -147,4 +147,21 @@
 
 .alternative-login-container .alternative-button:hover{
     background-color: rgb(196, 196, 212);
+}
+
+.link-container-register{
+    margin-top: 70px;
+}
+
+.register-link{
+    color:white;
+}
+
+.forgot-password-link{
+    color:black;
+    text-decoration: underline black;
+}
+
+.link-container-forgot-password{
+    margin-bottom: 30px;
 }

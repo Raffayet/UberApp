@@ -7,8 +7,11 @@
 
             <label class="password-label">Password</label>
             <input class="password-field" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
+            <div class="link-container-forgot-password">
+                <a class="forgot-password-link" href="/forgot-password">Forgot password?</a>
+            </div>
             <div class="button-container">
-                <button class="login-button" pButton type="submit" label="Submit" [disabled]="!loginForm.valid" clickable>Log In</button>
+                <button class="login-button" pButton type="submit" label="Submit" (error)="submitted" [disabled]="!loginForm.valid" clickable>Log In</button>
             </div>
         </div>
     </div>
@@ -25,5 +28,11 @@
                 <label class="facebook-label">Facebook Account</label>
             </span>
         </button>
+        <div class="link-container-register">
+            <a class="register-link" href="/register">Don't have an account yet? Register now</a>
+        </div>
+        <div *ngIf="!this.success && this.submitted" style="color:aqua">
+            <h1>gadsghashgasfdhgafs</h1>
+        </div>
     </div>
 </form>
