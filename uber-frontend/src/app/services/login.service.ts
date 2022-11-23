@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError, retry, map } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
 
 @Injectable({
@@ -9,14 +9,19 @@ import { FormGroup } from '@angular/forms';
 })
 export class LoginService {
 
+  error = '';
+
   constructor(private http: HttpClient) { }
 
-  logIn(credentials: FormGroup): void {
+  logIn(credentials: FormGroup, success: boolean) : Observable<any> {
+
     let data = {
       email: credentials.value.email,
       password: credentials.value.password
     }
-    this.http.post("http://localhost:8081/api/auth/login", data)
-      .subscribe(res => {console.log(data)})
+
+    let result = undefined;
+
+    return this.http.post("http://localhost:8081/api/auth/login", data)
   }
 }

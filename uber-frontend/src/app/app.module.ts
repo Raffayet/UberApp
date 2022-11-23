@@ -19,6 +19,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
 import { LivechatComponent } from './components/livechat/livechat.component';
 import { MatIconModule } from '@angular/material/icon';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { Router } from '@angular/router';
 
 
 @NgModule({
@@ -29,7 +31,8 @@ import { MatIconModule } from '@angular/material/icon';
     HomePageComponent,
     MapComponent,
     GeocodingComponent,
-    LivechatComponent
+    LivechatComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
