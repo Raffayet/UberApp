@@ -12,10 +12,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MapComponent } from './components/map/map.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
+import { LivechatComponent } from './components/livechat/livechat.component';
+import { MatIconModule } from '@angular/material/icon';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { Router } from '@angular/router';
 
@@ -28,6 +31,7 @@ import { Router } from '@angular/router';
     HomePageComponent,
     MapComponent,
     GeocodingComponent,
+    LivechatComponent,
     DashboardComponent
   ],
   imports: [
@@ -43,7 +47,9 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatDividerModule,
     MatAutocompleteModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatListModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
