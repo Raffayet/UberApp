@@ -1,47 +1,69 @@
 <div class="container">
-    <div class="user-container">
-        <div class="user-profile">
-            <div class="user-pic"> </div>
-            <div class="user-name">User Name</div>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="user-list">
-            <mat-list *ngIf="onlineUsers">
-                <mat-list-item *ngFor="let user of onlineUsers ">
-                    <mat-icon mat-list-icon color="primary">account_circle</mat-icon>
-                    <div mat-line>{{user}}</div>
-                </mat-list-item>
-            </mat-list>
-        </div>
-    </div>
-    <div class="message-container">
-        <mat-list>
-            <mat-list-item *ngFor="let chat of adminChat">
-                <!-- "chat.isSender == true ? 'sender-message-body': 'receiver-message-body'" -->
-                <div mat-line>
-                    <div class="user-icon">
-                        <mat-icon mat-list-icon color="primary">portrait</mat-icon>
+    <div class="chatbox">
+        <div class="col-1">
+            <div class="wrapper">
+                <div class="col1-scroll">
+                    <div class="msg-row">
+                        <div class="msg-text">
+                            <h2>Steve Austin</h2>
+                            <p>Hello there</p>
+                        </div>
+                        <img src="" class="msg-img">
                     </div>
-                    <div class="message-text">
-                        <div class="user-date-label"><span> Username Pera </span> 9.18 am</div>
-                        <div class="message">Pozdrav poruka</div>
+    
+                    <div class="msg-row">
+                        <div class="msg-text">
+                            <h2>Steve Austin</h2>
+                            <p>Hello there</p>
+                        </div>
+                        <img src="" class="msg-img">
                     </div>
+                    <div class="msg-row">
+                        <div class="msg-text">
+                            <h2>Steve Austin</h2>
+                            <p>Hello there</p>
+                        </div>
+                        <img src="" class="msg-img">
+                    </div>
+                    <div class="msg-row">
+                        <div class="msg-text">
+                            <h2>Steve Austin</h2>
+                            <p>Hello there</p>
+                        </div>
+                        <img src="" class="msg-img">
+                    </div>
+                    <div class="msg-row">
+                        <div class="msg-text">
+                            <h2>Steve Austin</h2>
+                            <p>Hello there</p>
+                        </div>
+                        <img src="" class="msg-img">
+                    </div>
+        
+                    <div class="msg-row msg-row2">
+                        <div class="msg-text">
+                            <h2>Amy Jackson</h2>
+                            <p>What is up</p>
+                        </div>
+                        <img src="" class="msg-img">
+                    </div>
+                
+    
+                    <input type="text" placeholder="Type your message here...">
+                    <button>Send</button>
                 </div>
-            </mat-list-item>
-        </mat-list>
-
-        <div class="input-container">
-            <div>
-                <mat-form-field appearance="outline">
-                    <mat-label>Message</mat-label>
-                    <input matInput placeholder="Placeholder" class="chat-input" [(ngModel)]="message">
-                </mat-form-field>
-            </div>
-            <div class="button-container">
-                <button mat-mini-fab color="primary" (click)="handleMessage()">
-                    <mat-icon>send</mat-icon>
-                </button>
             </div>
         </div>
+
+        <div class="col-2">       
+            <div class="col2-scroll">
+                <h3>Users</h3>     
+                <ul>
+                    <li>Johny Austin</li>
+                    <li>Charli Bronson</li>
+                    <li>Johny Austin</li>
+                </ul>
+            </div>
+        </div>       
     </div>
 </div> 
