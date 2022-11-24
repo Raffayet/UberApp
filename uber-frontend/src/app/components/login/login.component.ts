@@ -35,7 +35,8 @@ export class LoginComponent implements OnInit {
         .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
         .subscribe({
           next: (res) => {
-            console.log('uspesno');
+            let token = res.accessToken;
+            localStorage.setItem("user", token);
             this.success = true;
             this.router.navigateByUrl('/dashboard');
           },

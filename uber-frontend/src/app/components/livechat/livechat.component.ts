@@ -1,8 +1,10 @@
 import "../init.js";
 import { Component } from '@angular/core';
 import { LivechatService } from 'src/app/services/livechat.service';
+import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import * as SockJS from 'sockjs-client';
 import { over, Client } from 'stompjs';
+import { LoginComponent } from "../login/login.component.js";
 
 // interface Message{
 //   senderName: string,
@@ -15,19 +17,21 @@ import { over, Client } from 'stompjs';
 @Component({
   selector: 'app-livechat',
   templateUrl: './livechat.component.html',
-  styleUrls: ['./livechat.component.css']
+  styleUrls: ['./livechat.component.css'],
 })
 
 export class LivechatComponent {
 
   private stompClient : Client;
   private userChats : Map<string, string[]>;
+  private loggedUsername : string | null;
+  private loggedRole: string | null;
 
   onlineUsers: string[] = ["Jovan", "Petar"];
   adminChat : string[] = ["a", "a", "a", "a", "a", "a"];
   message: string;
 
-  constructor(private livechatService: LivechatService) {}
+  constructor(private livechatService: LivechatService, private tokenUtilsService: TokenUtilsService) {}
   
   ngOnInit() {
     let Sock = new SockJS("http://localhost:8081/api/ws");
@@ -36,19 +40,15 @@ export class LivechatComponent {
   }
 
   onConnected = () => {
-      console.log("\n\n\nUser is connected\n\n\n");
-      // username izvadi iz tokena, ako je u pitanju user(client ili driver)
-      let username = "David";
+      this.loggedUsername = this.tokenUtilsService.getUsernameFromToken();     
+      this.loggedRole = this.tokenUtilsService.getRoleFromToken();      
 
       this.stompClient.subscribe("/chatroom/public", this.onPublicMessageReceived);
-      this.stompClient.subscribe("/user/" + username + "/private", this.onPrivateMessageReceived);      
+      this.stompClient.subscribe("/user/" + this.loggedUsername  + "/private", this.onPrivateMessageReceived);      
   }
 
   onPublicMessageReceived = (payload: any) => {
       let payloadData = JSON.parse(payload.body);
-      //this.adminChat.push(payloadData);
-      console.log("JOCA");      
-      //console.log(this.adminChat);
   }
 
   onPrivateMessageReceived = (payload: any) => {
