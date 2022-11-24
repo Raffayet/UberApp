@@ -21,7 +21,6 @@ export class TokenUtilsService {
         return token.sub;
     }
     catch{
-        console.log("There is no token.");
         return null;
     }
 }
@@ -32,7 +31,6 @@ getRoleFromToken(): string | null{
         return token.role;
     }
     catch{
-        console.log("Greska");
         return null;
     }
 }

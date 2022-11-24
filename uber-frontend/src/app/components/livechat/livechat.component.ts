@@ -5,6 +5,7 @@ import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import * as SockJS from 'sockjs-client';
 import { over, Client } from 'stompjs';
 import { LoginComponent } from "../login/login.component.js";
+import { environment } from "../../environments/environment";
 
 // interface Message{
 //   senderName: string,
@@ -34,7 +35,7 @@ export class LivechatComponent {
   constructor(private livechatService: LivechatService, private tokenUtilsService: TokenUtilsService) {}
   
   ngOnInit() {
-    let Sock = new SockJS("http://localhost:8081/api/ws");
+    let Sock = new SockJS(environment.apiURL + "/ws");
     this.stompClient = over(Sock);
     this.stompClient.connect({}, this.onConnected, this.onError);
   }
