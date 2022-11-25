@@ -1,5 +1,10 @@
+
+import { Router } from '@angular/router';
 import { Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators, AbstractControl, ValidatorFn, ValidationErrors} from '@angular/forms';
+import { catchError, throwError } from 'rxjs';
+import { RegisterService } from 'src/app/services/register.service';
+import { Register } from 'src/app/model/register';
 
 
 export const identityRevealedValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -25,7 +30,7 @@ export class RegistrationPageComponent implements OnInit {
 
   form:FormGroup 
 
-  constructor(){
+  constructor(private registerService: RegisterService, private router:Router){
   }
 
   ngOnInit(){
@@ -66,8 +71,27 @@ export class RegistrationPageComponent implements OnInit {
   onSubmit(){
     console.log(this.form.errors);
     console.log(this.form.invalid);
-    if(!this.form.invalid)
-      console.log(this.form.value)
+    if(!this.form.invalid){
+      let registerDto:Register = this.form.value;
+      registerDto.provider = "LOCAL";
+      console.log("DTO REGISTRACIJE:")
+      console.log(registerDto);
+
+      this.registerService.register(registerDto)
+      .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
+        .subscribe({
+          next: (res:any) => {
+            let token = res.accessToken;
+            localStorage.setItem("user", token);
+            this.router.navigateByUrl('/dashboard');
+          },
+          error: () => {
+            
+          },
+        });
+
+      
+    }
   }
 
 }
