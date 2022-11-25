@@ -28,7 +28,6 @@ public class ChatController {
 
     @MessageMapping("/private-message")
     public Message receivePrivateMessage(@Payload Message message){
-
         // if user wants to listen to this particular message, it needs to listen to /user/David/private e.g.
         String receiver = message.getReceiverName();
         simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(), "/private", message);
