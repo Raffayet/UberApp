@@ -187,3 +187,12 @@ pogresan unos */
     font-size: 16px;
     background-color: rgb(243, 241, 241);
 }
+
+.alternative-login-container #google-button{
+    justify-content: center;
+    background-color: black;
+}
+
+#g_id_onload{
+    background-color: red;
+}

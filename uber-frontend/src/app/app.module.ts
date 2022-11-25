@@ -18,7 +18,11 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { Router } from '@angular/router';
-
+import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import {
+  GoogleLoginProvider,
+  FacebookLoginProvider
+} from '@abacritt/angularx-social-login';
 
 @NgModule({
   declarations: [
@@ -43,9 +47,32 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatDividerModule,
     MatAutocompleteModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    SocialLoginModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '942553161348-dq7es99f69eovl0q1vl98ilgncia59nq.apps.googleusercontent.com'
+            )
+          },
+          {
+            id: FacebookLoginProvider.PROVIDER_ID,
+            provider: new FacebookLoginProvider('clientId')
+          }
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
