@@ -12,13 +12,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import { RegistrationPageComponent } from './components/registration-page/registration-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     LoginComponent,
-    HomePageComponent
+    HomePageComponent,
+    RegistrationPageComponent
   ],
   imports: [
     BrowserModule,
