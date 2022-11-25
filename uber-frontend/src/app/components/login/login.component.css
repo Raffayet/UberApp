@@ -25,29 +25,24 @@
 }
 
 .login-window .login-container #float-input{
-    padding: 10px;
-    height: 160px;
+    padding: 12px;
+    height: 60px !important;
     margin-bottom: 20px;
     font-size: 16px;
     background-color: rgb(243, 241, 241);
     border: 0;
 }
 
-#float-input:focus{
-    border: 0 !important;
+.login-window .login-container #float-input:focus{
+    outline: 3px solid rgb(192, 215, 255);
 }
-
 
 .login-window .login-container .password-field{
-    padding: 10px;
-    height: 160px;
-    margin-bottom: 60px;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 40px;
     border-radius: 0 !important;
     background-color: rgb(243, 241, 241);
-    border: 0;
-}
-
-.password-field:focus{
     border: 0;
 }
 
@@ -96,3 +91,99 @@
     font-weight: 700;
 }
 
+.alternative-login-container{
+    background-color: black;
+    width: 500px;
+    height: 500px;
+}
+
+.alternative-login-container .alternative-button{
+    background-color: white;
+    border-radius: 5px;
+    width: 60%;
+    height: 45px !important;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    cursor: pointer;
+}
+
+.alternative-button .google-label{
+    font-size: 24px;
+    font-weight: 600;
+    color: black;
+    cursor: pointer;
+}
+
+.alternative-button .pi-google{
+    color: black;
+    text-align: left;
+    font-size: 24px;
+    margin-left: -20px;
+    margin-right: 20px;
+}
+
+.alternative-button .facebook-label{
+    font-size: 24px;
+    font-weight: 600;
+    color: black;
+    cursor: pointer;
+}
+
+.alternative-button .pi-facebook{
+    color: black;
+    text-align: left;
+    font-size: 24px;
+    margin-right: 20px;
+}
+
+.google-login-header{
+    margin-top: 40px;
+    margin-bottom: 65px;
+    padding-bottom: 0px;
+    font-size: 50px;
+    font-weight: 700;
+    color: white;
+}
+
+.alternative-login-container .alternative-button:hover{
+    background-color: rgb(196, 196, 212);
+}
+
+.link-container-register{
+    margin-top: 70px;
+}
+
+.register-link{
+    color:white;
+}
+
+.forgot-password-link{
+    color:black;
+    text-decoration: underline black;
+}
+
+.link-container-forgot-password{
+    margin-bottom: 30px;
+}
+
+
+/* 
+pogresan unos */
+
+.login-window .login-container .password-field-error{
+    border: 1px solid red;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 40px;
+    border-radius: 0 !important;
+    background-color: rgb(243, 241, 241);
+}
+
+.login-window .login-container #float-input-error{
+    border: 1px solid red;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 20px;
+    font-size: 16px;
+    background-color: rgb(243, 241, 241);
+}

@@ -3,14 +3,36 @@
         <div class="login-container">
             <h1 class="login">Log In</h1>
             <label class="username-label" for="float-input">Email</label>
-            <input id="float-input" type="email" pInputText placeholder="Email" formControlName="email" required=""> 
+            <input *ngIf="!(!this.success && this.submitted)" id="float-input" type="email" pInputText placeholder="Email" formControlName="email" required=""> 
+            <input *ngIf="!this.success && this.submitted" id="float-input-error" type="email" pInputText placeholder="Email" formControlName="email" required="">
 
             <label class="password-label">Password</label>
-            <input class="password-field" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
-
-            <div class="button-container">
-                <button class="login-button" pButton type="submit" label="Submit" [disabled]="!loginForm.valid" clickable>Log In</button>
+            <input *ngIf="!(!this.success && this.submitted)" class="password-field" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
+            <input *ngIf="!this.success && this.submitted" class="password-field-error" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
+        
+            <div class="link-container-forgot-password">
+                <a class="forgot-password-link" href="/forgot-password">Forgot password?</a>
             </div>
+            <div class="button-container">
+                <button class="login-button" pButton type="submit" label="Submit" (error)="submitted" [disabled]="!loginForm.valid" clickable>Log In</button>
+            </div>
+        </div>
+    </div>
+    <div class="alternative-login-container">
+        <h1 class="google-login-header">Log In With</h1>
+        <button class="alternative-button">
+            <i class="pi pi-google"></i>
+            <label class="google-label">Google Account</label>
+        </button>
+        <hr width="60%">
+        <button class="alternative-button">
+            <span>
+                <i class="pi pi-facebook"></i>
+                <label class="facebook-label">Facebook Account</label>
+            </span>
+        </button>
+        <div class="link-container-register">
+            <a class="register-link" href="/register">Don't have an account yet? Register now</a>
         </div>
     </div>
 </form>
