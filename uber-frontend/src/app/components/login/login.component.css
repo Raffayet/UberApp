@@ -190,9 +190,44 @@ pogresan unos */
 
 .alternative-login-container #google-button{
     justify-content: center;
-    background-color: black;
 }
 
-#g_id_onload{
-    background-color: red;
+.asl-button-container{
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    margin-bottom: 50px;
+}
+
+#facebook-button{
+    background-color: white;
+    border-radius: 5px;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    border: 0;
+    margin-left: 50px;
+}
+
+#facebook-button :hover{
+    background-color: antiquewhite;
+}
+
+
+#facebook-button .pi-facebook{
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+#continue-button{
+    margin-top: 60px;
+    background-color: white;
+    color: black;
+    font-weight: 800;
+    font-size: 20px;
+    width: 40%;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    min-height: 45px;
 }

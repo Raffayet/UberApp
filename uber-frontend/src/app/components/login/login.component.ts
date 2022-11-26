@@ -1,13 +1,11 @@
-import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
-import { catchError, lastValueFrom, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
 import { SocialAuthService } from "@abacritt/angularx-social-login";
 import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
-import { GoogleSigninButtonDirective } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-login',
@@ -34,22 +32,6 @@ export class LoginComponent implements OnInit {
         this.user = user;
         this.loggedIn = (user != null);
       });
-      // @ts-ignore
-      google.accounts.id.initialize({
-        client_id: '942553161348-dq7es99f69eovl0q1vl98ilgncia59nq.apps.googleusercontent.com',
-        callback: this.handleCredentialResponse.bind(this),
-        auto_select: false,
-        cancel_on_tap_outside: true,
-
-      });
-      // @ts-ignore
-      google.accounts.id.renderButton(
-      // @ts-ignore
-      document.getElementById("google-button"),
-        { theme: "outline", size: "large", width: "100%"}
-      );
-      // @ts-ignore
-      google.accounts.id.prompt((notification: PromptMomentNotification) => {})
   }
   
   get formFields() { return this.loginForm.controls; }
@@ -74,17 +56,17 @@ export class LoginComponent implements OnInit {
       // console.log(data)
   }
   
-  signInWithGoogle(): void {
+  recognizeGoogleAccount(): void {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
-    if(this.user)
-    {
-      this.router.navigateByUrl(`/dashboard/${this.user.email}`);
-    }
   }
 
-  signInWithFB(): void {
+  recognizeFacebookAccount(): void {
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
-    // this.router.navigateByUrl(`/dashboard/${this.user.email}`);
+  }
+
+  signIn(): void {
+    if(this.user)
+      this.router.navigateByUrl(`/dashboard/${this.user.email}`);
   }
 
   signOut(): void {
@@ -97,6 +79,6 @@ export class LoginComponent implements OnInit {
 
   async handleCredentialResponse(response: any) {
     // Here will be your response from Google.
-    this.signInWithGoogle()
+    this.recognizeGoogleAccount()
   }
 }
