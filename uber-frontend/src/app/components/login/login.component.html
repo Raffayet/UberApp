@@ -21,7 +21,8 @@
     <div class="alternative-login-container">
         <h1 class="google-login-header">Log In With</h1>
         <asl-google-signin-button></asl-google-signin-button>
-        <button id="google-button"></button>
+        <button id="google-button" *ngIf="!user" style="visibility: hidden;"></button>
+        <button id="google-button" *ngIf="user" style="visibility: visible;"></button>
         <hr width="60%">
         <button type="button" id="facebook-button" (click)="signInWithFB()">Facebook</button>
         <div class="link-container-register">
