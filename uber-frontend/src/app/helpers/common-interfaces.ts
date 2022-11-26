@@ -6,8 +6,8 @@ export interface Message{
     receiverFirstName: string | null,
     receiverLastName: string | null,
     content: string,
-    date: string,
-    status: string
+    date: Date,
+    status: number
   }
 
   export interface User{

@@ -40,7 +40,10 @@ export class LivechatComponent {
         this.stompClient.subscribe("/chatroom/public", this.onPublicMessageReceived);
 
         let users:Observable<User[]> = this.livechatService.getAllUsersFromMessages();
-        users.subscribe(val => this.allUsersFromMessages = val);   
+        users.subscribe(val => this.allUsersFromMessages = val);
+        
+        this.livechatService.getAdminChat().subscribe(val => {this.adminChat = val; console.log(val);
+        });
 
       }else{       
         this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/private", this.onPrivateMessageReceived);  
@@ -89,8 +92,8 @@ export class LivechatComponent {
           receiverFirstName: null,
           receiverLastName: null,
           content : this.messageToSend,
-          date: new Date().toDateString(),
-          status: 'UNREAD'
+          date: new Date(),
+          status: 1
         }        
         
         this.messageToSend = "";
@@ -111,8 +114,8 @@ export class LivechatComponent {
         receiverFirstName: null,
         receiverLastName: null,
         content: this.messageToSend,
-        date: new Date().toDateString(),
-        status: 'UNREAD'
+        date: new Date(),
+        status: 1
       }
       
       this.messageToSend = "";

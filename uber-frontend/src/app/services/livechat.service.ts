@@ -27,4 +27,16 @@ export class LivechatService {
     
     return this.http.get<User[]>(environment.apiURL + "/message/get-users", { params: queryParams});
   }
+
+  getAdminChat(): Observable<Map<string, Message[]>>{
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("format", "json");
+    
+    return this.http.get<Map<string, Message[]>>(environment.apiURL + "/message/get-admin-chat", { params: queryParams});
+  }
+
+  persistMessage(): void{
+    //this.http.post(environment.apiURL + "/message/save")
+  }
+
 }
