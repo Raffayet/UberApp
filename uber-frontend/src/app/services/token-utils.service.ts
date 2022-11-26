@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import jwtDecode from "jwt-decode";
+import { User } from "src/app/helpers/common-interfaces.js";
 
 interface JwtToken{
   sub: string,
   iat: number,
   exp: number,
-  role: string
+  role: string,
+  userDto: User
 }
 
 @Injectable({
@@ -15,14 +17,14 @@ export class TokenUtilsService {
 
   constructor() { }
 
-  getUsernameFromToken(): string | null {
-    try{
-        let token: JwtToken = jwtDecode(localStorage.getItem("user") || "");
-        return token.sub;
-    }
-    catch{
-        return null;
-    }
+getUsernameFromToken(): string | null {
+  try{
+      let token: JwtToken = jwtDecode(localStorage.getItem("user") || "");
+      return token.sub;
+  }
+  catch{
+      return null;
+  }
 }
 
 getRoleFromToken(): string | null{
@@ -35,4 +37,15 @@ getRoleFromToken(): string | null{
     }
 }
 
+getUserFromToken(): User | null {
+  try{
+      let token: JwtToken = jwtDecode(localStorage.getItem("user") || "");
+      return token.userDto;
+  }
+  catch{
+      return null;
+  }
 }
+
+}
+

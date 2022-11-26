@@ -1,8 +1,6 @@
 package com.example.uberbackend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import net.bytebuddy.build.Plugin;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

@@ -18,9 +18,11 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
 import { LivechatComponent } from './components/livechat/livechat.component';
 import { MatIconModule } from '@angular/material/icon';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
+import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
+import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 
 
 @NgModule({
@@ -32,7 +34,9 @@ import { JwtInterceptor } from './helpers/jwt-interceptor';
     MapComponent,
     GeocodingComponent,
     LivechatComponent,
-    DashboardComponent
+    ClientDashboardComponent,
+    DriverDashboardComponent,
+    AdminDashboardComponent
   ],
   imports: [
     BrowserModule,

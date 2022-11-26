@@ -4,6 +4,7 @@ import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { catchError, lastValueFrom, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
+import { TokenUtilsService } from 'src/app/services/token-utils.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,7 @@ export class LoginComponent implements OnInit {
   success = false;
   res = '';
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(private loginService: LoginService, private router: Router, private tokenUtilsService: TokenUtilsService) {}
   
   ngOnInit() {
       this.loginForm = new FormGroup({
@@ -38,7 +39,21 @@ export class LoginComponent implements OnInit {
             let token = res.accessToken;
             localStorage.setItem("user", token);
             this.success = true;
-            this.router.navigateByUrl('/dashboard');
+            let role:string | null = this.tokenUtilsService.getRoleFromToken();
+            switch(role){
+              case 'CLIENT':
+                this.router.navigateByUrl('/client-dashboard');
+                break;
+              case 'DRIVER':
+                this.router.navigateByUrl('/driver-dashboard');
+                break;
+              case 'ADMIN':
+                this.router.navigateByUrl('/admin-dashboard');
+                break;
+              default:
+                this.router.navigateByUrl('/login');
+            }
+            
           },
           error: (err) => {
             this.success = false;

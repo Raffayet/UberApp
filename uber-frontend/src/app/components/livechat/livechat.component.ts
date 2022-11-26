@@ -3,22 +3,11 @@ import { Component } from '@angular/core';
 import { LivechatService } from 'src/app/services/livechat.service';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import * as SockJS from 'sockjs-client';
-import { over, Client } from 'stompjs';
+import { over, Client, Message as StompMessage} from 'stompjs';
 import { LoginComponent } from "../login/login.component.js";
 import { environment } from "../../environments/environment";
 import { Observable } from "rxjs";
-
-export interface Message{
-  senderEmail: string,
-  senderFirstName: string | null,
-  senderLastName: string | null,
-  receiverEmail: string,
-  receiverFirstName: string | null,
-  receiverLastName: string | null,
-  content: string,
-  date: string,
-  status: string
-}
+import { Message, User } from "src/app/helpers/common-interfaces.js";
 
 @Component({
   selector: 'app-livechat',
@@ -29,13 +18,11 @@ export interface Message{
 export class LivechatComponent {
 
   private stompClient : Client;
-  private loggedUsername : string | null;
-  loggedRole: string | null;
-  
-  allUsersFromMessages: string[] = ["Jovan", "Petar"];
+  loggedUser : User | null;
+  allUsersFromMessages: User[] = [];
   userChat : Message[] = [];
   adminChat : Map<string, Message[]>;
-  message: string;
+  messageToSend: string = "";
 
   constructor(private livechatService: LivechatService, private tokenUtilsService: TokenUtilsService) {}
   
@@ -46,31 +33,30 @@ export class LivechatComponent {
   }
 
   onConnected = () => {
-      this.loggedUsername = this.tokenUtilsService.getUsernameFromToken();     
-      this.loggedRole = this.tokenUtilsService.getRoleFromToken();
+      this.loggedUser = this.tokenUtilsService.getUserFromToken();
       
-      if(this.loggedRole === 'ADMIN'){
+      if(this.loggedUser?.role === 'ADMIN'){
         //get request for admin
         this.stompClient.subscribe("/chatroom/public", this.onPublicMessageReceived);
 
-        // let msgs:Observable<Message[]> = this.livechatService.findAllMessagesForUser(this.loggedUsername as string);
-        // msgs.subscribe(val => this.userChat = val);   
+        let users:Observable<User[]> = this.livechatService.getAllUsersFromMessages();
+        users.subscribe(val => this.allUsersFromMessages = val);   
 
       }else{       
-        this.stompClient.subscribe("/user/" + this.loggedUsername  + "/private", this.onPrivateMessageReceived);  
+        this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/private", this.onPrivateMessageReceived);  
 
-        let msgs:Observable<Message[]> = this.livechatService.findAllMessagesForUser(this.loggedUsername as string);
+        let msgs:Observable<Message[]> = this.livechatService.findAllMessagesForUser(this.loggedUser?.email as string);
         msgs.subscribe(val => this.userChat = val);        
       }    
           
   }
 
-  onPublicMessageReceived = (payload: any) => {
+  onPublicMessageReceived = (payload: StompMessage) => {
       let payloadData = JSON.parse(payload.body);
-      console.log(payloadData);
+      // console.log(payloadData);
   }
 
-  onPrivateMessageReceived = (payload: any) => {
+  onPrivateMessageReceived = (payload: StompMessage) => {
       let payloadData = JSON.parse(payload.body);
       // if(this.userChats.get(payloadData.senderName)){
       //     this.userChats.get(payloadData.senderName)?.push(payloadData);
@@ -81,7 +67,7 @@ export class LivechatComponent {
 
       //     this.userChats.set(payloadData.senderName, messages);
       // }
-      console.log(payloadData);      
+      this.userChat.push(payloadData);
   }
 
   onError = () => {
@@ -94,20 +80,21 @@ export class LivechatComponent {
 
   sendPublicMessage = () => {
     if(this.stompClient){
-        let message = "Pozdrav!";
 
         let chatMessage : Message = {
-          senderEmail: this.loggedUsername as string,
-          senderFirstName: null,
-          senderLastName: null,
+          senderEmail: this.loggedUser?.email as string,
+          senderFirstName: this.loggedUser?.name as string,
+          senderLastName: this.loggedUser?.surname as string,
           receiverEmail: "support",
           receiverFirstName: null,
           receiverLastName: null,
-          content : message,
+          content : this.messageToSend,
           date: new Date().toDateString(),
           status: 'UNREAD'
-        }
-    
+        }        
+        
+        this.messageToSend = "";
+        this.userChat.push(chatMessage);
         this.stompClient.send('/app/message', {}, JSON.stringify(chatMessage));
     }
   
@@ -115,20 +102,21 @@ export class LivechatComponent {
 
   sendPrivateMessage = () => {
     if(this.stompClient){
-      let message = "Pozdrav!";
 
       let chatMessage: Message = {
-        senderEmail: this.loggedUsername as string,
+        senderEmail: this.loggedUser?.email as string,
         senderFirstName: null,
         senderLastName: null,
-        receiverEmail: "support",
+        receiverEmail: "sasa@gmail.com",
         receiverFirstName: null,
         receiverLastName: null,
-        content: message,
+        content: this.messageToSend,
         date: new Date().toDateString(),
         status: 'UNREAD'
       }
-  
+      
+      this.messageToSend = "";
+      // this.adminChat.set();
       this.stompClient.send('/app/private-message', {}, JSON.stringify(chatMessage));
     }
   }

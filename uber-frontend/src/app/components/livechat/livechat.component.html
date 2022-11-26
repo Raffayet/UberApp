@@ -3,36 +3,25 @@
         <div class="col-1">
             <div class="wrapper">
                 <div class="col1-scroll">
-                    <div *ngFor="let message of userChat;" class="msg-row">
+                    <div *ngFor="let message of userChat;" [ngClass]=" loggedUser?.email !== message.senderEmail ? 'msg-row' : 'msg-row msg-row2'">
                         <div class="msg-text">
                             <h2>{{message.senderFirstName}} {{message.senderLastName}}</h2>
                             <p>{{message.content}}</p>
                         </div>
                         <img src="" class="msg-img">
-                    </div>                
-        
-                    <div class="msg-row msg-row2">
-                        <div class="msg-text">
-                            <h2>Amy Jackson</h2>
-                            <p>What is up</p>
-                        </div>
-                        <img src="" class="msg-img">
-                    </div>
-                
+                    </div>               
     
-                    <input type="text" placeholder="Type your message here...">
-                    <button>Send</button>
+                    <input type="text" placeholder="Type your message here..." [(ngModel)]="messageToSend">
+                    <button (click)="loggedUser?.role === 'ADMIN' ? sendPrivateMessage() : sendPublicMessage() ">Send</button>
                 </div>
             </div>
         </div>
 
-        <div *ngIf="loggedRole=='ADMIN'" class="col-2">       
+        <div *ngIf="loggedUser?.role === 'ADMIN'" class="col-2">       
             <div class="col2-scroll">
                 <h3>Users</h3>     
                 <ul>
-                    <li>Johny Austin</li>
-                    <li>Charli Bronson</li>
-                    <li>Johny Austin</li>
+                    <li *ngFor="let user of allUsersFromMessages">{{user.name}} {{user.surname}}</li>
                 </ul>
             </div>
         </div>       

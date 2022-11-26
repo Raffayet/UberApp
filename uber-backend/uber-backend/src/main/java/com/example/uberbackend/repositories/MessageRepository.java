@@ -19,6 +19,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT r FROM Message r WHERE r.receiver.email = ?1 or r.sender.email = ?1 order by r.date")
     List<Message> findAllForUser(String userEmail);
 
-    @Query("SELECT DISTINCT r.sender FROM Message r WHERE r.receiver.role = 'ADMIN'")
+    @Query("SELECT DISTINCT r.sender FROM Message r WHERE r.receiver.role = '3'")
     List<User> getDistinctUserFromMessages();
 }

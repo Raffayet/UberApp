@@ -58,7 +58,7 @@ public class MessageController {
     }
 
     @GetMapping("get-users")
-    public ResponseEntity<List<UserDto>> getDistinctUsersFromMessages(@RequestParam("email") String userEmail){
+    public ResponseEntity<List<UserDto>> getDistinctUsersFromMessages(){
         List<UserDto> retList;
         try{
             retList = messageService.getDistinctUserFromMessages();
