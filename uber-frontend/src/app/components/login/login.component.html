@@ -20,11 +20,10 @@
     </div>
     <div class="alternative-login-container">
         <h1 class="google-login-header">Log In With</h1>
-        <div (click)="signInWithGoogle()">
-            <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
-        </div>
+        <asl-google-signin-button></asl-google-signin-button>
+        <button id="google-button"></button>
         <hr width="60%">
-        <button type="button" id="facebook-button"></button>
+        <button type="button" id="facebook-button" (click)="signInWithFB()">Facebook</button>
         <div class="link-container-register">
             <a class="register-link" href="/register">Don't have an account yet? Register now</a>
         </div>

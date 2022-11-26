@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { SocialAuthService } from "@abacritt/angularx-social-login";
 import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
+import { GoogleSigninButtonDirective } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-login',
@@ -45,7 +46,7 @@ export class LoginComponent implements OnInit {
       google.accounts.id.renderButton(
       // @ts-ignore
       document.getElementById("google-button"),
-        { theme: "outline", size: "large", width: "100%" }
+        { theme: "outline", size: "large", width: "100%"}
       );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => {})
@@ -74,15 +75,16 @@ export class LoginComponent implements OnInit {
   }
   
   signInWithGoogle(): void {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
     if(this.user)
     {
       this.router.navigateByUrl(`/dashboard/${this.user.email}`);
-      this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
     }
   }
 
   signInWithFB(): void {
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+    // this.router.navigateByUrl(`/dashboard/${this.user.email}`);
   }
 
   signOut(): void {
