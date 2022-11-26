@@ -23,4 +23,9 @@ public class Message {
     private String content;
     private LocalDateTime date;
     private MessageStatus status;
+
+//    @Override
+//    public int compareTo(Message message) {
+//        return getDate().compareTo(message.getDate());
+//    }
 }

@@ -1,5 +1,6 @@
 package com.example.uberbackend.security;
 
+import com.example.uberbackend.dto.UserDto;
 import com.example.uberbackend.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -27,6 +28,7 @@ public class JwtTokenGenerator {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", u.getRole().getAuthority());
+        claims.put("userDto", new UserDto(u));
 
         return Jwts.builder()
                 .setClaims(claims)

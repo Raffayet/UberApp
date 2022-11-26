@@ -26,6 +26,9 @@ import {
 } from '@abacritt/angularx-social-login';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
+import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
+import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 
 
 @NgModule({
@@ -36,7 +39,10 @@ import { JwtInterceptor } from './helpers/jwt-interceptor';
     HomePageComponent,
     MapComponent,
     GeocodingComponent,
-    LivechatComponent
+    LivechatComponent,
+    ClientDashboardComponent,
+    DriverDashboardComponent,
+    AdminDashboardComponent
   ],
   imports: [
     BrowserModule,

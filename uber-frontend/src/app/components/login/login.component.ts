@@ -3,6 +3,7 @@ import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { catchError, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
+import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import { SocialAuthService } from "@abacritt/angularx-social-login";
 import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
@@ -21,7 +22,7 @@ export class LoginComponent implements OnInit {
   user: SocialUser;
   loggedIn: boolean;
 
-  constructor(private loginService: LoginService, private router: Router, private authService: SocialAuthService) {}
+  constructor(private loginService: LoginService, private router: Router, private tokenUtilsService: TokenUtilsService, private authService: SocialAuthService) {}
   
   ngOnInit() {
       this.loginForm = new FormGroup({
@@ -46,7 +47,21 @@ export class LoginComponent implements OnInit {
             let token = res.accessToken;
             localStorage.setItem("user", token);
             this.success = true;
-            this.router.navigateByUrl('/dashboard');
+            let role:string | null = this.tokenUtilsService.getRoleFromToken();
+            switch(role){
+              case 'CLIENT':
+                this.router.navigateByUrl('/client-dashboard');
+                break;
+              case 'DRIVER':
+                this.router.navigateByUrl('/driver-dashboard');
+                break;
+              case 'ADMIN':
+                this.router.navigateByUrl('/admin-dashboard');
+                break;
+              default:
+                this.router.navigateByUrl('/login');
+            }
+            
           },
           error: (err) => {
             this.success = false;

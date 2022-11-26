@@ -1,19 +1,28 @@
 .container{
     background-image: linear-gradient(to rigth, #1c00f2, #453f96);
-    width: 100%;
-    height: 100vh;
-    display: flex;
+    height: 70vh;
+    position: fixed;
+    bottom: 5.5rem;
+    right: 5.5rem;
     align-items: center;
     justify-content: center;
     color: #fff;
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.4);
+    border-radius: 10px;
+    overflow-y: scroll;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+}
+
+.container > div.chatbox > div:last-child {
+    scroll-snap-align: end;
 }
 
 .chatbox{
     background-color: #1d61c2;
-    width: 60%;
     min-width: 250px;
     display: flex;
-    height: 80%;
+    border-radius: 10px;
 }
 
 .col-1{
@@ -70,24 +79,26 @@
     padding: 20px 40px;
     background-color: #3874c9;
     color: #fff;
-    width: 80%;
+    width: 75%;
     font-size: 1rem;
     font-weight: 300;
     position: sticky;
     bottom: 0;
+    border-radius: 10px;
 }
 
 .col-1 button{
     border: 1px outset #0a438c;
     outline: none;
-    padding: 20px 40px;
+    padding: 20px 20px;
     background-color: #1d5cae;
     color: #fff;
-    width: 20%;
+    width: 25%;
     font-size: 1rem;
     font-weight: 300;
     position: sticky;
     bottom: 0;
+    border-radius: 10px;
 }
 
 .col-1 button:hover{
