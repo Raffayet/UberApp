@@ -7,22 +7,26 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import {PasswordModule} from 'primeng/password';
-import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MapComponent } from './components/map/map.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { LivechatComponent } from './components/livechat/livechat.component';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import {
   GoogleLoginProvider,
   FacebookLoginProvider
 } from '@abacritt/angularx-social-login';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './helpers/jwt-interceptor';
+
 
 @NgModule({
   declarations: [
@@ -32,7 +36,7 @@ import {
     HomePageComponent,
     MapComponent,
     GeocodingComponent,
-    DashboardComponent
+    LivechatComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +52,8 @@ import {
     MatDividerModule,
     MatAutocompleteModule,
     MatAutocompleteModule,
+    MatListModule,
+    MatIconModule,
     SocialLoginModule
   ],
   providers: [
@@ -65,14 +71,16 @@ import {
           {
             id: FacebookLoginProvider.PROVIDER_ID,
             provider: new FacebookLoginProvider('726405335024718')
-          }
+          },
         ],
         onError: (err) => {
           console.error(err);
         }
       } as SocialAuthServiceConfig,
-    }
-  ],
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+
+  ], 
   bootstrap: [AppComponent]
 })
 export class AppModule { }

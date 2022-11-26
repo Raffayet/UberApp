@@ -43,9 +43,10 @@ export class LoginComponent implements OnInit {
         .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
         .subscribe({
           next: (res) => {
-            console.log('uspesno');
+            let token = res.accessToken;
+            localStorage.setItem("user", token);
             this.success = true;
-            this.router.navigateByUrl(`/dashboard/${this.loginForm.value.email}`);
+            this.router.navigateByUrl('/dashboard');
           },
           error: (err) => {
             this.success = false;
@@ -65,8 +66,8 @@ export class LoginComponent implements OnInit {
   }
 
   signIn(): void {
-    if(this.user)
-      this.router.navigateByUrl(`/dashboard/${this.user.email}`);
+    // if(this.user)
+    //   this.router.navigateByUrl(`/dashboard`);
   }
 
   signOut(): void {

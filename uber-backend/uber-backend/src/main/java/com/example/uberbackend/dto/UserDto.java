@@ -8,8 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDataDto {
-    private long id;
+public class UserDto {
     private String name;
     private String surname;
     private String email;
@@ -22,8 +21,7 @@ public class UserDataDto {
     private DrivingStatus drivingStatus;
     private AccountStatus accountStatus;
 
-    public UserDataDto(User user) {
-        this.id = user.getId();
+    public UserDto(User user) {
         this.name = user.getName();
         this.surname = user.getSurname();
         this.email = user.getEmail();
@@ -36,6 +34,5 @@ public class UserDataDto {
         this.blocked = user.getBlocked();
         this.drivingStatus = user.getDrivingStatus();
         this.accountStatus = user.getAccountStatus();
-
     }
 }
