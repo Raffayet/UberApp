@@ -7,7 +7,6 @@ import { ClientDashboardComponent } from './components/client-dashboard/client-d
 import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 
-
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'home-page', component: HomePageComponent }, 
@@ -15,6 +14,7 @@ const routes: Routes = [
   { path: 'driver-dashboard', component: DriverDashboardComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent },
   { path: 'chat', component: LivechatComponent }
+
 ];
 
 @NgModule({
