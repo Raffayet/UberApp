@@ -27,7 +27,7 @@
         <hr width="60%">
         <button type="button" id="continue-button" (click)="signIn()" style="visibility: visible;" *ngIf="user">Continue</button>
         <div class="link-container-register">
-            <a class="register-link" href="/register">Don't have an account yet? Register now</a>
+            <a class="register-link" (click)="goToRegistration()">Don't have an account yet? Register now</a>
         </div>
     </div>
 </form>

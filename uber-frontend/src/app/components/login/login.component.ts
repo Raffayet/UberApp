@@ -76,6 +76,10 @@ export class LoginComponent implements OnInit {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
+  goToRegistration():void{
+    this.router.navigateByUrl('/registration');
+  }
+
   recognizeFacebookAccount(): void {
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
   }

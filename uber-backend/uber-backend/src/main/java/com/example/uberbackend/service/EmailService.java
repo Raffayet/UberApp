@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+
 @Service
 public class EmailService{
 
@@ -14,14 +16,18 @@ public class EmailService{
 
     @Async
     public void sendConfirmationAsync(String email, String token) throws MailException {
+
         SimpleMailMessage mail = new SimpleMailMessage();
 
         mail.setTo(email);
-        mail.setSubject("Primer slanja emaila pomoću Spring taska");
-        String link = "http://localhost:8080/confirmation?token=" + token;
-        mail.setText("Pozdrav hvala što pratiš ISA, aktiviraj svoj account na " + link + ".");
-
+        mail.setSubject("Activate account");
+        String link = "http://localhost:8081/api/user/activate?token=" + token;
+        mail.setText("You have successfully registered on Uber App, to Log In please activate account here: " + link + ".");
+        try{
         mailSender.send(mail);
+        }catch (RuntimeException e){
+            throw new IllegalStateException("failed to send email");
+        }
     }
 
     @Async
@@ -29,8 +35,8 @@ public class EmailService{
         SimpleMailMessage mail = new SimpleMailMessage();
 
         mail.setTo(email);
-        mail.setSubject("Response for registration request");
-        mail.setText("Hello, your registration request has been accepted. You can use our application now. Good Luck!");
+        mail.setSubject("Account activated");
+        mail.setText("Hello, you have successfully activated your account. You can use our application now. Good Luck!");
 
         mailSender.send(mail);
 
