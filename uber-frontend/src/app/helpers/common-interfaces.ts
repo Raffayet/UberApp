@@ -12,7 +12,7 @@ export interface Message{
     status: number
   }
 
-export interface User{
+  export interface User{
     name: string,
     surname: string,
     email: string,
@@ -24,4 +24,4 @@ export interface User{
     profileImage: string,
     drivingStatus: string,
     accountStatus: string
-}
+  }

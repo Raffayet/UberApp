@@ -1,12 +1,10 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
-import { catchError, throwError } from 'rxjs';
+import { catchError, lastValueFrom, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
-import { SocialAuthService } from "@abacritt/angularx-social-login";
-import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
-import { SocialUser } from "angularx-social-login";
 
 @Component({
   selector: 'app-login',
@@ -19,19 +17,13 @@ export class LoginComponent implements OnInit {
   submitted = false;
   success = false;
   res = '';
-  user: SocialUser;
-  loggedIn: boolean;
 
-  constructor(private loginService: LoginService, private router: Router, private tokenUtilsService: TokenUtilsService, private authService: SocialAuthService) {}
+  constructor(private loginService: LoginService, private router: Router, private tokenUtilsService: TokenUtilsService) {}
   
   ngOnInit() {
       this.loginForm = new FormGroup({
           'email': new FormControl('', Validators.required),
           'password': new FormControl('', Validators.required)
-      });
-      this.authService.authState.subscribe((user) => {
-        this.user = user;
-        this.loggedIn = (user != null);
       });
   }
   
@@ -39,7 +31,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit() { 
       this.submitted = true;
-      this.success = true;
+
         this.loginService.logIn(this.loginForm, this.success)
         .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
         .subscribe({
@@ -67,34 +59,9 @@ export class LoginComponent implements OnInit {
             this.success = false;
           },
         });
-      console.log(this.success)
+
       // let data = await lastValueFrom(response);
       // console.log(data)
   }
-  
-  recognizeGoogleAccount(): void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
-  }
 
-  recognizeFacebookAccount(): void {
-    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
-  }
-
-  signIn(): void {
-    // if(this.user)
-    //   this.router.navigateByUrl(`/dashboard`);
-  }
-
-  signOut(): void {
-    this.authService.signOut();
-  }
-
-  refreshToken(): void {
-    this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
-  }
-
-  async handleCredentialResponse(response: any) {
-    // Here will be your response from Google.
-    this.recognizeGoogleAccount()
-  }
 }
