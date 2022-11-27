@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import { RegistrationPageComponent } from './components/registration-page/registration-page.component';
 import { MatListModule } from '@angular/material/list';
 import { MapComponent } from './components/map/map.component';
 import {MatDividerModule} from '@angular/material/divider';
@@ -20,6 +21,8 @@ import { LivechatComponent } from './components/livechat/livechat.component';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
+import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
+import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
@@ -31,9 +34,12 @@ import { AdminDashboardComponent } from './components/admin-dashboard/admin-dash
     NavbarComponent,
     LoginComponent,
     HomePageComponent,
+    RegistrationPageComponent,
     MapComponent,
     GeocodingComponent,
     LivechatComponent,
+    ActivatedAccountComponent,
+    RegisteredAccountPageComponent,
     ClientDashboardComponent,
     DriverDashboardComponent,
     AdminDashboardComponent

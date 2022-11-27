@@ -63,5 +63,17 @@ export class LoginComponent implements OnInit {
       // let data = await lastValueFrom(response);
       // console.log(data)
   }
+  
+  recognizeGoogleAccount(): void {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  }
+
+  goToRegistration():void{
+    this.router.navigateByUrl('/registration');
+  }
+
+  recognizeFacebookAccount(): void {
+    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+  }
 
 }
