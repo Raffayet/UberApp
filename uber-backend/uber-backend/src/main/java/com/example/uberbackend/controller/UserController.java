@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -29,8 +30,21 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto, BindingResult result){
-        return new ResponseEntity<>(userService.registerUser(registerDto, result), HttpStatus.CREATED);
+        try{
+            String message = userService.registerUser(registerDto, result);
+            if (message.equals("Success"))
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.badRequest().build();
+        }catch (RuntimeException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping("/activate")
+    public void activateAccount(@RequestParam(value = "token") String token, HttpServletResponse httpServletResponse){
+        userService.activateAccount(token);
+        httpServletResponse.setHeader("Location", "http://localhost:4200/activatedAccount");
+        httpServletResponse.setStatus(302);
     }
 
 }

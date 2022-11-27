@@ -2,7 +2,6 @@
 import { Router } from '@angular/router';
 import { Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators, AbstractControl, ValidatorFn, ValidationErrors} from '@angular/forms';
-import { catchError, throwError } from 'rxjs';
 import { RegisterService } from 'src/app/services/register.service';
 import { Register } from 'src/app/model/register';
 
@@ -66,9 +65,13 @@ export class RegistrationPageComponent implements OnInit {
   get telephone(){
     return this.form.get("telephone");
   }
-  
+
+  goToLogin(){
+    this.router.navigateByUrl('/login');
+  }
 
   onSubmit(){
+    localStorage.clear();
     console.log(this.form.errors);
     console.log(this.form.invalid);
     if(!this.form.invalid){
@@ -78,20 +81,18 @@ export class RegistrationPageComponent implements OnInit {
       console.log(registerDto);
 
       this.registerService.register(registerDto)
-      .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
         .subscribe({
-          next: (res:any) => {
-            let token = res.accessToken;
-            localStorage.setItem("user", token);
-            this.router.navigateByUrl('/dashboard');
+          next: () => {
+            console.log("USpeh")
+            this.router.navigateByUrl("/registeredAccount");
           },
-          error: () => {
-            
-          },
+          error: (err) => {
+            console.log("Greskaa");
+            console.log(err);
+          }
         });
 
       
     }
   }
-
 }

@@ -1,3 +1,5 @@
+import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
+import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
@@ -11,7 +13,9 @@ const routes: Routes = [
   { path: 'home-page', component: HomePageComponent },
   { path: 'registration', component: RegistrationPageComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'chat', component: LivechatComponent }
+  { path: 'chat', component: LivechatComponent },
+  { path: 'activatedAccount', component: ActivatedAccountComponent },
+  { path: 'registeredAccount', component: RegisteredAccountPageComponent }
 ];
 
 @NgModule({

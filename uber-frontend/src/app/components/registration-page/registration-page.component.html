@@ -1,9 +1,9 @@
 <div class="backgroundDiv">
     <div class="container">
-        <h1 class="header">Register</h1>
+        <h1 class="header">Register for free</h1>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="formDiv" *ngIf="form">
-                <mat-form-field class="formFieldName" color="primary" >
+                <mat-form-field class="formFieldName" >
                     <mat-label>First name</mat-label>
                     <input matInput formControlName="firstName">
                     <mat-error *ngIf="firstName && firstName.errors?.['required'] && (firstName.touched || firstName.dirty || form.invalid)">
@@ -61,7 +61,7 @@
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="formField" color="primary" >
+                <mat-form-field class="formField" >
                     <mat-label>Telephone</mat-label>
                     <input type="tel" matInput placeholder="555-555-1234" formControlName="telephone">
                     <mat-error *ngIf="telephone && telephone.errors?.['required'] && (telephone.touched || telephone.dirty|| form.invalid)">
@@ -70,7 +70,8 @@
                 </mat-form-field>
 
                 <div class="buttonDiv">
-                    <button mat-raised-button color="primary" type="submit" class="button">Register</button>
+                    <button mat-raised-button type="submit" class="button">Register</button>
+                    <button mat-raised-button color="basic" type="button" class="button" (click)="goToLogin()">Back to Login</button>
                 </div>
             </div>
         </form>

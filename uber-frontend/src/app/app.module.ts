@@ -22,6 +22,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
+import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
+import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import { JwtInterceptor } from './helpers/jwt-interceptor';
     MapComponent,
     GeocodingComponent,
     LivechatComponent,
-    DashboardComponent
+    DashboardComponent,
+    ActivatedAccountComponent,
+    RegisteredAccountPageComponent
   ],
   imports: [
     BrowserModule,
