@@ -16,16 +16,17 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private long id;
-    @ManyToOne
-    private User sender;
-    @ManyToOne
-    private User receiver;
+    private String senderEmail;
+    private String receiverEmail;
     private String content;
     private LocalDateTime date;
     private MessageStatus status;
 
-//    @Override
-//    public int compareTo(Message message) {
-//        return getDate().compareTo(message.getDate());
-//    }
+    public Message(String sender, String receiver, String content, LocalDateTime date, MessageStatus status) {
+        this.senderEmail = sender;
+        this.receiverEmail = receiver;
+        this.content = content;
+        this.date = date;
+        this.status = status;
+    }
 }

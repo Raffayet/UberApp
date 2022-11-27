@@ -20,12 +20,17 @@
     </div>
     <div class="alternative-login-container">
         <h1 class="google-login-header">Log In With</h1>
-        <div class="asl-button-container">
-            <asl-google-signin-button></asl-google-signin-button>
-            <button type="button" id="facebook-button" (click)="recognizeFacebookAccount()"><i class="pi pi-facebook"></i></button>
-        </div>
+        <button class="alternative-button">
+            <i class="pi pi-google"></i>
+            <label class="google-label">Google Account</label>
+        </button>
         <hr width="60%">
-        <button type="button" id="continue-button" (click)="signIn()" style="visibility: visible;" *ngIf="user">Continue</button>
+        <button class="alternative-button">
+            <span>
+                <i class="pi pi-facebook"></i>
+                <label class="facebook-label">Facebook Account</label>
+            </span>
+        </button>
         <div class="link-container-register">
             <a class="register-link" (click)="goToRegistration()">Don't have an account yet? Register now</a>
         </div>

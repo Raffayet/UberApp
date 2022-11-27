@@ -1,17 +1,17 @@
-<div class="container">
+<div [ngClass]=" loggedUser?.role !== 'ADMIN' ? 'container' : 'container container2'">
     <div class="chatbox">
         <div class="col-1">
             <div class="wrapper">
                 <div class="col1-scroll">
-                    <div *ngFor="let message of userChat;" [ngClass]=" loggedUser?.email !== message.senderEmail ? 'msg-row' : 'msg-row msg-row2'">
+                    <div *ngFor="let message of userChat;" [ngClass]=" (loggedUser?.email === message.senderEmail || (loggedUser?.role === 'ADMIN' && message.senderEmail === 'support')) ? 'msg-row msg-row2' : 'msg-row'">
+                        <img [src]="loggedUser?.email === message.senderEmail ? loggedUser?.profileImage : (message.senderImage == null ? customerSupportProfileImage : message.senderImage)" class="msg-img">
                         <div class="msg-text">
                             <h2>{{message.senderFirstName}} {{message.senderLastName}}</h2>
                             <p>{{message.content}}</p>
                         </div>
-                        <img src="" class="msg-img">
                     </div>               
     
-                    <input type="text" placeholder="Type your message here..." [(ngModel)]="messageToSend">
+                    <input  [readonly]="userEmailToSend==='' && loggedUser?.role === 'ADMIN'" type="text" placeholder="Type your message here..." [(ngModel)]="messageToSend">
                     <button (click)="loggedUser?.role === 'ADMIN' ? sendPrivateMessage() : sendPublicMessage() ">Send</button>
                 </div>
             </div>
@@ -20,9 +20,11 @@
         <div *ngIf="loggedUser?.role === 'ADMIN'" class="col-2">       
             <div class="col2-scroll">
                 <h3>Users</h3>     
-                <ul>
-                    <li *ngFor="let user of allUsersFromMessages">{{user.name}} {{user.surname}}</li>
-                </ul>
+                <mat-divider></mat-divider>
+                <mat-nav-list>
+                        <a mat-list-item *ngFor="let user of allUsersFromMessages" (click)="selectUserToChat(user.email)"> <mat-icon></mat-icon> {{user.name}} {{user.surname}}</a>
+                        <mat-divider></mat-divider>
+                </mat-nav-list>
             </div>
         </div>       
     </div>
