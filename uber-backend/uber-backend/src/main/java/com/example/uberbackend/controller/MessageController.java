@@ -22,28 +22,6 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping("get-all-by-sender")
-    public ResponseEntity<List<MessageDto>> getAllBySenderEmail(@RequestParam("email") String senderEmail){
-        List<MessageDto> retList;
-        try{
-            retList = messageService.findAllBySenderEmail(senderEmail);
-        }catch(Exception ex){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(retList);
-    }
-
-    @GetMapping("get-all-by-receiver")
-    public ResponseEntity<List<MessageDto>> getAllByReceiverEmail(@RequestParam("email") String receiverEmail){
-        List<MessageDto> retList;
-        try{
-            retList = messageService.findAllByReceiverEmail(receiverEmail);
-        }catch(Exception ex){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(retList);
-    }
-
     @GetMapping("get-all-for-user")
     public ResponseEntity<List<MessageDto>> getAllForUser(@RequestParam("email") String userEmail){
         List<MessageDto> retList;
@@ -78,9 +56,9 @@ public class MessageController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveMessage(@RequestBody MessageDto dto){
+    public ResponseEntity<String> saveMessage(@RequestBody MessageDto message){
         try{
-            messageService.saveMessage(dto);
+            messageService.saveMessage(message);
         }catch(Exception ex){
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }

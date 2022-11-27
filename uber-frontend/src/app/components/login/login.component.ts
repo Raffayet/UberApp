@@ -1,6 +1,7 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
-import { catchError, throwError } from 'rxjs';
+import { catchError, lastValueFrom, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
@@ -40,7 +41,7 @@ export class LoginComponent implements OnInit {
   onSubmit() { 
       localStorage.clear();
       this.submitted = true;
-      this.success = true;
+
         this.loginService.logIn(this.loginForm, this.success)
         .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
         .subscribe({
@@ -68,7 +69,7 @@ export class LoginComponent implements OnInit {
             this.success = false;
           },
         });
-      console.log(this.success)
+
       // let data = await lastValueFrom(response);
       // console.log(data)
   }
