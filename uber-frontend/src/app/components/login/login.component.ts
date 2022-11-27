@@ -76,12 +76,10 @@ export class LoginComponent implements OnInit {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
-<<<<<<< HEAD
-  goToRegistration(){
+  goToRegistration():void{
     this.router.navigateByUrl('/registration');
   }
 
-=======
   recognizeFacebookAccount(): void {
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
   }
@@ -103,5 +101,4 @@ export class LoginComponent implements OnInit {
     // Here will be your response from Google.
     this.recognizeGoogleAccount()
   }
->>>>>>> develop
 }

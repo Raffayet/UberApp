@@ -1,3 +1,4 @@
+import { RegistrationPageComponent } from './components/registration-page/registration-page.component';
 import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
 import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
 import { NgModule } from '@angular/core';
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'client-dashboard', component: ClientDashboardComponent },
   { path: 'driver-dashboard', component: DriverDashboardComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent },
+  { path: 'registration', component: RegistrationPageComponent },
   { path: 'chat', component: LivechatComponent },
   { path: 'activatedAccount', component: ActivatedAccountComponent },
   { path: 'registeredAccount', component: RegisteredAccountPageComponent }

@@ -27,14 +27,11 @@ import {
 } from '@abacritt/angularx-social-login';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
-<<<<<<< HEAD
 import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
 import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
-=======
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
->>>>>>> develop
 
 
 @NgModule({
@@ -47,15 +44,11 @@ import { AdminDashboardComponent } from './components/admin-dashboard/admin-dash
     MapComponent,
     GeocodingComponent,
     LivechatComponent,
-<<<<<<< HEAD
-    DashboardComponent,
     ActivatedAccountComponent,
-    RegisteredAccountPageComponent
-=======
+    RegisteredAccountPageComponent,
     ClientDashboardComponent,
     DriverDashboardComponent,
     AdminDashboardComponent
->>>>>>> develop
   ],
   imports: [
     BrowserModule,
