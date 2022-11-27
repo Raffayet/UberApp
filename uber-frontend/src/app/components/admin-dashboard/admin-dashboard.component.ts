@@ -6,5 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent {
+  chatHidden:boolean = false;
 
+  constructor(){}
+
+  ngOnInit() {
+    
+  }
+
+  toggleChat = () => {
+    this.chatHidden = !this.chatHidden;
+  }
 }

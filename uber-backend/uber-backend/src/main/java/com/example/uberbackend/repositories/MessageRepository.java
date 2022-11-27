@@ -22,5 +22,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findAllForUser(String userEmail);
 
     @Query("SELECT DISTINCT r.senderEmail FROM Message r WHERE r.receiverEmail = 'support'")
-    List<User> getDistinctUserFromMessages();
+    List<String> getDistinctUserFromMessages();
 }

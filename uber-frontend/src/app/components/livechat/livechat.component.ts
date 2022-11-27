@@ -9,6 +9,8 @@ import { environment } from "../../environments/environment";
 import { Observable } from "rxjs";
 import { Message, User } from "src/app/helpers/common-interfaces.js";
 
+const LIVECHAT_SUPPORT: string = "support";
+
 @Component({
   selector: 'app-livechat',
   templateUrl: './livechat.component.html',
@@ -18,11 +20,15 @@ import { Message, User } from "src/app/helpers/common-interfaces.js";
 export class LivechatComponent {
 
   private stompClient : Client;
+
   loggedUser : User | null;
   allUsersFromMessages: User[] = [];
+
   userChat : Message[] = [];
-  adminChat : Map<string, Message[]>;
+  adminChat : Map<string, Message[]>
   messageToSend: string = "";
+  userEmailToSend: string = "";
+  customerSupportProfileImage: string = environment.customerSupportProfileImage;
 
   constructor(private livechatService: LivechatService, private tokenUtilsService: TokenUtilsService) {}
   
@@ -36,17 +42,16 @@ export class LivechatComponent {
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
       
       if(this.loggedUser?.role === 'ADMIN'){
-        //get request for admin
         this.stompClient.subscribe("/chatroom/public", this.onPublicMessageReceived);
 
         let users:Observable<User[]> = this.livechatService.getAllUsersFromMessages();
-        users.subscribe(val => this.allUsersFromMessages = val);
+        users.subscribe(val => this.allUsersFromMessages = val );
         
-        this.livechatService.getAdminChat().subscribe(val => {this.adminChat = val; console.log(val);
-        });
-
-      }else{       
-        this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/private", this.onPrivateMessageReceived);  
+        let msgs:Observable<Map<string, Message[]>> = this.livechatService.getAdminChat();
+        msgs.subscribe(val => this.adminChat = new Map(Object.entries(val)));        
+      }
+      else{             
+        this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/private", this.onPrivateMessageReceived);
 
         let msgs:Observable<Message[]> = this.livechatService.findAllMessagesForUser(this.loggedUser?.email as string);
         msgs.subscribe(val => this.userChat = val);        
@@ -56,29 +61,16 @@ export class LivechatComponent {
 
   onPublicMessageReceived = (payload: StompMessage) => {
       let payloadData = JSON.parse(payload.body);
-      // console.log(payloadData);
+      this.adminChat.get(this.userEmailToSend)?.push(payloadData);      
   }
 
   onPrivateMessageReceived = (payload: StompMessage) => {
-      let payloadData = JSON.parse(payload.body);
-      // if(this.userChats.get(payloadData.senderName)){
-      //     this.userChats.get(payloadData.senderName)?.push(payloadData);
-      // }
-      // else{
-      //     let messages : string[] = [];
-      //     messages.push(payloadData);
-
-      //     this.userChats.set(payloadData.senderName, messages);
-      // }
+      let payloadData = JSON.parse(payload.body);      
       this.userChat.push(payloadData);
   }
 
   onError = () => {
     console.log("Error");    
-  }
-
-  handleMessage = () => {
-    let message = "Pozdrav!";
   }
 
   sendPublicMessage = () => {
@@ -88,9 +80,12 @@ export class LivechatComponent {
           senderEmail: this.loggedUser?.email as string,
           senderFirstName: this.loggedUser?.name as string,
           senderLastName: this.loggedUser?.surname as string,
-          receiverEmail: "support",
-          receiverFirstName: null,
-          receiverLastName: null,
+          senderImage: this.loggedUser?.profileImage as string,
+
+          receiverEmail: LIVECHAT_SUPPORT,
+          receiverFirstName: "Admin",
+          receiverLastName: "Support",
+          receiverImage: null,
           content : this.messageToSend,
           date: new Date(),
           status: 1
@@ -108,21 +103,32 @@ export class LivechatComponent {
     if(this.stompClient){
 
       let chatMessage: Message = {
-        senderEmail: this.loggedUser?.email as string,
-        senderFirstName: null,
-        senderLastName: null,
-        receiverEmail: "sasa@gmail.com",
+        senderEmail: LIVECHAT_SUPPORT,
+        senderFirstName: "Admin",
+        senderLastName: "Support",
+        senderImage: environment.customerSupportProfileImage,
+
+        receiverEmail: this.userEmailToSend,
         receiverFirstName: null,
         receiverLastName: null,
+        receiverImage: null,
         content: this.messageToSend,
         date: new Date(),
         status: 1
       }
       
       this.messageToSend = "";
-      // this.adminChat.set();
+      this.adminChat.get(this.userEmailToSend)?.push(chatMessage);
       this.stompClient.send('/app/private-message', {}, JSON.stringify(chatMessage));
+      this.livechatService.persistMessage(chatMessage);
     }
+  }
+
+  selectUserToChat = (email: string) => {
+      this.userEmailToSend = email;
+      if (this.adminChat instanceof Map<string, Message[]>) {        
+        this.userChat = this.adminChat.get(email) as Message[];
+      }        
   }
 
 }

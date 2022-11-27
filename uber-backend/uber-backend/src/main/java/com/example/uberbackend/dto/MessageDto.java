@@ -29,6 +29,8 @@ public class MessageDto implements Serializable {
     private String content;
     private LocalDateTime date;
     private MessageStatus status;
+    private String senderImage;
+    private String receiverImage;
 
     public MessageDto(Message msg){
         this.senderEmail = msg.getSenderEmail();
@@ -48,6 +50,7 @@ public class MessageDto implements Serializable {
         if(sender){
             this.senderFirstName = u.getName();
             this.senderLastName = u.getSurname();
+            this.senderImage = u.getProfileImage();
         }else{
             this.receiverFirstName = u.getName();
             this.receiverLastName = u.getSurname();

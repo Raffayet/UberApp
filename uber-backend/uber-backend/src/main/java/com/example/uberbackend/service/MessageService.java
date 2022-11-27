@@ -44,8 +44,9 @@ public class MessageService {
     public List<UserDto> getDistinctUserFromMessages() {
         List<UserDto> retList = new ArrayList<>();
 
-        for(User m : this.messageRepository.getDistinctUserFromMessages()){
-            retList.add(new UserDto(m));
+        for(String m : this.messageRepository.getDistinctUserFromMessages()){
+            Optional<User> u = userRepository.findByEmail(m);
+            u.ifPresent(user -> retList.add(new UserDto(user)));
         }
         return retList;
     }
@@ -62,7 +63,7 @@ public class MessageService {
             }
             if(!Objects.equals(m.getReceiverEmail(), LIVECHAT_SUPPORT)){
                 Optional<User> u = userRepository.findByEmail(m.getReceiverEmail());
-                u.ifPresent(user -> map.computeIfAbsent(m.getReceiverEmail(), k -> new ArrayList<>()).add(new MessageDto(m, user, true)));
+                u.ifPresent(user -> map.computeIfAbsent(m.getReceiverEmail(), k -> new ArrayList<>()).add(new MessageDto(m, user, false)));
             }
         }
         return map;
