@@ -89,6 +89,7 @@ public class UserService implements UserDetailsService {
         user.setRole(optionalRole.get());
         userRepository.save(user);
 
+        //ovde treba postaviti ako je google|login provider da preskoci sledecu funkciju
         this.sendAccountActivationEmail(user);
 
         return "Success";

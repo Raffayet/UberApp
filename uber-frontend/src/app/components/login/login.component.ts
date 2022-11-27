@@ -36,8 +36,9 @@ export class LoginComponent implements OnInit {
   }
   
   get formFields() { return this.loginForm.controls; }
-
+  
   onSubmit() { 
+      localStorage.clear();
       this.submitted = true;
       this.success = true;
         this.loginService.logIn(this.loginForm, this.success)
@@ -85,6 +86,7 @@ export class LoginComponent implements OnInit {
   }
 
   signIn(): void {
+    console.log(this.user)
     // if(this.user)
     //   this.router.navigateByUrl(`/dashboard`);
   }
