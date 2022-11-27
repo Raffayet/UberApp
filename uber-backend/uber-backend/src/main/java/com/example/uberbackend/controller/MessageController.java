@@ -6,12 +6,10 @@ import com.example.uberbackend.model.Message;
 import com.example.uberbackend.service.MessageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -58,7 +56,7 @@ public class MessageController {
     }
 
     @GetMapping("get-users")
-    public ResponseEntity<List<UserDto>> getDistinctUsersFromMessages(@RequestParam("email") String userEmail){
+    public ResponseEntity<List<UserDto>> getDistinctUsersFromMessages(){
         List<UserDto> retList;
         try{
             retList = messageService.getDistinctUserFromMessages();
@@ -66,5 +64,26 @@ public class MessageController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(retList);
+    }
+
+    @GetMapping("get-admin-chat")
+    public ResponseEntity<HashMap<String, List<MessageDto>>> getAdminChat(){
+        HashMap<String, List<MessageDto>> map;
+        try{
+            map = messageService.findAllGroupedByUser();
+        }catch(Exception ex){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(map);
+    }
+
+    @PostMapping("save")
+    public ResponseEntity<String> saveMessage(@RequestBody MessageDto dto){
+        try{
+            messageService.saveMessage(dto);
+        }catch(Exception ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok("Success!");
     }
 }

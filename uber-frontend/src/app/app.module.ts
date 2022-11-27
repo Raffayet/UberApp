@@ -19,11 +19,22 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
 import { LivechatComponent } from './components/livechat/livechat.component';
 import { MatIconModule } from '@angular/material/icon';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { Router } from '@angular/router';
+import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import {
+  GoogleLoginProvider,
+  FacebookLoginProvider
+} from '@abacritt/angularx-social-login';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
+<<<<<<< HEAD
 import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
 import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
+=======
+import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
+import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+>>>>>>> develop
 
 
 @NgModule({
@@ -36,9 +47,15 @@ import { RegisteredAccountPageComponent } from './components/registered-account-
     MapComponent,
     GeocodingComponent,
     LivechatComponent,
+<<<<<<< HEAD
     DashboardComponent,
     ActivatedAccountComponent,
     RegisteredAccountPageComponent
+=======
+    ClientDashboardComponent,
+    DriverDashboardComponent,
+    AdminDashboardComponent
+>>>>>>> develop
   ],
   imports: [
     BrowserModule,
@@ -55,11 +72,34 @@ import { RegisteredAccountPageComponent } from './components/registered-account-
     MatAutocompleteModule,
     MatAutocompleteModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    SocialLoginModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-  ],
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '942553161348-dq7es99f69eovl0q1vl98ilgncia59nq.apps.googleusercontent.com'
+            )
+          },
+          {
+            id: FacebookLoginProvider.PROVIDER_ID,
+            provider: new FacebookLoginProvider('726405335024718')
+          },
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+
+  ], 
   bootstrap: [AppComponent]
 })
 export class AppModule { }
