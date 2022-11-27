@@ -21,24 +21,36 @@ import java.time.LocalDateTime;
 public class MessageDto implements Serializable {
 
     private String senderEmail;
-    private String senderFirstName;
-    private String senderLastName;
+    private String senderFirstName = "Admin";
+    private String senderLastName = "support";
     private String receiverEmail;
-    private String receiverFirstName;
-    private String receiverLastName;
+    private String receiverFirstName = "Admin";
+    private String receiverLastName = "support";
     private String content;
     private LocalDateTime date;
     private MessageStatus status;
 
     public MessageDto(Message msg){
-        this.senderEmail = msg.getSender().getEmail();
-        this.senderFirstName = msg.getSender().getName();
-        this.senderLastName = msg.getSender().getSurname();
-        this.receiverEmail = msg.getReceiver().getEmail();
-        this.receiverFirstName = msg.getSender().getName();
-        this.receiverLastName = msg.getSender().getSurname();
+        this.senderEmail = msg.getSenderEmail();
+        this.receiverEmail = msg.getReceiverEmail();
         this.content = msg.getContent();
         this.date = msg.getDate();
         this.status = msg.getStatus();
+    }
+
+    public MessageDto(Message msg, User u, boolean sender) {
+        this.senderEmail = msg.getSenderEmail();
+        this.receiverEmail = msg.getReceiverEmail();
+        this.content = msg.getContent();
+        this.date = msg.getDate();
+        this.status = msg.getStatus();
+
+        if(sender){
+            this.senderFirstName = u.getName();
+            this.senderLastName = u.getSurname();
+        }else{
+            this.receiverFirstName = u.getName();
+            this.receiverLastName = u.getSurname();
+        }
     }
 }

@@ -99,6 +99,7 @@ export class LivechatComponent {
         this.messageToSend = "";
         this.userChat.push(chatMessage);
         this.stompClient.send('/app/message', {}, JSON.stringify(chatMessage));
+        this.livechatService.persistMessage(chatMessage);
     }
   
   }

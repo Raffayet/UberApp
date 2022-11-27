@@ -31,8 +31,8 @@ public class ChatController {
     @MessageMapping("/private-message")
     public Message receivePrivateMessage(@Payload Message message){
         // if user wants to listen to this particular message, it needs to listen to /user/David/private e.g.
-        String receiver = message.getReceiver().getEmail();
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiver().getEmail(), "/private", message);
+        String receiver = message.getReceiverEmail();
+        simpMessagingTemplate.convertAndSendToUser(message.getReceiverEmail(), "/private", message);
         return message;
     }
 }
