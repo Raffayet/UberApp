@@ -35,8 +35,15 @@ export class LivechatService {
     return this.http.get<Map<string, Message[]>>(environment.apiURL + "/message/get-admin-chat", { params: queryParams});
   }
 
-  persistMessage(): void{
-    //this.http.post(environment.apiURL + "/message/save")
+  persistMessage(message: Message): void{
+    this.http.post(environment.apiURL + "/message/save", message, {responseType: 'text'}).subscribe({
+      next: data => {
+          // console.log(data);
+      },
+      error: error => {
+          // console.error('There was an error!', error);
+      }
+    });
   }
 
 }

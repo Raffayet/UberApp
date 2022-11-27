@@ -2,15 +2,17 @@ export interface Message{
     senderEmail: string,
     senderFirstName: string | null,
     senderLastName: string | null,
+    senderImage: string | null,
     receiverEmail: string,
     receiverFirstName: string | null,
     receiverLastName: string | null,
+    receiverImage: string | null,
     content: string,
     date: Date,
     status: number
   }
 
-  export interface User{
+export interface User{
     name: string,
     surname: string,
     email: string,
@@ -22,4 +24,4 @@ export interface Message{
     profileImage: string,
     drivingStatus: string,
     accountStatus: string
-  }
+}

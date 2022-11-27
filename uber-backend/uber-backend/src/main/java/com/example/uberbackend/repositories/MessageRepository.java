@@ -12,15 +12,15 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query("SELECT r FROM Message r WHERE r.sender.email = ?1 order by r.date")
+    @Query("SELECT r FROM Message r WHERE r.senderEmail = ?1 order by r.date")
     List<Message> findAllBySenderEmail(String senderEmail);
 
-    @Query("SELECT r FROM Message r WHERE r.receiver.email = ?1 order by r.date")
+    @Query("SELECT r FROM Message r WHERE r.receiverEmail = ?1 order by r.date")
     List<Message> findAllByReceiverEmail(String receiverEmail);
 
-    @Query("SELECT r FROM Message r WHERE r.receiver.email = ?1 or r.sender.email = ?1 order by r.date")
+    @Query("SELECT r FROM Message r WHERE r.receiverEmail = ?1 or r.senderEmail = ?1 order by r.date")
     List<Message> findAllForUser(String userEmail);
 
-    @Query("SELECT DISTINCT r.sender FROM Message r WHERE r.receiver.role = '3'")
-    List<User> getDistinctUserFromMessages();
+    @Query("SELECT DISTINCT r.senderEmail FROM Message r WHERE r.receiverEmail = 'support'")
+    List<String> getDistinctUserFromMessages();
 }
