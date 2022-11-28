@@ -9,6 +9,8 @@ import { LivechatComponent } from './components/livechat/livechat.component';
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { RegisteredSocialAccountComponent } from './components/registered-social-account/registered-social-account.component';
+import { AdditionalLoginInfoComponent } from './components/additional-login-info/additional-login-info.component';
 
 
 const routes: Routes = [
@@ -20,7 +22,9 @@ const routes: Routes = [
   { path: 'registration', component: RegistrationPageComponent },
   { path: 'chat', component: LivechatComponent },
   { path: 'activatedAccount', component: ActivatedAccountComponent },
-  { path: 'registeredAccount', component: RegisteredAccountPageComponent }
+  { path: 'registeredAccount', component: RegisteredAccountPageComponent },
+  { path: 'additionalLoginInfo', component: AdditionalLoginInfoComponent},
+  { path: 'authenticatedSocialAccount', component: RegisteredSocialAccountComponent}
 ];
 
 @NgModule({

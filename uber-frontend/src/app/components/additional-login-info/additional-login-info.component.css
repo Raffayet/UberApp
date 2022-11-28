@@ -1,0 +1,72 @@
+.backgroundDiv{
+    background-image: url("../../resources/images/login-background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    top:0;
+    padding-top: 100px;
+}
+
+.container{
+    height: 500px;
+    width: 500px;
+    background-color: white;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.header{
+    font-size: 50px;
+    font-weight: 600;
+    padding-top: 50px;
+}
+
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+
+.formDiv{
+    display: block;
+    margin-top: 50px;
+    justify-content: center;
+    width: 100%;
+}
+
+.formFieldName{
+    padding-top: 10px;
+    width: 39%;
+}
+.formFieldLastName{
+    padding-top: 10px;
+    width: 39%;
+    margin-left: 10px;
+}
+
+.formField{
+    padding-top: 10px;
+    width: 80%;
+}
+
+.button{
+    height: 45px;
+    font-size: 20px;
+    border-radius: 5px;
+    background-color: black;
+    color: black;
+}
+
+.buttonDiv{
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    display: flex;
+}
+
+.button{
+    margin-inline: 10px;
+}

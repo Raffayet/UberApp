@@ -32,6 +32,8 @@ import {
   GoogleLoginProvider,
   FacebookLoginProvider
 } from '@abacritt/angularx-social-login';
+import { AdditionalLoginInfoComponent } from './components/additional-login-info/additional-login-info.component';
+import { RegisteredSocialAccountComponent } from './components/registered-social-account/registered-social-account.component';
 
 
 @NgModule({
@@ -48,7 +50,9 @@ import {
     RegisteredAccountPageComponent,
     ClientDashboardComponent,
     DriverDashboardComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    AdditionalLoginInfoComponent,
+    RegisteredSocialAccountComponent
   ],
   imports: [
     BrowserModule,

@@ -51,6 +51,17 @@ public class AuthController {
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }
 
+    @PostMapping("socialLogin")
+    public ResponseEntity<AuthResponseDto> login(@RequestBody String email){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, "social-password"));
+
+        User loggedUser = (User) authentication.getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtTokenGenerator.generateToken(loggedUser);
+
+        return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
+    }
+
     // register endpoint for users, for drivers it may be different
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
