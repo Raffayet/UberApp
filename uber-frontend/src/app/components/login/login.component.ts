@@ -8,6 +8,7 @@ import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import { SocialAuthService } from "@abacritt/angularx-social-login";
 import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
+import { SocialUserInfo } from 'src/app/model/SocialUserInfo';
 
 @Component({
   selector: 'app-login',
@@ -88,7 +89,18 @@ export class LoginComponent implements OnInit {
   }
 
   signIn(): void {
-    console.log(this.user)
+    let socialUserDto: SocialUserInfo = this.user
+    let route = 'additionalLoginInfo'
+    this.router.navigate([route, {
+      email: socialUserDto.email,
+      id: socialUserDto.id,
+      idToken: socialUserDto.idToken,
+      firstName: socialUserDto.firstName,
+      lastName: socialUserDto.lastName,
+      name: socialUserDto.name,
+      photoUrl: socialUserDto.photoUrl,
+      provider: socialUserDto.provider
+    }]);
     // if(this.user)
     //   this.router.navigateByUrl(`/dashboard`);
   }

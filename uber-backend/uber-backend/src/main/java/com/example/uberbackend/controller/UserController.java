@@ -2,6 +2,7 @@ package com.example.uberbackend.controller;
 
 
 import com.example.uberbackend.dto.RegisterDto;
+import com.example.uberbackend.dto.SocialLoginDto;
 import com.example.uberbackend.service.EmailService;
 import com.example.uberbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,18 @@ public class UserController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto, BindingResult result){
         try{
             String message = userService.registerUser(registerDto, result);
+            if (message.equals("Success"))
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.badRequest().build();
+        }catch (RuntimeException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/socialLogin")
+    public ResponseEntity<?> loginSocialUser(@Valid @RequestBody SocialLoginDto socialLoginDto, BindingResult result){
+        try{
+            String message = userService.loginSocialUser(socialLoginDto, result);
             if (message.equals("Success"))
                 return new ResponseEntity<>(HttpStatus.CREATED);
             return ResponseEntity.badRequest().build();

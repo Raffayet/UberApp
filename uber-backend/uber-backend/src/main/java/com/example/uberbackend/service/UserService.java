@@ -1,6 +1,7 @@
 package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.RegisterDto;
+import com.example.uberbackend.dto.SocialLoginDto;
 import com.example.uberbackend.exception.CustomValidationException;
 import com.example.uberbackend.exception.EmailAlreadyTakenException;
 import com.example.uberbackend.model.ActivateAccountToken;
@@ -89,7 +90,6 @@ public class UserService implements UserDetailsService {
         user.setRole(optionalRole.get());
         userRepository.save(user);
 
-        //ovde treba postaviti ako je google|login provider da preskoci sledecu funkciju
         this.sendAccountActivationEmail(user);
 
         return "Success";
@@ -121,5 +121,37 @@ public class UserService implements UserDetailsService {
         } catch (InterruptedException e) {
             throw new RuntimeException("Error sending email.");
         }
+    }
+
+    public String loginSocialUser(SocialLoginDto socialLoginDto, BindingResult result) {
+        if(result.hasErrors()){
+            throw new CustomValidationException(mapErrorService.mapValidationErrors(result));
+        }
+        if(userRepository.findByEmail(socialLoginDto.getEmail()).isPresent()){
+            return "User already defined";
+        }
+
+        Optional<Role> optionalRole = roleRepository.findByName(RoleType.CLIENT.name());
+        if(optionalRole.isEmpty()){
+            throw new RuntimeException("Failed social login due to database problem");
+        }
+
+        User user = new User();
+        user.setName(socialLoginDto.getFirstName());
+        user.setSurname(socialLoginDto.getLastName());
+        user.setEmail(socialLoginDto.getEmail());
+        user.setPassword("social-password");
+        user.setAccountStatus(AccountStatus.INACTIVE);
+        user.setActiveAccount(false);
+        user.setBlocked(false);
+        user.setDrivingStatus(DrivingStatus.OFFLINE);
+        user.setCity(socialLoginDto.getCity());
+        user.setPhoneNumber(socialLoginDto.getTelephone());
+        user.setProfileImage(socialLoginDto.getPhotoUrl());
+        user.setProvider(Provider.valueOf(socialLoginDto.getProvider().toUpperCase()));
+        user.setRole(optionalRole.get());
+        userRepository.save(user);
+
+        return "Success";
     }
 }
