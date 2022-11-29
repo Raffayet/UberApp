@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -8,7 +9,7 @@ import { Component } from '@angular/core';
 export class AdminDashboardComponent {
   chatHidden:boolean = false;
 
-  constructor(){}
+  constructor(private router: Router){}
 
   ngOnInit() {
     
@@ -16,5 +17,9 @@ export class AdminDashboardComponent {
 
   toggleChat = () => {
     this.chatHidden = !this.chatHidden;
+  }
+
+  logout = () => {
+    this.router.navigateByUrl('/login');
   }
 }
