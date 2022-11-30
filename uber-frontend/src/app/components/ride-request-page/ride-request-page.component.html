@@ -1,0 +1,40 @@
+<div class="upperContainer">
+    <div class="formContainer">
+        <h1 class="display-1">Request a ride now</h1>
+
+          <h2 class="display-1" *ngIf="destinations.length == 0">Pick locations for your ride</h2>
+          <div
+              cdkDropList
+              [cdkDropListData]="destinations"
+              class="example-list"
+              (cdkDropListDropped)="drop($event)">
+              <div *ngFor="let item of destinations; index as i;" cdkDrag>
+                <mat-form-field class="example-full-width" [style.width.rem]=20>
+                  <mat-label>Enter pickup location</mat-label>
+                  <input [disabled]="i < destinations.length - 1" matInput [(ngModel)]='inputValues[i]' placeholder="Enter pickup location" [matAutocomplete]="index"
+                         (input)="searchOptions(i)">
+                </mat-form-field>
+
+                <button *ngIf="destinations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+
+                <button *ngIf="i == destinations.length - 1" mat-mini-fab color="primary" (click)="addLocation(i)">
+                  <mat-icon>add_circle</mat-icon>
+                </button>
+
+                <mat-autocomplete #index="matAutocomplete">
+                  <mat-option *ngFor="let option of options[i] | async" [value]="option.displayName" (click)="pinLocation(option, i)">
+                    {{option.displayName}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+          </div>
+
+          <button mat-raised-button style="margin-right:2rem;">Request now</button>
+          <button mat-raised-button color="gray">Schedule for later</button>
+    </div>
+        <div class="mapContainer">
+          <app-map></app-map>
+        </div>
+</div>

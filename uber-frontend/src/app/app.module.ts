@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
-import { HomePageComponent } from './components/home-page/home-page.component';
+import { RideRequestPageComponent } from './components/ride-request-page/ride-request-page.component';
 import {PasswordModule} from 'primeng/password';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -26,7 +26,8 @@ import { RegisteredAccountPageComponent } from './components/registered-account-
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
-import { Router } from '@angular/router';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ToastrModule } from 'ngx-toastr';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import {
   GoogleLoginProvider,
@@ -41,7 +42,7 @@ import { RegisteredSocialAccountComponent } from './components/registered-social
     AppComponent,
     NavbarComponent,
     LoginComponent,
-    HomePageComponent,
+    RideRequestPageComponent,
     RegistrationPageComponent,
     MapComponent,
     GeocodingComponent,
@@ -70,7 +71,12 @@ import { RegisteredSocialAccountComponent } from './components/registered-social
     MatAutocompleteModule,
     MatListModule,
     MatIconModule,
-    SocialLoginModule
+    SocialLoginModule,
+    DragDropModule,
+    ToastrModule.forRoot({
+      timeOut: 2000,
+      positionClass: 'toast-bottom-right',
+    }),
   ],
   providers: [
     {
