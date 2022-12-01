@@ -12,7 +12,7 @@ export class MapComponent implements AfterViewInit {
   private map: L.Map;
   private customIcon : L.Icon;
 
-  private locations : Array<L.Marker> = new Array<L.Marker>();
+  locations : Array<L.Marker> = new Array<L.Marker>();
   private featureGroup: L.FeatureGroup;
 
   private initMap(): void {
@@ -65,8 +65,10 @@ export class MapComponent implements AfterViewInit {
   }
 
   deletePin(index: number): void{
-    this.locations[index].setLatLng(new L.LatLng(-1,-1));
+    this.locations[index].removeFrom(this.map);
     this.locations.splice(index, 1);
+    this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
+    
   }
 
 }

@@ -4,7 +4,6 @@ import { MapService, MapSearchResult } from "../../services/map.service"
 import { Observable, of } from 'rxjs';
 import { MapComponent } from '../map/map.component';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {copyArrayItem} from '@angular/cdk/drag-drop';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -17,9 +16,6 @@ export class RideRequestPageComponent {
 
   @ViewChild(MapComponent)
   private mapChild!: MapComponent;
-  searchForm: FormGroup;
-  pickupOptions: Observable<MapSearchResult[]>;
-  destinationOptions: Observable<MapSearchResult[]>;
 
   destinations: MapSearchResult[] = [];
   options: Observable<MapSearchResult[]>[] = [];
@@ -28,31 +24,16 @@ export class RideRequestPageComponent {
   constructor(private mapService: MapService, private toastr: ToastrService) {}
 
   drop(event: CdkDragDrop<MapSearchResult[]>) {
-   
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      copyArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      
-    }
-    moveItemInArray(this.destinations, event.previousIndex, event.currentIndex);
+    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.inputValues, event.previousIndex, event.currentIndex);      
+    moveItemInArray(this.mapChild.locations, event.previousIndex, event.currentIndex);     
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.destinations.push({
       displayName: "",
       lon: "",
       lat: ""});
-
-    this.searchForm = new FormGroup({
-        'pickupLocation': new FormControl('', Validators.required),
-        'destination': new FormControl('', Validators.required)
-    });
   }
 
   searchOptions(index: number) : void {    
@@ -65,16 +46,6 @@ export class RideRequestPageComponent {
     });
   }
 
-  searchDestination() : void {
-    let results : MapSearchResult[];
-    
-    this.mapService.search(this.searchForm.controls['destination'].value)
-    .subscribe(res => {
-      results = this.mapService.convertSearchResultsToList(res);
-      this.destinationOptions = of(results);
-    });
-  }
-
   pinLocation(option: MapSearchResult, index: number) : void {
     this.destinations[index] = option;
     this.mapChild.pinNewResult(option, index);
@@ -82,18 +53,20 @@ export class RideRequestPageComponent {
 
   deleteLocation(index: number) : void {      
       this.destinations.splice(index, 1);
-      this.mapChild.deletePin(index);      
+      this.inputValues.splice(index, 1);
+      this.mapChild.deletePin(index);            
   }
 
   addLocation(index: number) : void {    
     this.destinations.length < 5 ? (this.destinations[index].displayName === "") ?  this.toastr.warning('Choose location for current stop!') : 
     this.destinations.push({
-      displayName: "",
+      displayName: this.destinations.length + "",
       lon: "",
       lat: ""}) : this.toastr.warning('Maximum number of stops is 5!');
   }
 
   getPins(){
     let markers: Array<L.Marker> = this.mapChild.getPins();
+    console.log(markers);    
   }
 }
