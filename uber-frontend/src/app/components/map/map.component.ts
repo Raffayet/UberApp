@@ -12,8 +12,7 @@ export class MapComponent implements AfterViewInit {
   private map: L.Map;
   private customIcon : L.Icon;
 
-  private pickupLocation : L.Marker;
-  private destinationLocation : L.Marker;
+  locations : Array<L.Marker> = new Array<L.Marker>();
   private featureGroup: L.FeatureGroup;
 
   private initMap(): void {
@@ -39,38 +38,37 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  constructor() { }
+  constructor() {}
 
-  ngAfterViewInit(): void { 
+  ngAfterViewInit(): void {
     this.initMap();
-
-    //pickup and destination markers initialization
-    this.pickupLocation = L.marker([0, 0], {icon: this.customIcon});
-    this.destinationLocation = L.marker([0, 0], {icon: this.customIcon});
-
-    this.featureGroup = new L.FeatureGroup([ this.pickupLocation , this.destinationLocation]);
+    
+    for(let i=0; i < 5; i++){
+      this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
+    }        
   }
 
-  pinNewPickupResult(pin: MapSearchResult): void {    
-    var newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
+  pinNewResult(pin: MapSearchResult, i: number): void {    
+    let newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
+    
+    this.locations[i].setLatLng(newLatLng);
+    this.locations[i].addTo(this.map);
 
-    this.pickupLocation.setLatLng(newLatLng); 
-    this.pickupLocation.addTo(this.map);
-
-    this.map.setView(newLatLng, 12);
-
+    this.map.setView(newLatLng, 12);    
+    this.featureGroup = L.featureGroup(this.locations.filter((location) => { return location.getLatLng().lat != 0 && location.getLatLng().lng != 0; }));
+    
     this.map.fitBounds(this.featureGroup.getBounds());
   }
 
-  pinNewDestinationResult(pin: MapSearchResult): void {
-    var newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
-
-    this.destinationLocation.setLatLng(newLatLng); 
-    this.destinationLocation.addTo(this.map);
-
-    this.map.setView(newLatLng, 12);
-
-    this.map.fitBounds(this.featureGroup.getBounds());
+  getPins(): Array<L.Marker>{
+    return this.locations;
   }
-  
+
+  deletePin(index: number): void{
+    this.locations[index].removeFrom(this.map);
+    this.locations.splice(index, 1);
+    this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
+    
+  }
+
 }

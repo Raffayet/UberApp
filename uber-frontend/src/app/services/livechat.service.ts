@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { Message, User } from '../helpers/common-interfaces';
+import { Message } from "src/app/model/Message";
+import { User } from "src/app/model/User";
 
 @Injectable({
   providedIn: 'root'

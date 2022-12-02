@@ -21,6 +21,7 @@ export class ClientDashboardComponent {
     }
 
     logout = () => {
+      localStorage.removeItem("user");
       this.router.navigateByUrl('/login');
     }
 }

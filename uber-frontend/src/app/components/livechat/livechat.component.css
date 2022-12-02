@@ -12,6 +12,7 @@
     /* overflow-y: scroll; */
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
+    z-index: 999;
 }
 
 .container2{
@@ -141,22 +142,3 @@
 .col-2 ul li{
     padding: 5px 0;
 }
-
-::-webkit-scrollbar {
-    width: 15px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
-  }
-   
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #888; 
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555; 
-  }

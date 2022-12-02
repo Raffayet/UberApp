@@ -20,6 +20,7 @@ export class AdminDashboardComponent {
   }
 
   logout = () => {
+    localStorage.removeItem("user");
     this.router.navigateByUrl('/login');
   }
 }

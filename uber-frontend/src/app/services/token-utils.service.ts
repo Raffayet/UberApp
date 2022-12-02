@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import jwtDecode from "jwt-decode";
-import { User } from "src/app/helpers/common-interfaces.js";
+import { User } from "src/app/model/User";
 
 interface JwtToken{
   sub: string,

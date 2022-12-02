@@ -7,7 +7,8 @@ import { over, Client, Message as StompMessage} from 'stompjs';
 import { LoginComponent } from "../login/login.component.js";
 import { environment } from "../../environments/environment";
 import { Observable } from "rxjs";
-import { Message, User } from "src/app/helpers/common-interfaces.js";
+import { Message } from "src/app/model/Message";
+import { User } from "src/app/model/User";
 
 const LIVECHAT_SUPPORT: string = "support";
 
