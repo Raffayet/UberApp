@@ -1,16 +1,7 @@
 <nav class="navbar">
-    <div class="container-fluid">
-      <div
-        class="collapse navbar-collapse"
-        id="navbarNavAltMarkup"
-       
-      >
-        <a aria-current="page" href="/home-page">Home</a>
-        <a href="#">Features</a>
-        <a href="#">Pricing</a>
-        <a href="/login" tabindex="-1" aria-disabled="true"
-          >Log In</a
-        >
-      </div>
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <a *ngFor="let label of navbarLabels; index as i;" (click)="changeOption(navbarPaths[i])">{{label}}</a>
     </div>
-  </nav>
+  </div>
+</nav>

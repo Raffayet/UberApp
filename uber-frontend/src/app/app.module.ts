@@ -35,6 +35,8 @@ import {
 } from '@abacritt/angularx-social-login';
 import { AdditionalLoginInfoComponent } from './components/additional-login-info/additional-login-info.component';
 import { RegisteredSocialAccountComponent } from './components/registered-social-account/registered-social-account.component';
+import { UnauthenticatedDashboard } from './components/unauthenticated-dashboard/unauthenticated-dashboard.component';
+import { UserProfilePageComponent } from './components/user-profile-page/user-profile-page.component';
 
 
 @NgModule({
@@ -53,7 +55,9 @@ import { RegisteredSocialAccountComponent } from './components/registered-social
     DriverDashboardComponent,
     AdminDashboardComponent,
     AdditionalLoginInfoComponent,
-    RegisteredSocialAccountComponent
+    RegisteredSocialAccountComponent,
+    UnauthenticatedDashboard,
+    UserProfilePageComponent
   ],
   imports: [
     BrowserModule,

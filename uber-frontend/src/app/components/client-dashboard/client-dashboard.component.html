@@ -1,9 +1,14 @@
-<p>client-dashboard works!</p>
-    <button mat-fab color="none" aria-label="Example icon button with a home icon" class="chat-button" (click)="toggleChat()">
-        <mat-icon>chat</mat-icon>
-    </button>
-    <button mat-fab color="none" aria-label="Example icon button with a home icon" class="logout-button" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-    </button>
+<app-navbar [navbarLabels]="navbarLabels" [navbarPaths]="navbarPaths" (chosenOption)="changeOption($event)"></app-navbar>
+<container-element [ngSwitch]="option">
+    <ride-request-page *ngSwitchCase="'/client-dashboard'"></ride-request-page>
+    <app-user-profile-page *ngSwitchCase="'/user-profile'"></app-user-profile-page>
+</container-element>
 
-    <app-livechat *ngIf="chatHidden" ></app-livechat>
+<button mat-fab color="primary" aria-label="Example icon button with a home icon" class="chat-button" (click)="toggleChat()">
+    <mat-icon>chat</mat-icon>
+</button>
+<button mat-fab color="none" aria-label="Example icon button with a home icon" class="logout-button" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+</button>
+
+<app-livechat *ngIf="chatHidden" ></app-livechat>
