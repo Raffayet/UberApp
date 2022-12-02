@@ -11,9 +11,12 @@ import { DriverDashboardComponent } from './components/driver-dashboard/driver-d
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { RegisteredSocialAccountComponent } from './components/registered-social-account/registered-social-account.component';
 import { AdditionalLoginInfoComponent } from './components/additional-login-info/additional-login-info.component';
+import { UnauthenticatedDashboard } from './components/unauthenticated-dashboard/unauthenticated-dashboard.component';
+import { UserProfilePageComponent } from './components/user-profile-page/user-profile-page.component';
 
 
 const routes: Routes = [
+  { path: '', component: UnauthenticatedDashboard},
   { path: 'login', component: LoginComponent },
   { path: 'home-page', component: RideRequestPageComponent }, 
   { path: 'client-dashboard', component: ClientDashboardComponent },
@@ -24,7 +27,8 @@ const routes: Routes = [
   { path: 'activatedAccount', component: ActivatedAccountComponent },
   { path: 'registeredAccount', component: RegisteredAccountPageComponent },
   { path: 'additionalLoginInfo', component: AdditionalLoginInfoComponent},
-  { path: 'authenticatedSocialAccount', component: RegisteredSocialAccountComponent}
+  { path: 'authenticatedSocialAccount', component: RegisteredSocialAccountComponent},
+  { path: 'user-profile', component: UserProfilePageComponent}
 ];
 
 @NgModule({

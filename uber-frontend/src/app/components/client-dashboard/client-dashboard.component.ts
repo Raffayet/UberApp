@@ -9,12 +9,17 @@ import { Router } from '@angular/router';
 export class ClientDashboardComponent {
 
     chatHidden:boolean = false;
+    navbarLabels: string[] = ["Home", "Profile"];
+    navbarPaths: string[] = ["/client-dashboard", "/user-profile"];
+    option: string = this.navbarPaths[0];
+
+    changeOption(eventData: string): void{      
+      this.option = eventData;
+    }
 
     constructor(private router: Router){}
 
-    ngOnInit() {
-      
-    }
+    ngOnInit() {}
 
     toggleChat = () => {
       this.chatHidden = !this.chatHidden;
@@ -22,6 +27,6 @@ export class ClientDashboardComponent {
 
     logout = () => {
       localStorage.removeItem("user");
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl('/');
     }
 }
