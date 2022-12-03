@@ -11,7 +11,7 @@ export class ClientDashboardComponent {
     chatHidden:boolean = false;
     navbarLabels: string[] = ["Home", "Profile"];
     navbarPaths: string[] = ["/client-dashboard", "/user-profile"];
-    option: string = this.navbarPaths[0];
+    option: string = this.navbarPaths[1];
 
     changeOption(eventData: string): void{      
       this.option = eventData;

@@ -37,6 +37,7 @@ import { AdditionalLoginInfoComponent } from './components/additional-login-info
 import { RegisteredSocialAccountComponent } from './components/registered-social-account/registered-social-account.component';
 import { UnauthenticatedDashboard } from './components/unauthenticated-dashboard/unauthenticated-dashboard.component';
 import { UserProfilePageComponent } from './components/user-profile-page/user-profile-page.component';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 @NgModule({
@@ -77,6 +78,7 @@ import { UserProfilePageComponent } from './components/user-profile-page/user-pr
     MatIconModule,
     SocialLoginModule,
     DragDropModule,
+    MatGridListModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-bottom-right',
