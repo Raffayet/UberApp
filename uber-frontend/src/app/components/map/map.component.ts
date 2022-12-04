@@ -47,8 +47,8 @@ export class MapComponent implements AfterViewInit {
       this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
     }        
   }
-
-  pinNewResult(pin: MapSearchResult, i: number): void {    
+  
+  pinNewResult(pin: MapSearchResult, i: number): void {  
     let newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
     
     this.locations[i].setLatLng(newLatLng);
