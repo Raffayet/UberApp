@@ -12,6 +12,7 @@ export class UserProfilePageComponent {
 
   loggedUser: User | null;
   infoForm: FormGroup;
+  passwordForm: FormGroup;
 
   constructor(private tokenUtilsService: TokenUtilsService){}
 
@@ -25,10 +26,20 @@ export class UserProfilePageComponent {
         'city': new FormControl(this.loggedUser?.city, Validators.required),
         'phone': new FormControl(this.loggedUser?.phoneNumber, Validators.required),
     });    
+
+    this.passwordForm = new FormGroup({
+      'old': new FormControl('', Validators.required),
+      'new': new FormControl('', Validators.required),
+      'confirmNew': new FormControl('', Validators.required),
+  });    
   }
 
 
   onSave(){
+
+  }
+
+  onPasswordChange(){
 
   }
 }

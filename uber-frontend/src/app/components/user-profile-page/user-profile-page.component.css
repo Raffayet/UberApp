@@ -1,6 +1,8 @@
 .container{
     height: 110vh;
     background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .left{
@@ -56,7 +58,7 @@
     margin-top: 4vh;
 }
 
-.payment-info, .change-password{
+.payment-info-button, .change-password-button{
     margin-top: 4vh;
 }
 
@@ -70,24 +72,24 @@
 }
 
 
-.formDiv{
+.form-div{
     display: block;
     margin-top: 50px;
     justify-content: center;
     width: 100%;
 }
 
-.formFieldName{
+.form-field-name{
     padding-top: 10px;
     width: 35%;
 }
-.formFieldLastName{
+.form-field-lastname{
     padding-top: 10px;
     width: 35%;
     margin-left: 10px;
 }
 
-.formField{
+.form-field{
     padding-top: 8px;
     width: 70%;
 }
@@ -111,7 +113,7 @@
     width: 100%;
   }
 
-.buttonDiv{
+.button-div{
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -119,4 +121,29 @@
 
 .button{
     margin-inline: 10px;
+}
+
+.payment-info{
+    /* height: 30vh; */
+    margin: auto;
+    width: 50%;
+}
+
+.payment-info{
+    /* height: 30vh; */
+    margin: auto;
+    width: 50%;
+    margin-bottom: 15vh;
+}
+.change-password{
+    margin: auto;
+    width: 50%;
+    margin-bottom: 5vh;
+    margin-top: 10vh;
+}
+
+.bottom{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }

@@ -38,6 +38,7 @@ import { RegisteredSocialAccountComponent } from './components/registered-social
 import { UnauthenticatedDashboard } from './components/unauthenticated-dashboard/unauthenticated-dashboard.component';
 import { UserProfilePageComponent } from './components/user-profile-page/user-profile-page.component';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 @NgModule({
@@ -79,6 +80,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     SocialLoginModule,
     DragDropModule,
     MatGridListModule,
+    MatExpansionModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-bottom-right',
