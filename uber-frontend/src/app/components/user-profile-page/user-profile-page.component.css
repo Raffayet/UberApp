@@ -1,3 +1,149 @@
-body{
-    background-color: red;
+.container{
+    height: 110vh;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.left{
+    float:left; 
+    width: 50%;
+    height: 75vh;
+    margin-top: 8%;
+    margin-left: 5%;
+    margin-right: 5%;
+    background-image: linear-gradient(to right, #868688, #88888a78);
+    text-align: center;
+    border: calc(8px + 0.2vw) solid transparent;
+	background-origin: border-box;
+	background-clip: content-box, border-box;
+	background-size: cover;
+	box-sizing: border-box;
+	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+
+.right{
+    float:right; 
+    width: 35%;
+    height: 75vh;
+    margin-top: 8%;
+    margin-right: 5%;
+    border: calc(8px + 0.2vw) solid transparent;
+	background-origin: border-box;
+	background-clip: content-box, border-box;
+	background-size: cover;
+	box-sizing: border-box;
+	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
+    padding: 30px;
+}
+
+.profile-picture{
+    background-image: url("https://blog.hubspot.com/hubfs/anna-byline-compressor.jpg");
+    border-radius: 50%;
+    margin-top: 5%;
+    flex-shrink: 0;
+	margin: 20px;
+	height: calc(150px + 6vw);
+	width: calc(150px + 6vw);
+	border: calc(8px + 0.2vw) solid transparent;
+	background-origin: border-box;
+	background-clip: content-box, border-box;
+	background-size: cover;
+	box-sizing: border-box;
+	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.change-profile-picture{
+    margin-top: 4vh;
+}
+
+.payment-info-button, .change-password-button{
+    margin-top: 4vh;
+}
+
+.login-form{
+    display: block;
+    width: 100%;
+}
+
+.login-form button{
+    margin-left: 1vw;
+}
+
+
+.form-div{
+    display: block;
+    margin-top: 50px;
+    justify-content: center;
+    width: 100%;
+}
+
+.form-field-name{
+    padding-top: 10px;
+    width: 35%;
+}
+.form-field-lastname{
+    padding-top: 10px;
+    width: 35%;
+    margin-left: 10px;
+}
+
+.form-field{
+    padding-top: 8px;
+    width: 70%;
+}
+
+.header{
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.button{
+    height: 45px;
+    font-size: 20px;
+    border-radius: 5px;
+    background-color: black;
+    color: black;
+}
+
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+
+.button-div{
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+
+.button{
+    margin-inline: 10px;
+}
+
+.payment-info{
+    /* height: 30vh; */
+    margin: auto;
+    width: 50%;
+}
+
+.payment-info{
+    /* height: 30vh; */
+    margin: auto;
+    width: 50%;
+    margin-bottom: 15vh;
+}
+.change-password{
+    margin: auto;
+    width: 50%;
+    margin-bottom: 5vh;
+    margin-top: 10vh;
+}
+
+.bottom{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
