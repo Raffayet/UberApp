@@ -1,6 +1,8 @@
 import * as L from 'leaflet';
 import { AfterViewInit, Component } from '@angular/core';
 import { MapSearchResult } from "../../services/map.service"
+import { MapService } from '../../services/map.service';
+import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-map',
@@ -11,7 +13,7 @@ export class MapComponent implements AfterViewInit {
 
   private map: L.Map;
   private customIcon : L.Icon;
-
+  
   locations : Array<L.Marker> = new Array<L.Marker>();
   private featureGroup: L.FeatureGroup;
 
@@ -35,14 +37,21 @@ export class MapComponent implements AfterViewInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
+    // L.Routing.control({
+    //   waypoints: [
+    //     L.latLng(57.74, 11.94),
+    //     L.latLng(57.6792, 11.949)
+    //   ]
+    // }).addTo(this.map);
+
     tiles.addTo(this.map);
   }
 
-  constructor() {}
+  constructor(private mapService: MapService) {}
 
   ngAfterViewInit(): void {
     this.initMap();
-    
+  
     for(let i=0; i < 5; i++){
       this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
     }        
@@ -71,4 +80,25 @@ export class MapComponent implements AfterViewInit {
     
   }
 
+  createRoute(): void{
+    this.map.eachLayer((layer) => {
+      layer.clearAllEventListeners()
+    });
+
+    let latlngs = Array();  
+  
+    for (let location of this.locations)
+    {
+      if (location.getLatLng().lng !== 0 && location.getLatLng().lat !== 0)
+        latlngs.push(location.getLatLng())
+    }
+
+    let polyline = L.polyline(latlngs, {color: 'red'}).addTo(this.map);
+    
+    this.map.fitBounds(polyline.getBounds());
+
+    L.Routing.control({
+      waypoints: latlngs
+    }).addTo(this.map);
+  }
 }

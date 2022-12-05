@@ -69,4 +69,8 @@ export class RideRequestPageComponent {
     let markers: Array<L.Marker> = this.mapChild.getPins();
     console.log(markers);    
   }
+
+  createRoute(): void{
+    this.mapChild.createRoute()
+  } 
 }
