@@ -4,9 +4,9 @@
     <div>
       <button class="change-profile-picture" mat-raised-button color="accent">Change profile picture</button>
       <br>
-      <button class="change-password-button" mat-raised-button color="accent">Change password</button>
+      <button class="change-password-button" mat-raised-button color="accent"><a (click)="onClick('change-password')">Change password</a></button>
       <br>
-      <button class="payment-info-button" mat-raised-button color="accent">Payment information</button>
+      <button class="payment-info-button" mat-raised-button color="accent"><a (click)="onClick('payment-info')">Payment information</a></button>
     </div>
   </span>
 
@@ -17,45 +17,39 @@
               <mat-form-field class="form-field-name" >
                   <mat-label>First name</mat-label>
                   <input matInput formControlName="name">
-                  <!-- <mat-error *ngIf="name && name.errors?.['required'] && (firstName.touched || firstName.dirty || form.invalid)">
+                  <mat-error *ngIf="firstName && firstName.errors?.['required'] && (firstName.touched || firstName.dirty || infoForm.invalid)">
                       This field is required
-                  </mat-error> -->
+                  </mat-error>
               </mat-form-field>
               
               <mat-form-field class="form-field-lastname" >
                   <mat-label>Last name</mat-label>
                   <input matInput formControlName="surname">
-                  <!-- <mat-error *ngIf="lastName && lastName.errors?.['required'] && (lastName.touched || lastName.dirty|| form.invalid)">
+                  <mat-error *ngIf="lastName && lastName.errors?.['required'] && (lastName.touched || lastName.dirty|| infoForm.invalid)">
                       This field is required
-                  </mat-error> -->
+                  </mat-error>
               </mat-form-field>
   
               <mat-form-field class="form-field">
                   <mat-label>Email</mat-label>
                   <input type="email" matInput formControlName="email"
-                         placeholder="Ex. pat@example.com" >
-                  <!-- <mat-error *ngIf="email && email.errors?.['required'] && (email.touched || email.dirty|| form.invalid)">
-                      This field is required
-                  </mat-error> -->
-                  <!-- <mat-error *ngIf="email && email.errors?.['email']">
-                      Invalid email address
-                  </mat-error> -->
+                         placeholder="Ex. pat@example.com" ng-disabled="true">
               </mat-form-field>
 
               <mat-form-field class="form-field" >
                   <mat-label>City</mat-label>
                   <input matInput placeholder="Ex. Novi Sad" formControlName="city">
-                  <!-- <mat-error *ngIf="city && city.errors?.['required'] && (city.touched || city.dirty|| form.invalid)">
+                  <mat-error *ngIf="city && city.errors?.['required'] && (city.touched || city.dirty|| infoForm.invalid)">
                       This field is required
-                  </mat-error> -->
+                  </mat-error>
               </mat-form-field>
 
               <mat-form-field class="form-field" >
                   <mat-label>Phone number</mat-label>
                   <input type="tel" matInput placeholder="555-555-1234" formControlName="phone">
-                  <!-- <mat-error *ngIf="telephone && telephone.errors?.['required'] && (telephone.touched || telephone.dirty|| form.invalid)">
+                  <mat-error *ngIf="telephone && telephone.errors?.['required'] && (telephone.touched || telephone.dirty|| infoForm.invalid)">
                       This field is required
-                  </mat-error> -->
+                  </mat-error>
               </mat-form-field>
 
               <div class="button-div">
@@ -65,28 +59,54 @@
       </form>
   </span>
   <div class="bottom">
-    <div class="change-password">
-        <mat-expansion-panel hideToggle>
+    <div id="change-password">
+        <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Password options
               </mat-panel-title>        
             </mat-expansion-panel-header>
                 <h1>Set up a new password</h1>
-
+                <form [formGroup]="passwordForm" (ngSubmit)="onPasswordChange()">
+                    <mat-form-field class="form-field">
+                        <mat-label>Old Password</mat-label>
+                        <input matInput type="password" formControlName="oldPassword">
+                        <mat-error *ngIf="oldPassword && oldPassword.errors?.['required'] && (oldPassword.touched || oldPassword.dirty|| passwordForm.invalid)">
+                            This field is required
+                        </mat-error>
+                        <mat-error *ngIf="oldPassword && oldPassword.errors?.['pattern'] && (oldPassword.touched|| oldPassword.dirty || passwordForm.invalid) ">
+                            Password must have 8 to 20 characters with at least one uppercase, one lowercase character and one digit
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="form-field">
+                        <mat-label>New Password</mat-label>
+                        <input matInput type="password" formControlName="newPassword">
+                        <mat-error *ngIf="newPassword && newPassword.errors?.['required'] && (newPassword.touched || newPassword.dirty || passwordForm.invalid)">
+                            This field is required
+                        </mat-error>
+                        <mat-error *ngIf="newPassword && newPassword.errors?.['pattern'] && (newPassword.touched|| newPassword.dirty || passwordForm.invalid) ">
+                            Password must have 8 to 20 characters with at least one uppercase, one lowercase character and one digit
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="form-field">
+                        <mat-label>Confirm New Password</mat-label>
+                        <input matInput type="password" formControlName="confirmNewPassword">
+                        <mat-error *ngIf="confirmNewPassword && confirmNewPassword.errors?.['required'] && (confirmNewPassword.touched || confirmNewPassword.dirty|| passwordForm.invalid)">
+                            This field is required
+                        </mat-error>
+                        <mat-error *ngIf="confirmNewPassword && confirmNewPassword.errors?.['pattern'] && (confirmNewPassword.touched|| confirmNewPassword.dirty || passwordForm.invalid) ">
+                            Password must have 8 to 20 characters with at least one uppercase, one lowercase character and one digit
+                        </mat-error>
+                    </mat-form-field>
+                    <div class="button-div">
+                        <button mat-raised-button type="submit" class="button">Save new password</button>
+                    </div>
+                </form>
                 
             </mat-expansion-panel>
       </div>
-      <div class="payment-info">
-        <mat-expansion-panel hideToggle>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Payment information
-              </mat-panel-title>        
-            </mat-expansion-panel-header>
-            <h1>Connect to your paypal account</h1>
-            <p>This is the primary content of the panel.</p>
-          </mat-expansion-panel>
+      <div id="payment-info">
+        <app-paypal-payment *ngIf="loggedUser?.role == 'CLIENT'" [loggedUser]="loggedUser"></app-paypal-payment>
       </div>
   </div>
 </div>

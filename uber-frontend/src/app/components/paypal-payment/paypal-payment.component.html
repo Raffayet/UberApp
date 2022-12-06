@@ -1,0 +1,19 @@
+<div>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Payment information
+          </mat-panel-title>        
+        </mat-expansion-panel-header>
+        <h1>Your current amount of available tokens is: {{currentAmount}}</h1>
+        <p>Choose how many tokens do you want to purchase:</p>
+        <p>Price of one token is 1$.</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Quantity</mat-label>
+            <input matInput [(ngModel)]="tokens" type="number" class="form-control" id="valueId" 
+            (change)="valueChange($event)">
+        </mat-form-field>
+        <div #paypalRef></div>
+      </mat-expansion-panel>
+    
+</div>

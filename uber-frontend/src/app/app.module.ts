@@ -39,6 +39,7 @@ import { UnauthenticatedDashboard } from './components/unauthenticated-dashboard
 import { UserProfilePageComponent } from './components/user-profile-page/user-profile-page.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payment.component';
 
 
 @NgModule({
@@ -59,7 +60,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     AdditionalLoginInfoComponent,
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
-    UserProfilePageComponent
+    UserProfilePageComponent,
+    PaypalPaymentComponent
   ],
   imports: [
     BrowserModule,

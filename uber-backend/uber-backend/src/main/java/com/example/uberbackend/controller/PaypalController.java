@@ -3,16 +3,14 @@ import com.example.uberbackend.model.Order;
 import com.example.uberbackend.service.PaypalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 
 @Controller
+@RequestMapping("/paypal")
 public class PaypalController {
 
     PaypalService service;
@@ -30,7 +28,7 @@ public class PaypalController {
     }
 
     @PostMapping("/pay")
-    public String payment(@ModelAttribute("order") Order order) {
+    public String payment(@RequestBody Order order) {
         try {
             Payment payment = service.createPayment(order.getPrice(), order.getCurrency(), order.getMethod(),
                     order.getIntent(), order.getDescription(), "http://localhost:8081/" + CANCEL_URL,
