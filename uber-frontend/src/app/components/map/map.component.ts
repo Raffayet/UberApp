@@ -3,6 +3,7 @@ import { AfterViewInit, Component } from '@angular/core';
 import { MapSearchResult } from "../../services/map.service"
 import { MapService } from '../../services/map.service';
 import 'leaflet-routing-machine';
+import { connect } from 'net';
 
 @Component({
   selector: 'app-map',
@@ -16,6 +17,10 @@ export class MapComponent implements AfterViewInit {
   
   locations : Array<L.Marker> = new Array<L.Marker>();
   private featureGroup: L.FeatureGroup;
+
+  routingControl: L.Routing.Control
+
+  routingPlan: L.Routing.Plan
 
   private initMap(): void {
 
@@ -37,13 +42,6 @@ export class MapComponent implements AfterViewInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    // L.Routing.control({
-    //   waypoints: [
-    //     L.latLng(57.74, 11.94),
-    //     L.latLng(57.6792, 11.949)
-    //   ]
-    // }).addTo(this.map);
-
     tiles.addTo(this.map);
   }
 
@@ -59,7 +57,7 @@ export class MapComponent implements AfterViewInit {
   
   pinNewResult(pin: MapSearchResult, i: number): void {  
     let newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
-    
+
     this.locations[i].setLatLng(newLatLng);
     this.locations[i].addTo(this.map);
 
@@ -67,6 +65,8 @@ export class MapComponent implements AfterViewInit {
     this.featureGroup = L.featureGroup(this.locations.filter((location) => { return location.getLatLng().lat != 0 && location.getLatLng().lng != 0; }));
     
     this.map.fitBounds(this.featureGroup.getBounds());
+
+    this.createRoute()
   }
 
   getPins(): Array<L.Marker>{
@@ -77,28 +77,40 @@ export class MapComponent implements AfterViewInit {
     this.locations[index].removeFrom(this.map);
     this.locations.splice(index, 1);
     this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
-    
+    this.map.removeControl(this.routingControl)
+    this.createRoute()
   }
 
   createRoute(): void{
-    this.map.eachLayer((layer) => {
-      layer.clearAllEventListeners()
-    });
-
+    for (let location of this.locations)
+    {
+      this.map.removeLayer(location)
+    }
     let latlngs = Array();  
-  
+
     for (let location of this.locations)
     {
       if (location.getLatLng().lng !== 0 && location.getLatLng().lat !== 0)
         latlngs.push(location.getLatLng())
     }
 
-    let polyline = L.polyline(latlngs, {color: 'red'}).addTo(this.map);
+    // let polyline = L.polyline(latlngs, {color: 'red'}).addTo(this.map);
     
-    this.map.fitBounds(polyline.getBounds());
+    // this.map.fitBounds(polyline.getBounds());
 
-    L.Routing.control({
-      waypoints: latlngs
+    this.routingControl = L.Routing.control({
+      waypoints: latlngs,
+      waypointMode: "connect",
+      routeWhileDragging: true,
+      autoRoute: true,
+      show: false,
+      plan: L.Routing.plan(latlngs, {
+        createMarker: function(i, wp) {
+          return L.marker(wp.latLng, {
+            draggable: false
+          });
+        }
+      }),
     }).addTo(this.map);
   }
 }
