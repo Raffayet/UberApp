@@ -1,8 +1,9 @@
 <div class="container">
   <span class="left">
-    <img src={{loggedUser?.profileImage}} class="profile-picture" alt="Profile picture">
+    <img class="profile-picture" src={{profilePicture}} alt="Profile picture">
     <div>
-      <button class="change-profile-picture" mat-raised-button color="accent">Change profile picture</button>
+      <button class="change-profile-picture" mat-raised-button color="accent"  (click)="fileInput.click()">Change profile picture</button>
+      <input hidden (change)="onFileSelected($event, fileInput)" #fileInput type="file" id="file">
       <br>
       <button class="change-password-button" mat-raised-button color="accent"><a (click)="onClick('change-password')">Change password</a></button>
       <br>
