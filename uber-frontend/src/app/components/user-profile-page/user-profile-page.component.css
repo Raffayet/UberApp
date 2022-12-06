@@ -39,7 +39,6 @@
 }
 
 .profile-picture{
-    background-image: url("https://blog.hubspot.com/hubfs/anna-byline-compressor.jpg");
     border-radius: 50%;
     margin-top: 5%;
     flex-shrink: 0;

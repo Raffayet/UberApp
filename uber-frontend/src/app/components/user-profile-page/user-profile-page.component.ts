@@ -17,12 +17,23 @@ export class UserProfilePageComponent {
   loggedUser: User | null;
   infoForm: FormGroup;
   passwordForm: FormGroup;
+  profilePicture: string;
 
   constructor(private tokenUtilsService: TokenUtilsService, private viewportScroller: ViewportScroller,
               private userService: UserService, private toastr: ToastrService){}
 
   ngOnInit() {    
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
+
+      this.userService.getProfilePicture(this.loggedUser?.email as string)
+      .subscribe({
+        next: (response: string) => {
+          
+          this.profilePicture = "data:image/jpg;base64, " + response;
+          console.log(this.profilePicture);
+                    
+        }});
+      
       
       this.infoForm = new FormGroup({
         'email': new FormControl(this.loggedUser?.email, Validators.required),
@@ -97,4 +108,32 @@ export class UserProfilePageComponent {
         }
       });
   }
+
+  onFileSelected(event: Event, fileInput: HTMLInputElement){
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    const file: File = fileList?.item(0) as File;
+    fileInput.value = "";
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.profilePicture = "data:image/jpg;base64, " + reader.result;
+
+      this.userService.changeProfilePicture(this.loggedUser?.email as string, reader.result)
+      .subscribe({
+          next: (response: string) => {
+            this.toastr.success("You have successfully updated profile picture!");
+            
+            this.profilePicture = "data:image/png;base64, " + response;
+          },
+          error: (err: HttpErrorResponse) => {
+            this.toastr.warning(err.error);
+          }
+        }
+      );
+    };    
+  }
+
+
 }

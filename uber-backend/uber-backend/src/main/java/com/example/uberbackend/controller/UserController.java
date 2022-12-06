@@ -1,10 +1,7 @@
 package com.example.uberbackend.controller;
 
 
-import com.example.uberbackend.dto.PasswordUpdateDto;
-import com.example.uberbackend.dto.PersonalInfoUpdateDto;
-import com.example.uberbackend.dto.RegisterDto;
-import com.example.uberbackend.dto.SocialLoginDto;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.User;
 import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.EmailService;
@@ -76,6 +73,26 @@ public class UserController {
         try{
             userService.updatePassword(dto);
             return ResponseEntity.ok("You have successfully updated password!");
+        } catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/update-profile-picture")
+    public ResponseEntity<String> updateProfilePicture(@RequestBody ProfilePictureUpdateDto dto){
+        try{
+            userService.updateProfilePicture(dto);
+            return ResponseEntity.ok(dto.getB64Image());
+        } catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/profile-picture")
+    public ResponseEntity<String> getProfilePictureBytes(@RequestParam String email){
+        try{
+            String bytes = userService.getProfilePicture(email);
+            return ResponseEntity.ok(bytes);
         } catch(Exception ex){
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
