@@ -1,9 +1,12 @@
 package com.example.uberbackend.service;
 
+import com.example.uberbackend.dto.PasswordUpdateDto;
+import com.example.uberbackend.dto.PersonalInfoUpdateDto;
 import com.example.uberbackend.dto.RegisterDto;
 import com.example.uberbackend.dto.SocialLoginDto;
 import com.example.uberbackend.exception.CustomValidationException;
 import com.example.uberbackend.exception.EmailAlreadyTakenException;
+import com.example.uberbackend.exceptions.InvalidPasswordException;
 import com.example.uberbackend.model.ActivateAccountToken;
 import com.example.uberbackend.model.Role;
 import com.example.uberbackend.model.User;
@@ -21,6 +24,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -41,6 +45,7 @@ public class UserService implements UserDetailsService {
     private final RoleRepository roleRepository;
     private final EmailService emailService;
     private final ActivateAccountTokenRepository accountTokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -153,5 +158,36 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         return "Success";
+    }
+
+    public User updatePersonalInfo(PersonalInfoUpdateDto dto) {
+        Optional<User> u = userRepository.findByEmail(dto.getEmail());
+        if(u.isPresent()) {
+            User toUpdate = u.get();
+            toUpdate.setName(dto.getName());
+            toUpdate.setSurname(dto.getSurname());
+            toUpdate.setCity(dto.getCity());
+            toUpdate.setPhoneNumber(dto.getPhone());
+
+            userRepository.save(toUpdate);
+            return toUpdate;
+        }
+        throw new UsernameNotFoundException("");
+    }
+
+    public void updatePassword(PasswordUpdateDto dto){
+        Optional<User> ou = userRepository.findByEmail(dto.getEmail());
+        if(ou.isPresent()){
+            User u = ou.get();
+            String newPasswordHash = passwordEncoder.encode(dto.getNewPassword());
+            if (!dto.getNewPassword().equals("") && dto.getNewPassword().equals(dto.getConfirmNewPassword()) && passwordEncoder.matches(dto.getOldPassword(), u.getPassword())) {
+                u.setPassword(newPasswordHash);
+                userRepository.save(u);
+                return;
+            }else{
+                throw new InvalidPasswordException("Data is invalid!");
+            }
+        }
+        throw new UsernameNotFoundException("User with given email does not exist!");
     }
 }

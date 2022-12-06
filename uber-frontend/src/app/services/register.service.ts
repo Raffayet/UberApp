@@ -17,7 +17,7 @@ export class RegisterService {
     return this.http.post<String>(environment.apiURL+"/user/",registrationForm)
             .pipe(
               catchError(this.handleError<String>('getHeroes', ""))
-            );;
+            );
   }
 
   /**

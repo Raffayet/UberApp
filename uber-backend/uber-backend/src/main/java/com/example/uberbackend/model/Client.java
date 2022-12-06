@@ -17,4 +17,6 @@ public class Client extends User {
 
     @OneToMany
     private List<Route> favoriteRoutes;
+
+    private double tokens = 0;
 }

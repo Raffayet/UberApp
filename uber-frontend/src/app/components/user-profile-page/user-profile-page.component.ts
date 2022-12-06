@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { User } from 'src/app/model/User';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
+import { ViewportScroller } from '@angular/common';
+import { UserService } from 'src/app/services/user.service';
+import { ToastrService } from 'ngx-toastr';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -14,11 +18,12 @@ export class UserProfilePageComponent {
   infoForm: FormGroup;
   passwordForm: FormGroup;
 
-  constructor(private tokenUtilsService: TokenUtilsService){}
+  constructor(private tokenUtilsService: TokenUtilsService, private viewportScroller: ViewportScroller,
+              private userService: UserService, private toastr: ToastrService){}
 
-  ngOnInit() {
+  ngOnInit() {    
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
-
+      
       this.infoForm = new FormGroup({
         'email': new FormControl(this.loggedUser?.email, Validators.required),
         'name': new FormControl(this.loggedUser?.name, Validators.required),
@@ -28,18 +33,68 @@ export class UserProfilePageComponent {
     });    
 
     this.passwordForm = new FormGroup({
-      'old': new FormControl('', Validators.required),
-      'new': new FormControl('', Validators.required),
-      'confirmNew': new FormControl('', Validators.required),
-  });    
+      'oldPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
+      'newPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
+      'confirmNewPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
+    });    
+  }
+
+  get oldPassword(){
+    return this.passwordForm.get("oldPassword");
+  }
+
+  get newPassword(){
+    return this.passwordForm.get("newPassword");
+  }
+
+  get confirmNewPassword(){
+    return this.passwordForm.get("confirmNewPassword");
+  }
+
+  get firstName(){
+    return this.infoForm.get("name");
+  }
+  get lastName(){
+    return this.infoForm.get("surname");
+  }
+  get email(){
+    return this.infoForm.get("email");
+  }
+  get city(){
+    return this.infoForm.get("city");
+  }
+  get telephone(){
+    return this.infoForm.get("phone");
   }
 
 
-  onSave(){
+  onClick(elementId: string): void { 
+    this.viewportScroller.scrollToAnchor(elementId);
+  }
 
+  onSave(){
+      this.userService.updatePersonalInfo(this.infoForm)
+      .subscribe({
+        next: (token: string) => {
+          localStorage.setItem("user", token);
+          this.toastr.success("You have successfully updated personal info!")
+        },
+        error: (err: HttpErrorResponse) => {
+          this.toastr.warning(err.error);
+        }
+      });
   }
 
   onPasswordChange(){
-
+      this.userService.updatePassword(this.passwordForm, this.loggedUser?.email as string)
+      .subscribe({
+        next: (response: string) => {
+          this.toastr.success(response);
+          this.passwordForm.reset();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.toastr.warning(err.error);
+        }
+      });
   }
 }
