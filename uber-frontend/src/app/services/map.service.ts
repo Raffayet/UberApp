@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import * as L from 'leaflet';
 
 export type MapSearchResult = {
   displayName: string;
@@ -38,5 +39,4 @@ export class MapService {
 
     return this.http.get<object[]>("https://nominatim.openstreetmap.org/search", { params: queryParams});
   }
-
 }
