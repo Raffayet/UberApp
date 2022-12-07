@@ -4,6 +4,7 @@ import { MapSearchResult } from "../../services/map.service"
 import { MapService } from '../../services/map.service';
 import 'leaflet-routing-machine';
 import { connect } from 'net';
+import { TitleStrategy } from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -77,8 +78,20 @@ export class MapComponent implements AfterViewInit {
     this.locations[index].removeFrom(this.map);
     this.locations.splice(index, 1);
     this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
-    this.map.removeControl(this.routingControl)
+    this.removePreviousRoute()
     this.createRoute()
+  }
+
+  removePreviousRoute(): void{
+    this.map.removeControl(this.routingControl)
+    this.map.eachLayer(layer => {
+      if (layer instanceof L.Marker)
+      { 
+        this.map.removeLayer(layer)
+      }
+    })
+    this.map.remove()
+    this.initMap()
   }
 
   createRoute(): void{
@@ -86,6 +99,7 @@ export class MapComponent implements AfterViewInit {
     {
       this.map.removeLayer(location)
     }
+
     let latlngs = Array();  
 
     for (let location of this.locations)

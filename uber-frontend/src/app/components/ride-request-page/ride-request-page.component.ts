@@ -5,6 +5,8 @@ import { Observable, of } from 'rxjs';
 import { MapComponent } from '../map/map.component';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from './../../environments/environment'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ride-request-page',
@@ -21,12 +23,14 @@ export class RideRequestPageComponent {
   options: Observable<MapSearchResult[]>[] = [];
   inputValues: string[] = [];
 
-  constructor(private mapService: MapService, private toastr: ToastrService) {}
+  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router) {}
 
   drop(event: CdkDragDrop<MapSearchResult[]>) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     moveItemInArray(this.inputValues, event.previousIndex, event.currentIndex);      
-    moveItemInArray(this.mapChild.locations, event.previousIndex, event.currentIndex);     
+    moveItemInArray(this.mapChild.locations, event.previousIndex, event.currentIndex);  
+    this.mapChild.removePreviousRoute()
+    this.mapChild.createRoute()   
   }
 
   ngOnInit() {    
@@ -54,7 +58,11 @@ export class RideRequestPageComponent {
   deleteLocation(index: number) : void {      
       this.destinations.splice(index, 1);
       this.inputValues.splice(index, 1);
-      this.mapChild.deletePin(index);            
+      this.mapChild.deletePin(index); 
+      // if (this.destinations.length === 1)
+      // {
+      //   this.mapChild.deletePin(index);
+      // }          
   }
 
   addLocation(index: number) : void {    
@@ -67,7 +75,9 @@ export class RideRequestPageComponent {
 
   getPins(){
     let markers: Array<L.Marker> = this.mapChild.getPins();
-    console.log(markers);    
+    console.log(markers);  
+    if (window.location.href === environment.frontURL) 
+      this.router.navigateByUrl('login') 
   }
 
   createRoute(): void{
