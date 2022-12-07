@@ -17,7 +17,6 @@ public class UserDto {
     private String phoneNumber;
     private Boolean activeAccount;
     private Boolean blocked;
-    private String profileImage;
     private DrivingStatus drivingStatus;
     private AccountStatus accountStatus;
 
@@ -26,7 +25,6 @@ public class UserDto {
         this.surname = user.getSurname();
         this.email = user.getEmail();
         this.role = user.getRole().getName();
-        this.profileImage = user.getProfileImage();
         this.city = user.getCity();
         this.phoneNumber = user.getPhoneNumber();
         this.accountStatus = user.getAccountStatus();

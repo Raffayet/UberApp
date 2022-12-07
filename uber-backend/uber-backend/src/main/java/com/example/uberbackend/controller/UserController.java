@@ -1,12 +1,12 @@
 package com.example.uberbackend.controller;
 
 
-import com.example.uberbackend.dto.RegisterDto;
-import com.example.uberbackend.dto.SocialLoginDto;
+import com.example.uberbackend.dto.*;
+import com.example.uberbackend.model.User;
+import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.EmailService;
 import com.example.uberbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,10 +24,7 @@ public class UserController {
 
     private final EmailService emailService;
 
-    @GetMapping
-    public void SendEmail() throws InterruptedException {
-        emailService.sendConfirmationRegistrationRequest("jovancevicjovan5@gmail.com");
-    }
+    private final JwtTokenGenerator tokenGenerator;
 
     @PostMapping
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto, BindingResult result){
@@ -58,6 +55,47 @@ public class UserController {
         userService.activateAccount(token);
         httpServletResponse.setHeader("Location", "http://localhost:4200/activatedAccount");
         httpServletResponse.setStatus(302);
+    }
+
+    @PutMapping(value = "/update-personal-info")
+    public ResponseEntity<?> updatePersonalInfo(@RequestBody PersonalInfoUpdateDto dto){
+        try{
+            User u = userService.updatePersonalInfo(dto);
+            String token = tokenGenerator.generateToken(u);
+            return ResponseEntity.ok(token);
+        }catch (RuntimeException ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto dto){
+        try{
+            userService.updatePassword(dto);
+            return ResponseEntity.ok("You have successfully updated password!");
+        } catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/update-profile-picture")
+    public ResponseEntity<String> updateProfilePicture(@RequestBody ProfilePictureUpdateDto dto){
+        try{
+            userService.updateProfilePicture(dto);
+            return ResponseEntity.ok(dto.getB64Image());
+        } catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/profile-picture")
+    public ResponseEntity<String> getProfilePictureBytes(@RequestParam String email){
+        try{
+            String bytes = userService.getProfilePicture(email);
+            return ResponseEntity.ok(bytes);
+        } catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

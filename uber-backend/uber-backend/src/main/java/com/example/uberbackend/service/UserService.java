@@ -1,9 +1,9 @@
 package com.example.uberbackend.service;
 
-import com.example.uberbackend.dto.RegisterDto;
-import com.example.uberbackend.dto.SocialLoginDto;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.CustomValidationException;
 import com.example.uberbackend.exception.EmailAlreadyTakenException;
+import com.example.uberbackend.exceptions.InvalidPasswordException;
 import com.example.uberbackend.model.ActivateAccountToken;
 import com.example.uberbackend.model.Role;
 import com.example.uberbackend.model.User;
@@ -17,18 +17,24 @@ import com.example.uberbackend.repositories.UserRepository;
 import com.example.uberbackend.security.SecurityConfig;
 import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
+import org.javatuples.Pair;
+import org.springframework.core.io.ResourceLoader;
+//import org.springframework.data.util.Pair;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -41,6 +47,8 @@ public class UserService implements UserDetailsService {
     private final RoleRepository roleRepository;
     private final EmailService emailService;
     private final ActivateAccountTokenRepository accountTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ResourceLoader resourceLoader;
 
 
     @Override
@@ -153,5 +161,95 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         return "Success";
+    }
+
+    public User updatePersonalInfo(PersonalInfoUpdateDto dto) {
+        Optional<User> u = userRepository.findByEmail(dto.getEmail());
+        if(u.isPresent()) {
+            User toUpdate = u.get();
+            toUpdate.setName(dto.getName());
+            toUpdate.setSurname(dto.getSurname());
+            toUpdate.setCity(dto.getCity());
+            toUpdate.setPhoneNumber(dto.getPhone());
+
+            userRepository.save(toUpdate);
+            return toUpdate;
+        }
+        throw new UsernameNotFoundException("");
+    }
+
+    public void updatePassword(PasswordUpdateDto dto){
+        Optional<User> ou = userRepository.findByEmail(dto.getEmail());
+        if(ou.isPresent()){
+            User u = ou.get();
+            String newPasswordHash = passwordEncoder.encode(dto.getNewPassword());
+            if (!dto.getNewPassword().equals("") && dto.getNewPassword().equals(dto.getConfirmNewPassword()) && passwordEncoder.matches(dto.getOldPassword(), u.getPassword())) {
+                u.setPassword(newPasswordHash);
+                userRepository.save(u);
+                return;
+            }else{
+                throw new InvalidPasswordException("Data is invalid!");
+            }
+        }
+        throw new UsernameNotFoundException("User with the given email does not exist!");
+    }
+
+    public void updateProfilePicture(ProfilePictureUpdateDto dto) throws IOException {
+        Optional<User> u = userRepository.findByEmail(dto.getEmail());
+
+        if(u.isPresent()){
+            Pair<String, String> tuple = generateNewPicturePath();
+            try (FileOutputStream fos = new FileOutputStream(tuple.getValue0())) {
+                fos.write(DatatypeConverter.parseBase64Binary(dto.getB64Image()));
+            }
+            User user = u.get();
+            user.setProfileImage(tuple.getValue1());
+            userRepository.save(user);
+        }else{
+            throw new UsernameNotFoundException("User with the given email does not exist!");
+        }
+
+    }
+
+    private String generateRandomString(){
+        String AlphaNumericStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789";
+        StringBuilder s = new StringBuilder(10);
+
+        for (int i=0; i<10; i++) {
+            int ch = (int)(AlphaNumericStr.length() * Math.random());
+            s.append(AlphaNumericStr.charAt(ch));
+        }
+        return s.toString();
+    }
+
+    private  Pair<String, String> generateNewPicturePath() throws IOException {
+        String uniqueTime = LocalDateTime.now().toString().split("T")[0];
+        String photoName = "//" +uniqueTime + generateRandomString() + "profilePicture.jpg";
+
+        File currDir = new File("uber-backend//src//main//resources//data//");
+        String path = currDir.getAbsolutePath();
+
+        return new Pair<String, String>(Paths.get(path + photoName).toString(), photoName.substring(1));
+    }
+
+    public String getProfilePicture(String email) throws IOException {
+        Optional<User> u = userRepository.findByEmail(email);
+        if(u.isPresent()){
+
+            File currDir = new File("uber-backend//src//main//resources//data//");
+            String path = currDir.getAbsolutePath();
+            String photoName = u.get().getProfileImage();
+
+            String py = Paths.get(path + photoName).toString();
+            File file = new File(py);
+            FileInputStream fl = new FileInputStream(file);
+            byte[] arr = new byte[(int)file.length()];
+            fl.read(arr);
+            fl.close();
+            String encoded = Base64Utils.encodeToString(arr);
+            return encoded;
+        }else{
+            throw new UsernameNotFoundException("User with the given email does not exist!");
+        }
     }
 }
