@@ -7,6 +7,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from './../../environments/environment'
 import { Router } from '@angular/router';
+import {MatRadioModule} from '@angular/material/radio';
 
 @Component({
   selector: 'ride-request-page',
@@ -22,6 +23,11 @@ export class RideRequestPageComponent {
   destinations: MapSearchResult[] = [];
   options: Observable<MapSearchResult[]>[] = [];
   inputValues: string[] = [];
+
+  vehicleType: string;
+  vehicleTypes: string[] = ['Regular', 'Baby Seats', 'Pet Seats'];
+
+  price: Number
 
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router) {}
 
@@ -53,16 +59,14 @@ export class RideRequestPageComponent {
   pinLocation(option: MapSearchResult, index: number) : void {
     this.destinations[index] = option;
     this.mapChild.pinNewResult(option, index);
+    this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)
   }
 
   deleteLocation(index: number) : void {      
       this.destinations.splice(index, 1);
       this.inputValues.splice(index, 1);
-      this.mapChild.deletePin(index); 
-      // if (this.destinations.length === 1)
-      // {
-      //   this.mapChild.deletePin(index);
-      // }          
+      this.mapChild.deletePin(index);    
+      this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)      
   }
 
   addLocation(index: number) : void {    
@@ -83,4 +87,9 @@ export class RideRequestPageComponent {
   createRoute(): void{
     this.mapChild.createRoute()
   } 
+
+  calculatePrice(vType: string): void{
+    this.vehicleType = vType
+    this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)
+  }
 }
