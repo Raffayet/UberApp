@@ -58,3 +58,27 @@ h1{
     background-color: green;
     margin-bottom: 2rem;
 }
+
+.vehicle-expansion-panel{
+    margin-bottom: 2rem;
+    width: 59.3%;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.radio-button {
+margin: 5px;
+}
+
+.example-list .priceChip{
+    background-color: rgba(0, 0, 0, 0.87);
+    font-size: 20px;
+    padding: 5px;
+    margin-bottom: 2rem;
+    text-align: right;
+}

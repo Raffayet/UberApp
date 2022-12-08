@@ -40,6 +40,8 @@ import { UserProfilePageComponent } from './components/user-profile-page/user-pr
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payment.component';
+import { MatRadioModule } from '@angular/material/radio';
+import {MatChipsModule} from '@angular/material/chips';
 
 
 @NgModule({
@@ -61,7 +63,7 @@ import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payme
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent
+    PaypalPaymentComponent,
   ],
   imports: [
     BrowserModule,
@@ -87,6 +89,8 @@ import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payme
       timeOut: 2000,
       positionClass: 'toast-bottom-right',
     }),
+    MatRadioModule,
+    MatChipsModule,
   ],
   providers: [
     {
