@@ -1,6 +1,6 @@
 package com.example.uberbackend.controller;
 
-import com.example.uberbackend.dto.DriverStatusDto;
+import com.example.uberbackend.dto.UserDrivingStatus;
 import com.example.uberbackend.model.User;
 import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.DriverService;
@@ -21,15 +21,4 @@ public class DriverController {
     private final UserService userService;
     private final DriverService driverService;
     private final JwtTokenGenerator tokenGenerator;
-
-    @PostMapping("/change-driver-status")
-    public ResponseEntity<?> changeDriverStatus(@RequestBody DriverStatusDto dto){
-        try{
-            User u = userService.changeDrivingStatus(dto);
-            String token = tokenGenerator.generateToken(u);
-            return ResponseEntity.ok(token);
-        }catch(Exception ex){
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
 }

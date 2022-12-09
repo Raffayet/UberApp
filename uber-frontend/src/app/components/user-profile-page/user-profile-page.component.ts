@@ -91,7 +91,7 @@ export class UserProfilePageComponent {
           localStorage.setItem("user", token);
           this.toastr.success("You have successfully updated personal info!")
         },
-        error: (err: HttpErrorResponse) => {
+        error: (err: HttpErrorResponse) => {          
           this.toastr.warning(err.error);
         }
       });
@@ -138,7 +138,7 @@ export class UserProfilePageComponent {
 
   changeDriverStatus(){
     this.driverIsOnline = !this.driverIsOnline;
-    this.userService.changeDriverStatus(this.loggedUser?.email as string, this.driverIsOnline)
+    this.userService.changeUserDrivingStatus(this.loggedUser?.email as string, this.driverIsOnline ? 0 : 2)
     .subscribe({
       next: (token: string) => {
         localStorage.setItem("user", token);

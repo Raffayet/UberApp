@@ -24,7 +24,7 @@ public class JwtTokenGenerator {
     public String generateToken(User u){
         String username = u.getEmail();
         Date currentDate = new Date();
-        Date expiryDate = new Date(currentDate.getTime() + 1000);
+        Date expiryDate = new Date(currentDate.getTime() + 700000);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", u.getRole().getAuthority());
@@ -53,7 +53,7 @@ public class JwtTokenGenerator {
             Jwts.parser().setSigningKey(env.getProperty("jwt.secret")).parseClaimsJws(token);
             return true;
         }catch(Exception ex){
-            throw new AuthenticationCredentialsNotFoundException("Jwt was expired or incorrect!");
+            throw new AuthenticationCredentialsNotFoundException("You were not authenticated, please log in!");
         }
     }
 }

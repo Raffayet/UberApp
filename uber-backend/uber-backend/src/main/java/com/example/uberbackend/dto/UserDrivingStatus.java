@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DriverStatusDto {
+public class UserDrivingStatus {
 
     @JsonProperty
     private String email;
     @JsonProperty
-    private Boolean active;
+    private int status;
 }
