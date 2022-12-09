@@ -28,7 +28,7 @@ public class ClientController {
         }
     }
 
-    @PostMapping
+    @PostMapping("add-tokens")
     public ResponseEntity<?> addTokens(@RequestBody String email){
         try{
             double amount = clientService.getTokensByEmail(email);

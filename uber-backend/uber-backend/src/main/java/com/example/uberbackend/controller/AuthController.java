@@ -4,9 +4,11 @@ import com.example.uberbackend.dto.AuthResponseDto;
 import com.example.uberbackend.dto.LoginDto;
 import com.example.uberbackend.dto.RegisterDto;
 import com.example.uberbackend.model.User;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.RoleRepository;
 import com.example.uberbackend.repositories.UserRepository;
 import com.example.uberbackend.security.JwtTokenGenerator;
+import com.example.uberbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,15 +31,17 @@ public class AuthController {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private JwtTokenGenerator jwtTokenGenerator;
+    private UserService userService;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenGenerator jwtTokenGenerator) {
+                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenGenerator jwtTokenGenerator, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenGenerator = jwtTokenGenerator;
+        this.userService = userService;
     }
 
     @PostMapping("login")
@@ -45,6 +49,8 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 
         User loggedUser = (User) authentication.getPrincipal();
+        loggedUser.setDrivingStatus(DrivingStatus.ONLINE);
+        userService.save(loggedUser);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenGenerator.generateToken(loggedUser);
 

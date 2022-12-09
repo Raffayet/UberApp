@@ -53,7 +53,7 @@ public class JwtTokenGenerator {
             Jwts.parser().setSigningKey(env.getProperty("jwt.secret")).parseClaimsJws(token);
             return true;
         }catch(Exception ex){
-            throw new AuthenticationCredentialsNotFoundException("Jwt was expired or incorrect!");
+            throw new AuthenticationCredentialsNotFoundException("You were not authenticated, please log in!");
         }
     }
 }
