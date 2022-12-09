@@ -1,8 +1,13 @@
+.chat-button{
+    cursor: pointer;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+  }
+  
 .logout-button{
     cursor: pointer;
     position: fixed;
     bottom: 2rem;
     left: 2rem;
-    background-color: rgb(150, 59, 59);
-    color: white;
   }

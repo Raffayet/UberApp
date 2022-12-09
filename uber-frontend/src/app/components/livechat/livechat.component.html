@@ -4,7 +4,7 @@
             <div class="wrapper">
                 <div class="col1-scroll">
                     <div *ngFor="let message of userChat;" [ngClass]=" (loggedUser?.email === message.senderEmail || (loggedUser?.role === 'ADMIN' && message.senderEmail === 'support')) ? 'msg-row msg-row2' : 'msg-row'">
-                        <img [src]="loggedUser?.email === message.senderEmail ? loggedUser?.profileImage : (message.senderImage == null ? customerSupportProfileImage : message.senderImage)" class="msg-img">
+                        <img [src]="loggedUser?.email === message.senderEmail ? profilePicture : (message.senderImage == null ? customerSupportProfileImage : userToChatPicture)" class="msg-img">
                         <div class="msg-text">
                             <h2>{{message.senderFirstName}} {{message.senderLastName}}</h2>
                             <p>{{message.content}}</p>

@@ -18,7 +18,7 @@
 
   <span class="right">
     <h1 class="header">Personal information</h1>
-      <form [formGroup]="infoForm" (ngSubmit)="onSave()">
+      <form [formGroup]="infoForm" (ngSubmit)="loggedUser?.role == 'DRIVER' ? onSaveDriver() : onSave()">
           <div class="form-div" *ngIf="infoForm">
               <mat-form-field class="form-field-name" >
                   <mat-label>First name</mat-label>

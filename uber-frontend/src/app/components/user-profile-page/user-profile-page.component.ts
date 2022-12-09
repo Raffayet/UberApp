@@ -6,6 +6,7 @@ import { ViewportScroller } from '@angular/common';
 import { UserService } from 'src/app/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DriverService } from 'src/app/services/driver.service';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -21,7 +22,8 @@ export class UserProfilePageComponent {
   driverIsOnline: boolean;
 
   constructor(private tokenUtilsService: TokenUtilsService, private viewportScroller: ViewportScroller,
-              private userService: UserService, private toastr: ToastrService){}
+              private userService: UserService, private toastr: ToastrService,
+              private driverService: DriverService){}
 
   ngOnInit() {    
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
@@ -96,6 +98,18 @@ export class UserProfilePageComponent {
         }
       });
   }
+
+  onSaveDriver(){
+    this.driverService.updatePersonalInfo(this.infoForm)
+    .subscribe({
+      next: (response: string) => {
+        this.toastr.success(response);
+      },
+      error: (err: HttpErrorResponse) => {          
+        this.toastr.warning(err.error);
+      }
+    });
+}
 
   onPasswordChange(){
       this.userService.updatePassword(this.passwordForm, this.loggedUser?.email as string)
