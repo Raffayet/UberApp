@@ -42,4 +42,12 @@ export class UserService {
     return this.http.get<string>(environment.apiURL + '/user/profile-picture', {params:queryParams, headers, responseType: 'text' as 'json'});    
   }
 
+  changeDriverStatus(email:string, isActive: boolean){
+    
+    let headers = new HttpHeaders();
+    let params = {email: email, active: isActive};       
+    
+    return this.http.post<string>(environment.apiURL + '/driver/change-driver-status', params, {headers, responseType: 'text' as 'json'});    
+  }
+
 }

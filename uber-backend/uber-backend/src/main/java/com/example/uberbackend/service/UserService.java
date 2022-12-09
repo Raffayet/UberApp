@@ -208,7 +208,6 @@ public class UserService implements UserDetailsService {
         }else{
             throw new UsernameNotFoundException("User with the given email does not exist!");
         }
-
     }
 
     private String generateRandomString(){
@@ -248,6 +247,27 @@ public class UserService implements UserDetailsService {
             fl.close();
             String encoded = Base64Utils.encodeToString(arr);
             return encoded;
+        }else{
+            throw new UsernameNotFoundException("User with the given email does not exist!");
+        }
+    }
+
+    public void save(User loggedUser) {
+        userRepository.save(loggedUser);
+    }
+
+    public User changeDrivingStatus(DriverStatusDto dto) {
+        Optional<User> u = userRepository.findByEmail(dto.getEmail());
+
+        if(u.isPresent()){
+            User user = u.get();
+            if (dto.getActive()) {
+                user.setDrivingStatus(DrivingStatus.ONLINE);
+            } else {
+                user.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
+            }
+            userRepository.save(user);
+            return user;
         }else{
             throw new UsernameNotFoundException("User with the given email does not exist!");
         }

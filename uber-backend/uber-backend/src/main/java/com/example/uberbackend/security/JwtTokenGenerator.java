@@ -24,7 +24,7 @@ public class JwtTokenGenerator {
     public String generateToken(User u){
         String username = u.getEmail();
         Date currentDate = new Date();
-        Date expiryDate = new Date(currentDate.getTime() + 700000);
+        Date expiryDate = new Date(currentDate.getTime() + 1000);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", u.getRole().getAuthority());
