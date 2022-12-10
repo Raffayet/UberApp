@@ -3,36 +3,14 @@ import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
+import { TokenUtilsService } from './token-utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private http: HttpClient) { }
-
-  updatePersonalInfo(infoForm: FormGroup) : Observable<string>{
-      let headers = new HttpHeaders();
-      let params = infoForm.getRawValue();
-
-      return this.http.put<string>(environment.apiURL + '/user/update-personal-info', params, { headers, responseType: 'text' as 'json' });      
-  }
-
-  updatePassword(passwordForm: FormGroup, email: string): Observable<string>{
-    let headers = new HttpHeaders();
-    let params = {...passwordForm.getRawValue(), email: email};
-
-    return this.http.put<string>(environment.apiURL + '/user/update-password', params, { headers, responseType: 'text' as 'json' });      
-  }
-
-  changeProfilePicture(email: string, b64Image: string | ArrayBuffer | null){    
-    let headers = new HttpHeaders();
-    let b64 = b64Image as string;    
-
-    let params = {email: email, b64Image: b64.split(',', 2)[1]};       
-
-    return this.http.put<string>(environment.apiURL + '/user/update-profile-picture', params, { headers, responseType: 'text' as 'json' });      
-  }
+  constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService) { }
 
   getProfilePicture(email: string){
     let headers = new HttpHeaders();
@@ -41,5 +19,37 @@ export class UserService {
 
     return this.http.get<string>(environment.apiURL + '/user/profile-picture', {params:queryParams, headers, responseType: 'text' as 'json'});    
   }
+
+  changeUserDrivingStatus(email:string, status: number){
+    
+    let headers = new HttpHeaders();
+    let params = {email: email, status: status};       
+    
+    return this.http.post<string>(environment.apiURL + '/user/change-user-driving-status', params, {headers, responseType: 'text' as 'json'});    
+  }
+
+  updatePersonalInfo(infoForm: FormGroup) : Observable<string>{
+    let headers = new HttpHeaders();
+    let params = {...infoForm.getRawValue(), role: this.tokenUtilsService.getRoleFromToken()};
+
+    return this.http.put<string>(environment.apiURL + '/client/update-personal-info', params, { headers, responseType: 'text' as 'json' });      
+  }
+
+  updatePassword(passwordForm: FormGroup, email: string): Observable<string>{
+    let headers = new HttpHeaders();
+    let params = {...passwordForm.getRawValue(), email: email};
+
+    return this.http.put<string>(environment.apiURL + '/client/update-password', params, { headers, responseType: 'text' as 'json' });      
+  }
+
+  changeProfilePicture(email: string, b64Image: string | ArrayBuffer | null){    
+    let headers = new HttpHeaders();
+    let b64 = b64Image as string;    
+
+    let params = {email: email, b64Image: b64.split(',', 2)[1]};       
+
+    return this.http.put<string>(environment.apiURL + '/client/update-profile-picture', params, { headers, responseType: 'text' as 'json' });      
+  }
+
 
 }

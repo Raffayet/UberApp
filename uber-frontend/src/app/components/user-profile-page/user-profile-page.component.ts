@@ -7,6 +7,7 @@ import { UserService } from 'src/app/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaypalPaymentComponent } from '../paypal-payment/paypal-payment.component';
+import { DriverService } from 'src/app/services/driver.service';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -20,18 +21,21 @@ export class UserProfilePageComponent {
   infoForm: FormGroup;
   passwordForm: FormGroup;
   profilePicture: string;
+  driverIsOnline: boolean;
 
   constructor(private tokenUtilsService: TokenUtilsService, private viewportScroller: ViewportScroller,
-              private userService: UserService, private toastr: ToastrService){}
+              private userService: UserService, private toastr: ToastrService,
+              private driverService: DriverService){}
 
   ngOnInit() {    
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
+      this.driverIsOnline = this.loggedUser?.drivingStatus === "ONLINE" ? true : false;
+      
       this.userService.getProfilePicture(this.loggedUser?.email as string)
       .subscribe({
         next: (response: string) => {
           
           this.profilePicture = "data:image/jpg;base64, " + response;
-          console.log(this.profilePicture);
                     
         }});
       
@@ -91,11 +95,23 @@ export class UserProfilePageComponent {
           localStorage.setItem("user", token);
           this.toastr.success("You have successfully updated personal info!")
         },
-        error: (err: HttpErrorResponse) => {
+        error: (err: HttpErrorResponse) => {          
           this.toastr.warning(err.error);
         }
       });
   }
+
+  onSaveDriver(){
+    this.driverService.updatePersonalInfo(this.infoForm)
+    .subscribe({
+      next: (response: string) => {
+        this.toastr.success(response);
+      },
+      error: (err: HttpErrorResponse) => {          
+        this.toastr.warning(err.error);
+      }
+    });
+}
 
   onPasswordChange(){
       this.userService.updatePassword(this.passwordForm, this.loggedUser?.email as string)
@@ -136,5 +152,17 @@ export class UserProfilePageComponent {
     };    
   }
 
-
+  changeDriverStatus(){
+    this.driverIsOnline = !this.driverIsOnline;
+    this.userService.changeUserDrivingStatus(this.loggedUser?.email as string, this.driverIsOnline ? 0 : 2)
+    .subscribe({
+      next: (token: string) => {
+        localStorage.setItem("user", token);
+        this.toastr.success("You have successfully changed your status!");
+      },
+      error: (err: HttpErrorResponse) => {
+        this.toastr.warning(err.error);
+      }
+    });
+  }
 }

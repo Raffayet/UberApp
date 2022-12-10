@@ -2,6 +2,8 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/model/User';
 import { UserProfilePageComponent } from '../user-profile-page/user-profile-page.component';
+import { UserService } from 'src/app/services/user.service';
+import { TokenUtilsService } from 'src/app/services/token-utils.service';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -19,7 +21,7 @@ export class ClientDashboardComponent {
       this.option = eventData;
     }
 
-    constructor(private router: Router){}
+    constructor(private router: Router, private userService: UserService, private tokenUtilsService: TokenUtilsService){}
 
     ngOnInit() {}
 
@@ -27,7 +29,8 @@ export class ClientDashboardComponent {
       this.chatHidden = !this.chatHidden;
     }
 
-    logout = () => {
+    logout = () => {      
+      this.userService.changeUserDrivingStatus(this.tokenUtilsService.getUsernameFromToken() as string, 1).subscribe();
       localStorage.removeItem("user");
       this.router.navigateByUrl('/');
     }

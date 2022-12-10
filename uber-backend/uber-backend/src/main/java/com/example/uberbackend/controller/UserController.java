@@ -98,4 +98,15 @@ public class UserController {
         }
     }
 
+    @PostMapping("/change-user-driving-status")
+    public ResponseEntity<?> changeUserDrivingStatus(@RequestBody UserDrivingStatus dto){
+        try{
+            User u = userService.changeUserDrivingStatus(dto);
+            String token = tokenGenerator.generateToken(u);
+            return ResponseEntity.ok(token);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

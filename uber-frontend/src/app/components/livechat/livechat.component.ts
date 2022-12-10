@@ -4,11 +4,11 @@ import { LivechatService } from 'src/app/services/livechat.service';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import * as SockJS from 'sockjs-client';
 import { over, Client, Message as StompMessage} from 'stompjs';
-import { LoginComponent } from "../login/login.component.js";
 import { environment } from "../../environments/environment";
 import { Observable } from "rxjs";
 import { Message } from "src/app/model/Message";
 import { User } from "src/app/model/User";
+import { UserService } from 'src/app/services/user.service';
 
 const LIVECHAT_SUPPORT: string = "support";
 
@@ -24,6 +24,8 @@ export class LivechatComponent {
 
   loggedUser : User | null;
   allUsersFromMessages: User[] = [];
+  profilePicture: string;
+  userToChatPicture: string;
 
   userChat : Message[] = [];
   adminChat : Map<string, Message[]>
@@ -31,16 +33,21 @@ export class LivechatComponent {
   userEmailToSend: string = "";
   customerSupportProfileImage: string = environment.customerSupportProfileImage;
 
-  constructor(private livechatService: LivechatService, private tokenUtilsService: TokenUtilsService) {}
+  constructor(private livechatService: LivechatService, private tokenUtilsService: TokenUtilsService, private userService: UserService) {}
   
   ngOnInit() {
     let Sock = new SockJS(environment.apiURL + "/ws");
     this.stompClient = over(Sock);
-    this.stompClient.connect({}, this.onConnected, this.onError);
+    this.stompClient.connect({}, this.onConnected, this.onError);    
   }
 
   onConnected = () => {
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
+      this.userService.getProfilePicture(this.loggedUser?.email as string)
+      .subscribe({
+        next: (response: string) => {          
+          this.profilePicture = "data:image/jpg;base64, " + response;
+        }});
       
       if(this.loggedUser?.role === 'ADMIN'){
         this.stompClient.subscribe("/chatroom/public", this.onPublicMessageReceived);
@@ -126,6 +133,14 @@ export class LivechatComponent {
   }
 
   selectUserToChat = (email: string) => {
+      this.userService.getProfilePicture(email)
+      .subscribe({
+        next: (response: string) => {
+          
+          this.userToChatPicture = "data:image/jpg;base64, " + response;
+                    
+        }});
+
       this.userEmailToSend = email;
       if (this.adminChat instanceof Map<string, Message[]>) {        
         this.userChat = this.adminChat.get(email) as Message[];
