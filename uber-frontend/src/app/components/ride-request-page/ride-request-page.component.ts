@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { MapService, MapSearchResult } from "../../services/map.service"
 import { Observable, of } from 'rxjs';
@@ -7,18 +7,48 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from './../../environments/environment'
 import { Router } from '@angular/router';
-import {MatRadioModule} from '@angular/material/radio';
+import { trigger, transition, animate, style } from '@angular/animations'
+import {MatChipEditedEvent, MatChipInputEvent} from '@angular/material/chips';
+import { Person } from 'src/app/model/Person';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { PaypalService } from 'src/app/services/paypal.service';
+import { User } from 'src/app/model/User';
+import { TokenUtilsService } from 'src/app/services/token-utils.service';
 
 @Component({
   selector: 'ride-request-page',
   templateUrl: './ride-request-page.component.html',
   styleUrls: ['./ride-request-page.component.css'],
+  animations: [
+    trigger('firstWindowAnimation', [
+      transition(':enter', [
+        style({transform: 'translateX(-100%)'}),
+        animate('300ms ease-in', style({transform: 'translateX(0%)'}))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({transform: 'translateX(-100%)'}))
+      ])
+    ]),
+    trigger('secondWindowAnimation', [
+      transition(':enter', [
+        style({transform: 'translateX(100%)'}),
+        animate('300ms ease-in', style({transform: 'translateX(0%)'}))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({transform: 'translateX(100%)'}))
+      ])
+    ])
+  ]
 })
 
 export class RideRequestPageComponent {
 
   @ViewChild(MapComponent)
   private mapChild!: MapComponent;
+
+  loggedUser: User | null
+
+  currentAmount: number
 
   destinations: MapSearchResult[] = [];
   options: Observable<MapSearchResult[]>[] = [];
@@ -29,7 +59,62 @@ export class RideRequestPageComponent {
 
   price: Number
 
-  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router) {}
+  firstWindow: boolean = true
+
+  secondWindow: boolean = false
+
+  animationsStarted: boolean = false
+
+  //add more people
+  addOnBlur = true;
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  people: Person[] = [];
+  
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.people.push({name: value});
+    }
+
+    event.chipInput!.clear();
+  }
+
+  remove(person: Person): void {
+    const index = this.people.indexOf(person);
+
+    if (index >= 0) {
+      this.people.splice(index, 1);
+    }
+  }
+
+  edit(person: Person, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    if (!value) {
+      this.remove(person);
+      return;
+    }
+
+    const index = this.people.indexOf(person);
+    if (index > 0) {
+      this.people[index].name = value;
+    }
+  }
+
+  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService, private tokenUtilsService: TokenUtilsService) {}
+
+  trigger()
+  {
+    this.firstWindow = false
+    this.secondWindow = true
+  }
+
+  triggerBack()
+  {
+    this.firstWindow = true
+    this.secondWindow = false
+  }
 
   drop(event: CdkDragDrop<MapSearchResult[]>) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -39,7 +124,10 @@ export class RideRequestPageComponent {
     this.mapChild.createRoute()   
   }
 
-  ngOnInit() {    
+  ngOnInit() { 
+    this.loggedUser = this.tokenUtilsService.getUserFromToken();  
+    this.getAmountOfTokens() 
+    console.log(this.loggedUser)
     this.destinations.push({
       displayName: "",
       lon: "",
@@ -91,5 +179,11 @@ export class RideRequestPageComponent {
   calculatePrice(vType: string): void{
     this.vehicleType = vType
     this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)
+  }
+
+  getAmountOfTokens(){
+    this.paypalService.getAmountOfTokens(this.loggedUser?.email as string).subscribe(
+      (data: number) => this.currentAmount = data
+    );
   }
 }

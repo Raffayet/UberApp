@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { User } from 'src/app/model/User';
+import { UserProfilePageComponent } from '../user-profile-page/user-profile-page.component';
 
 @Component({
   selector: 'app-client-dashboard',

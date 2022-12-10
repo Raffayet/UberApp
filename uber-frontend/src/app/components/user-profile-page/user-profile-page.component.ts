@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { User } from 'src/app/model/User';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
@@ -6,6 +6,7 @@ import { ViewportScroller } from '@angular/common';
 import { UserService } from 'src/app/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PaypalPaymentComponent } from '../paypal-payment/paypal-payment.component';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -13,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./user-profile-page.component.css']
 })
 export class UserProfilePageComponent {
+  currentAmount: number
 
   loggedUser: User | null;
   infoForm: FormGroup;
@@ -24,7 +26,6 @@ export class UserProfilePageComponent {
 
   ngOnInit() {    
       this.loggedUser = this.tokenUtilsService.getUserFromToken();
-
       this.userService.getProfilePicture(this.loggedUser?.email as string)
       .subscribe({
         next: (response: string) => {
