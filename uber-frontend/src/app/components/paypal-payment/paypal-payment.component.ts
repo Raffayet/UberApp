@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { User } from 'src/app/model/User';
 import { PaypalService } from 'src/app/services/paypal.service';
 
@@ -12,11 +12,11 @@ export class PaypalPaymentComponent implements OnInit{
   @Input() loggedUser : User | null; 
   currentAmount : number;
   tokens: number | string;
-
+  
   constructor(private paypalService: PaypalService){}
 
   @ViewChild('paypalRef', { static: true }) private paypalRef: ElementRef;
-
+  
   ngOnInit(): void {
     this.getAmountOfTokens();
 

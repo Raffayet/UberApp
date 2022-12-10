@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { User } from 'src/app/model/User';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
@@ -6,6 +6,7 @@ import { ViewportScroller } from '@angular/common';
 import { UserService } from 'src/app/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PaypalPaymentComponent } from '../paypal-payment/paypal-payment.component';
 import { DriverService } from 'src/app/services/driver.service';
 
 @Component({
@@ -14,6 +15,7 @@ import { DriverService } from 'src/app/services/driver.service';
   styleUrls: ['./user-profile-page.component.css']
 })
 export class UserProfilePageComponent {
+  currentAmount: number
 
   loggedUser: User | null;
   infoForm: FormGroup;

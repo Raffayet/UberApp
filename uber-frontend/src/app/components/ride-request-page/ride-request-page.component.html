@@ -1,52 +1,99 @@
 <div class="upperContainer">
-  <div class="formContainer">
-      <h1 class="display-1">Request a ride now</h1>
+  <div class="vertical-container">
+    <div class="formContainer" *ngIf="firstWindow" [@firstWindowAnimation]="!firstWindow">
+        <h1 class="display-1">Request a ride now</h1>
+          <h2 class="display-1" *ngIf="destinations.length == 0">Pick locations for your ride</h2>
+          <button (click)="trigger()">click me</button>
+          <div
+              cdkDropList
+              [cdkDropListData]="destinations"
+              class="example-list"
+              (cdkDropListDropped)="drop($event)">
+              <div *ngFor="let item of destinations; index as i;" cdkDrag>
+                <mat-form-field class="example-full-width" [style.width.rem]=20>
+                  <mat-label>Enter location</mat-label>
+                  <input [disabled]="i < destinations.length - 1" matInput [(ngModel)]='inputValues[i]' placeholder="Enter location" [matAutocomplete]="auto"
+                        (input)="searchOptions(i)">
+                </mat-form-field>
 
-        <h2 class="display-1" *ngIf="destinations.length == 0">Pick locations for your ride</h2>
-        <div
-            cdkDropList
-            [cdkDropListData]="destinations"
-            class="example-list"
-            (cdkDropListDropped)="drop($event)">
-            <div *ngFor="let item of destinations; index as i;" cdkDrag>
-              <mat-form-field class="example-full-width" [style.width.rem]=20>
-                <mat-label>Enter location</mat-label>
-                <input [disabled]="i < destinations.length - 1" matInput [(ngModel)]='inputValues[i]' placeholder="Enter location" [matAutocomplete]="auto"
-                       (input)="searchOptions(i)">
-              </mat-form-field>
+                <button *ngIf="destinations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
 
-               <button *ngIf="destinations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
-                <mat-icon>delete_forever</mat-icon>
-              </button>
+                <button *ngIf="i == destinations.length - 1 && i != 4" mat-mini-fab color="primary" (click)="addLocation(i)">
+                  <mat-icon>add_circle</mat-icon>
+                </button>
 
-              <button *ngIf="i == destinations.length - 1 && i != 4" mat-mini-fab color="primary" (click)="addLocation(i)">
-                <mat-icon>add_circle</mat-icon>
-              </button>
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of options[i] | async" [value]="option.displayName" (click)="pinLocation(option, i)">
+                    {{option.displayName}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+              <mat-expansion-panel class="vehicle-expansion-panel">
+                <mat-expansion-panel-header>Select Vehicle Type</mat-expansion-panel-header>
+                  <mat-radio-group
+                    aria-labelledby="radio-group-label"
+                    class="radio-group"
+                    [(ngModel)]="vehicleType">
+                    <mat-radio-button class="radio-button" *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
+                      {{vType}}
+                    </mat-radio-button>
+                  </mat-radio-group>
+              </mat-expansion-panel>
+              <mat-chip class="priceChip" *ngIf="vehicleType">$ {{price}}</mat-chip>
+          </div>
+          <button mat-raised-button class="request-button" style="margin-right:2rem;" [disabled]="!vehicleType || destinations.length < 2" (click)="getPins()">Request now</button>
+          <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2">Schedule for later</button>
 
-              <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of options[i] | async" [value]="option.displayName" (click)="pinLocation(option, i)">
-                  {{option.displayName}}
-                </mat-option>
-              </mat-autocomplete>
-            </div>
-            <mat-expansion-panel class="vehicle-expansion-panel">
-              <mat-expansion-panel-header>Select Vehicle Type</mat-expansion-panel-header>
-                <mat-radio-group
-                  aria-labelledby="radio-group-label"
-                  class="radio-group"
-                  [(ngModel)]="vehicleType">
-                  <mat-radio-button class="radio-button" *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
-                    {{vType}}
-                  </mat-radio-button>
-                </mat-radio-group>
-            </mat-expansion-panel>
-            <mat-chip class="priceChip" *ngIf="vehicleType">$ {{price}}</mat-chip>
-        </div>
-        <button mat-raised-button style="margin-right:2rem;" (click)="getPins()">Request now</button>
-        <button mat-raised-button color="gray">Schedule for later</button>
-
-  </div>
-      <div class="mapContainer">
-        <app-map></app-map>
+    </div>
+    <button mat-fab color="accent" aria-label="Example icon button with a home icon" class="back-button" (click)="triggerBack()">
+      <mat-icon>arrow_left</mat-icon>
+    </button>
+    <div class="payment-container" *ngIf="secondWindow" [@secondWindowAnimation]>
+      <h1 class="additional-info-header">Additional Information</h1>
+      
+      <div *ngIf="vehicleType && currentAmount < price">
+        <mat-chip class="final-price-failure" style="background-color: #B22222">{{price}} Tokens</mat-chip>
+        <mat-icon class="price-icon-failure">report_problem</mat-icon>
+        <label class="failure-label">Not enough tokens!</label>
       </div>
+      <div *ngIf="vehicleType && currentAmount >= price">
+        <mat-chip class="final-price-success" style="background-color: #228B22">{{price}} Tokens</mat-chip>
+        <mat-icon class="price-icon-success">done</mat-icon>
+        <label class="success-label">Enough Tokens!</label>
+      </div>
+
+      <!-- <div>
+        <button class="split-fare-button">Split Fare</button>
+      </div> -->
+
+      <mat-form-field class="example-chip-list" appearance="fill">
+        <mat-label>Add more people</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Add more people">
+          <mat-chip-row *ngFor="let person of people"
+                        (removed)="remove(person)"
+                        [editable]="true"
+                        (edited)="edit(person, $event)">
+            {{person.name}}
+            <button matChipRemove [attr.aria-label]="'remove ' + person">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+          <input placeholder="New person..."
+                 [matChipInputFor]="chipGrid"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 (matChipInputTokenEnd)="add($event)"/>
+        </mat-chip-grid>
+      </mat-form-field>
+      <div *ngIf="people.length > 0">
+        <label class="progress-label">Waiting for people to confirm...</label>
+        <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+      </div>
+    </div>
+  </div>
+  <div class="mapContainer">
+    <app-map></app-map>
+  </div>
 </div>
