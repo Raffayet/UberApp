@@ -25,7 +25,7 @@ import { ActivatedAccountComponent } from './components/activated-account/activa
 import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
-import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ToastrModule } from 'ngx-toastr';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
@@ -42,6 +42,14 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payment.component';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatChipsModule} from '@angular/material/chips';
+import { AdminNavbarComponent } from './components/admin/admin-navbar/admin-navbar.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { RegisterDriverComponent } from './components/admin/register-driver/register-driver.component';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatSelectModule} from '@angular/material/select';
 
 
 @NgModule({
@@ -64,6 +72,8 @@ import {MatChipsModule} from '@angular/material/chips';
     UnauthenticatedDashboard,
     UserProfilePageComponent,
     PaypalPaymentComponent,
+    AdminNavbarComponent,
+    RegisterDriverComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,6 +95,15 @@ import {MatChipsModule} from '@angular/material/chips';
     DragDropModule,
     MatGridListModule,
     MatExpansionModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatListModule,
+    MatExpansionModule,
+    MatTooltipModule,
+    MatStepperModule,
+    MatSelectModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-bottom-right',

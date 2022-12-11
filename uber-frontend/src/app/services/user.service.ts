@@ -3,13 +3,14 @@ import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router:Router) { }
 
   updatePersonalInfo(infoForm: FormGroup) : Observable<string>{
       let headers = new HttpHeaders();
@@ -40,6 +41,11 @@ export class UserService {
     queryParams = queryParams.append("email", email);
 
     return this.http.get<string>(environment.apiURL + '/user/profile-picture', {params:queryParams, headers, responseType: 'text' as 'json'});    
+  }
+
+  logOut(){
+    localStorage.clear();
+    this.router.navigateByUrl("/login");
   }
 
 }

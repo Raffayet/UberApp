@@ -1,0 +1,70 @@
+<mat-toolbar >
+    <button mat-icon-button (click)="sidenav.toggle()" matTooltip="Menu">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <span>UberApp</span>
+    <span class="toolbar-item-spacer"></span>
+    <button mat-icon-button matTooltip="Notifications">
+        <mat-icon>notifications</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="My Account" [matMenuTriggerFor]="userAccountMenu">
+        <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #userAccountMenu [overlapTrigger]="false" yPosition="below">
+        <button mat-menu-item routerLink="#">
+            <mat-icon>person</mat-icon><span>My Account</span>
+        </button>
+        <button mat-menu-item routerLink="#">
+            <mat-icon>settings</mat-icon><span>Settings</span>
+        </button>
+        <button mat-menu-item routerLink="#">
+            <mat-icon>help</mat-icon><span>Help</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="LogOut()">
+            <mat-icon>exit_to_app</mat-icon>Logout
+        </button>
+    </mat-menu>
+</mat-toolbar>
+
+<mat-sidenav-container class="app-container">
+    <mat-sidenav #sidenav mode="side" [class.mat-elevation-z4]="true" class="app-sidenav">
+        <mat-nav-list>
+            <mat-list-item routerLink="#">
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>dashboard</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Dashboard
+                    </p>
+                </div>
+            </mat-list-item>
+            <mat-list-item [routerLink]="['/admin-dashboard', {outlets: {'adminRouter': ['registerDriver']}}]">
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>person_add</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Register Driver
+                    </p>
+                </div>
+            </mat-list-item>
+            <mat-list-item [routerLink]="['/admin-dashboard', {outlets: {'adminRouter': ['adminChat']}}]" >
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>chat</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Live Chat
+                    </p>
+                </div>
+            </mat-list-item>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet name="adminRouter">
+            
+        </router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container> 
