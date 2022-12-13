@@ -14,6 +14,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { PaypalService } from 'src/app/services/paypal.service';
 import { User } from 'src/app/model/User';
 import { TokenUtilsService } from 'src/app/services/token-utils.service';
+import { Point } from '../../model/Point';
 
 @Component({
   selector: 'ride-request-page',
@@ -149,8 +150,8 @@ export class RideRequestPageComponent {
 
   ngOnInit() { 
     this.loggedUser = this.tokenUtilsService.getUserFromToken();  
-    this.getAmountOfTokens() 
-    console.log(this.loggedUser)
+    this.getAmountOfTokens();
+    
     this.destinations.push({
       displayName: "",
       lon: "",
@@ -192,9 +193,9 @@ export class RideRequestPageComponent {
 
   getPins(){
     let markers: Array<L.Marker> = this.mapChild.getPins();
-    console.log(markers);  
+
     if (window.location.href === environment.frontURL) 
-      this.router.navigateByUrl('login') 
+      this.router.navigateByUrl('login');
   }
 
   createRoute(): void{
@@ -202,14 +203,13 @@ export class RideRequestPageComponent {
   } 
 
   calculatePrice(vType: string): void{
-    this.vehicleType = vType
-    this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)
-    this.pricePerPassenger = this.price
+    this.vehicleType = vType;
+    this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations);
+    this.pricePerPassenger = this.price;
   }
 
   getTotalDistance(): void{
-    this.totalDistance = this.mapService.getTotalDistance(this.mapChild.locations)
-    console.log(this.totalDistance)
+    this.totalDistance = this.mapService.getTotalDistance(this.mapChild.locations);
   }
 
   getAmountOfTokens(){
@@ -219,23 +219,19 @@ export class RideRequestPageComponent {
   }
 
   splitFare(): void{
-    this.progressBarVisible = true
-    this.pricePerPassenger = this.price / (this.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
+    this.progressBarVisible = true;
+    this.pricePerPassenger = this.price / (this.people.length + 1);    //+ 1 se odnosi i na coveka koji je rezervisao voznju
   }
 
   onYourCharge(): void{
-    this.progressBarVisible = true
+    this.progressBarVisible = true;
   }
 
   automaticallyFindPath(isBest: boolean): void{
     this.mapService.automaticallyFindPath(isBest, this.mapChild.locations).subscribe({
       next: data => {
-          let coords: Array<[number, number]> = data.paths[0].points.coordinates;
-          coords = coords.map(coord => [
-            coord[1],
-            coord[0]
-          ])
-          console.log(coords)
+          let coords: Array<Point> = data;
+          coords = coords.map(coord => new Point(coord.lng, coord.lat));
           this.mapChild.drawRoute(coords)
       },
       error: error => {

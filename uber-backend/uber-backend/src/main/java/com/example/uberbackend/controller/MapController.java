@@ -26,11 +26,21 @@ import java.util.List;
 public class MapController {
     private final MapService mapService;
 
-    @PostMapping(value = "/determine-route")
-    public ResponseEntity<String> determineRoute(@RequestBody List<Point> points){
+    @PostMapping(value = "/determine-optimal-route")
+    public ResponseEntity<?> determineOptimalRoute(@RequestBody List<Point> points){
         try{
-            String res = mapService.getRoute(points);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            List<Point> response = mapService.getOptimalRoute(points);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/determine-alternative-route")
+    public ResponseEntity<?> determineAlternativeRoute(@RequestBody List<Point> points){
+        try{
+            List<Point> response = mapService.getAlternativeRoute(points);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception ex){
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }

@@ -26,4 +26,9 @@ public class Point {
         this.lat = lat;
         this.lng = lng;
     }
+
+    public Point(String lat, String lng) {
+        this.lat = Double.parseDouble(lat);
+        this.lng = Double.parseDouble(lng);
+    }
 }

@@ -71,16 +71,17 @@ export class MapService {
     return totalDistance
   }
 
-  automaticallyFindPath(isBest: boolean, locations: Array<L.Marker>): Observable<any>{
-    console.log(locations)
+  automaticallyFindPath(isBest: boolean, locations: Array<L.Marker>): Observable<Array<Point>>{
     locations = locations.filter(location => {
       return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0;
-    })
-    console.log(locations)
+    });
+
     let points = locations.map(location => new Point(location.getLatLng().lat,
     location.getLatLng().lng));
+
+    let routeParam: string = isBest ? "determine-optimal-route" : "determine-alternative-route"; 
     
-    return this.http.post<any>(environment.apiURL + "/map/determine-route", points);
+    return this.http.post<Array<Point>>(environment.apiURL + "/map/" + routeParam, points);
   }
   
 }
