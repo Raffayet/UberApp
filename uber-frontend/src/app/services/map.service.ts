@@ -79,10 +79,8 @@ export class MapService {
     console.log(locations)
     let points = locations.map(location => new Point(location.getLatLng().lat,
     location.getLatLng().lng));
-
-    // let queryParams = new HttpParams();
-    // queryParams = queryParams.append("points", JSON.stringify(points));
     
     return this.http.post<any>(environment.apiURL + "/map/determine-route", points);
   }
+  
 }

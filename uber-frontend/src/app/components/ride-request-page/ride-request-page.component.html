@@ -30,23 +30,27 @@
                   </mat-option>
                 </mat-autocomplete>
               </div>
-              <mat-expansion-panel class="vehicle-expansion-panel">
-                <mat-expansion-panel-header>Select Vehicle Type</mat-expansion-panel-header>
-                  <mat-radio-group
-                    aria-labelledby="radio-group-label"
-                    class="radio-group"
-                    [(ngModel)]="vehicleType">
-                    <mat-radio-button class="radio-button" *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
-                      {{vType}}
-                    </mat-radio-button>
-                  </mat-radio-group>
-              </mat-expansion-panel>
+       
+              <mat-form-field appearance="fill" class="vehicle-expansion-panel">
+                <mat-select [(ngModel)]="vehicleType" placeholder="Select vehicle type:">
+                  <mat-option *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
+                    {{vType}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <br>
               <mat-chip class="priceChip" *ngIf="vehicleType">$ {{price}}</mat-chip>
+
+              <mat-expansion-panel expanded="true" class="route-type-panel">         
+                <mat-label>Select route type:</mat-label><br>
+                <mat-radio-group aria-label="Select an option" [(ngModel)]="routeType" (change)="changeRouteType()" [disabled]="!vehicleType || destinations.length < 2">
+                  <mat-radio-button *ngFor="let type of routeTypes" [value]="type">{{type}}</mat-radio-button>
+                </mat-radio-group>
+              </mat-expansion-panel>
+             
           </div>
           <button mat-raised-button class="request-button" style="margin-right:2rem;" [disabled]="!vehicleType || destinations.length < 2" (click)="getPins()">Request now</button>
           <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2">Schedule for later</button>
-          <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2" (click)="automaticallyFindPath(true)">Best path</button>
-          <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2" (click)="automaticallyFindPath(false)">Alternative path</button>
 
     </div>
     <button mat-fab color="accent" aria-label="Example icon button with a home icon" class="back-button" (click)="triggerBack()">

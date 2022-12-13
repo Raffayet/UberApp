@@ -63,7 +63,7 @@ export class MapComponent implements AfterViewInit {
     this.locations[i].addTo(this.map);
 
     this.map.setView(newLatLng, 12);    
-    this.featureGroup = L.featureGroup(this.locations.filter((location) => { return location.getLatLng().lat != 0 && location.getLatLng().lng != 0; }));
+    this.featureGroup = L.featureGroup(this.locations.filter((location) => { return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0; }));
     
     this.map.fitBounds(this.featureGroup.getBounds());
 
@@ -109,11 +109,6 @@ export class MapComponent implements AfterViewInit {
         latlngs.push(location.getLatLng())
     }
 
-    // let polyline = L.polyline(latlngs, {color: 'red'}).addTo(this.map);
-    
-    // this.map.fitBounds(polyline.getBounds());
-
-
     this.routingControl = L.Routing.control({
       waypoints: latlngs,
       waypointMode: "connect",
@@ -134,8 +129,17 @@ export class MapComponent implements AfterViewInit {
     this.map.remove()
     this.initMap()
     var polyline = L.polyline(coords, {color: 'red'}).addTo(this.map);
-    L.marker([coords[0][0], coords[0][1]], {icon: this.customIcon}).addTo(this.map);
-    L.marker([coords[coords.length - 1][0], coords[coords.length - 1][1]], {icon: this.customIcon}).addTo(this.map);
+   
+    this.placePinsForFoundPath();
+
     this.map.fitBounds(polyline.getBounds());
+  }
+
+  placePinsForFoundPath(): void{
+    let locations = this.locations.filter((location) => { return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0; });
+
+    for(let location of locations){
+      location.addTo(this.map);
+    }
   }
 }

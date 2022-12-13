@@ -46,32 +46,35 @@ export class RideRequestPageComponent {
   @ViewChild(MapComponent)
   private mapChild!: MapComponent;
 
-  loggedUser: User | null
+  loggedUser: User | null;
 
-  currentAmount: number
+  currentAmount: number;
 
   destinations: MapSearchResult[] = [];
   options: Observable<MapSearchResult[]>[] = [];
   inputValues: string[] = [];
 
-  vehicleType: string;
   vehicleTypes: string[] = ['Regular', 'Baby Seats', 'Pet Seats'];
+  vehicleType: string;
 
-  price: number
+  routeTypes: string[] = ['Custom', 'Optimal', 'Alternative'];
+  routeType: string = this.routeTypes[0];
 
-  pricePerPassenger: number
+  price: number;
 
-  firstWindow: boolean = true
+  pricePerPassenger: number;
 
-  secondWindow: boolean = false
+  firstWindow: boolean = true;
 
-  animationsStarted: boolean = false
+  secondWindow: boolean = false;
 
-  progressBarVisible: boolean
+  animationsStarted: boolean = false;
 
-  totalDistance: Number
+  progressBarVisible: boolean;
 
-  maxPeoplePerDrive = environment.maxPeoplePerDrive
+  totalDistance: Number;
+
+  maxPeoplePerDrive = environment.maxPeoplePerDrive;
 
   //add more people
   addOnBlur = true;
@@ -195,7 +198,7 @@ export class RideRequestPageComponent {
   }
 
   createRoute(): void{
-    this.mapChild.createRoute()
+    this.mapChild.createRoute();
   } 
 
   calculatePrice(vType: string): void{
@@ -239,5 +242,20 @@ export class RideRequestPageComponent {
           console.error('There was an error!', error);
       }
     });
+  }
+
+  changeRouteType(): void{
+    switch(this.routeType){
+      case "Custom":
+        this.createRoute();
+        break;
+      case "Optimal":
+        this.automaticallyFindPath(true);
+        break;
+      case "Alternative":
+        this.automaticallyFindPath(false);
+        break;
+    }
+    
   }
 }

@@ -73,6 +73,12 @@
     width: 59.3%;
 }
 
+.route-type-panel{
+    width: 70%;
+    padding-top: 1rem;
+    margin-bottom: 2rem;
+}
+
 .vertical-container .radio-group {
     display: flex;
     flex-direction: column;

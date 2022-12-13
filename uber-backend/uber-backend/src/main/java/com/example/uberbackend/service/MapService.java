@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.hibernate.cfg.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,8 +19,15 @@ public class MapService {
     
     public String getRoute(List<Point> points) throws IOException {
         OkHttpClient client = new OkHttpClient();
+        String queryParams = new String();
+
+        for(Point p : points){
+            queryParams = queryParams.concat("point=").concat(p.getLat().toString()).concat(",")
+                       .concat(p.getLng().toString()).concat("&");
+        }
+
         Request request = new Request.Builder()
-                .url("https://graphhopper.com/api/1/route?point=45.2413851,19.8253233&point=45.2759048,19.8012658&points_encoded=false&profile=car&locale=de&key=" + graphhopperApiKey)
+                .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&profile=car&locale=de&key=").concat(graphhopperApiKey))
                 .get()
                 .build();
         Response response = client.newCall(request).execute();

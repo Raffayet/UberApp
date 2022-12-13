@@ -42,6 +42,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payment.component';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatSelectModule} from '@angular/material/select';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 
@@ -85,6 +86,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     SocialLoginModule,
     DragDropModule,
     MatGridListModule,
+    MatSelectModule,
     MatExpansionModule,
     ToastrModule.forRoot({
       timeOut: 2000,
