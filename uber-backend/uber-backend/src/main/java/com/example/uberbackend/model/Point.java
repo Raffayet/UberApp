@@ -15,15 +15,15 @@ public class Point {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private Double x;
-    private Double y;
+    private Double lat;
+    private Double lng;
 
     @ManyToOne
     @JoinColumn(name = "route_id")
     private Route route;
 
-    public Point(Double x, Double y) {
-        this.x = x;
-        this.y = y;
+    public Point(Double lat, Double lng) {
+        this.lat = lat;
+        this.lng = lng;
     }
 }

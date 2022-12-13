@@ -57,7 +57,9 @@ export class RideRequestPageComponent {
   vehicleType: string;
   vehicleTypes: string[] = ['Regular', 'Baby Seats', 'Pet Seats'];
 
-  price: Number
+  price: number
+
+  pricePerPassenger: number
 
   firstWindow: boolean = true
 
@@ -65,10 +67,16 @@ export class RideRequestPageComponent {
 
   animationsStarted: boolean = false
 
+  progressBarVisible: boolean
+
+  totalDistance: Number
+
+  maxPeoplePerDrive = environment.maxPeoplePerDrive
+
   //add more people
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  people: Person[] = [];
+  people: Person[] = []
   
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -76,7 +84,6 @@ export class RideRequestPageComponent {
     if (value) {
       this.people.push({name: value});
     }
-
     event.chipInput!.clear();
   }
 
@@ -106,8 +113,19 @@ export class RideRequestPageComponent {
 
   trigger()
   {
-    this.firstWindow = false
-    this.secondWindow = true
+    this.getTotalDistance()
+    if (this.destinations.length < 2)
+      this.toastr.warning('You must pick locations for ride!')
+    else if (this.totalDistance === 0)
+      this.toastr.warning('There should be distance between locations!')
+    else if (!this.vehicleType)
+      this.toastr.warning('Choose vehicle type!')
+    else{
+      if(this.currentAmount < this.pricePerPassenger)
+        this.toastr.warning('You do not have enough tokens for ride!')
+      this.firstWindow = false
+      this.secondWindow = true
+    }
   }
 
   triggerBack()
@@ -122,6 +140,8 @@ export class RideRequestPageComponent {
     moveItemInArray(this.mapChild.locations, event.previousIndex, event.currentIndex);  
     this.mapChild.removePreviousRoute()
     this.mapChild.createRoute()   
+    this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)    
+    this.pricePerPassenger = this.price  
   }
 
   ngOnInit() { 
@@ -148,13 +168,15 @@ export class RideRequestPageComponent {
     this.destinations[index] = option;
     this.mapChild.pinNewResult(option, index);
     this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)
+    this.pricePerPassenger = this.price
   }
 
   deleteLocation(index: number) : void {      
       this.destinations.splice(index, 1);
       this.inputValues.splice(index, 1);
       this.mapChild.deletePin(index);    
-      this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)      
+      this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)    
+      this.pricePerPassenger = this.price  
   }
 
   addLocation(index: number) : void {    
@@ -179,11 +201,43 @@ export class RideRequestPageComponent {
   calculatePrice(vType: string): void{
     this.vehicleType = vType
     this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)
+    this.pricePerPassenger = this.price
+  }
+
+  getTotalDistance(): void{
+    this.totalDistance = this.mapService.getTotalDistance(this.mapChild.locations)
+    console.log(this.totalDistance)
   }
 
   getAmountOfTokens(){
     this.paypalService.getAmountOfTokens(this.loggedUser?.email as string).subscribe(
       (data: number) => this.currentAmount = data
     );
+  }
+
+  splitFare(): void{
+    this.progressBarVisible = true
+    this.pricePerPassenger = this.price / (this.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
+  }
+
+  onYourCharge(): void{
+    this.progressBarVisible = true
+  }
+
+  automaticallyFindPath(isBest: boolean): void{
+    this.mapService.automaticallyFindPath(isBest, this.mapChild.locations).subscribe({
+      next: data => {
+          let coords: Array<[number, number]> = data.paths[0].points.coordinates;
+          coords = coords.map(coord => [
+            coord[1],
+            coord[0]
+          ])
+          console.log(coords)
+          this.mapChild.drawRoute(coords)
+      },
+      error: error => {
+          console.error('There was an error!', error);
+      }
+    });
   }
 }

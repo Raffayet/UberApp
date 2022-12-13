@@ -132,6 +132,7 @@
     font-size: 1.3rem;
     margin-right: 1rem;
     background-color: #B22222;
+    margin-bottom: 2rem;
 }
 
 .price-icon-success{
@@ -170,4 +171,25 @@
 
 .classic-label{
     font-size: 1rem;
+}
+
+.split-fare-button{
+    margin-left: 2rem;
+}
+
+.split-fare-button:disabled{
+    background-color: darkgrey;
+}
+
+.your-charge-button{
+    margin-left: 2rem;
+}
+
+.your-charge-button:disabled{
+    background-color: darkgrey;
+}
+
+.submit-button{
+    margin-top: 2rem;
+    margin-left: 2rem;
 }
