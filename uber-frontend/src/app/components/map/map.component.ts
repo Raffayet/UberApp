@@ -95,6 +95,7 @@ export class MapComponent implements AfterViewInit {
   }
 
   createRoute(): void{
+
     for (let location of this.locations)
     {
       this.map.removeLayer(location)
@@ -112,6 +113,7 @@ export class MapComponent implements AfterViewInit {
     
     // this.map.fitBounds(polyline.getBounds());
 
+
     this.routingControl = L.Routing.control({
       waypoints: latlngs,
       waypointMode: "connect",
@@ -126,5 +128,14 @@ export class MapComponent implements AfterViewInit {
         }
       }),
     }).addTo(this.map);
+  }
+
+  drawRoute(coords: any) {
+    this.map.remove()
+    this.initMap()
+    var polyline = L.polyline(coords, {color: 'red'}).addTo(this.map);
+    L.marker([coords[0][0], coords[0][1]], {icon: this.customIcon}).addTo(this.map);
+    L.marker([coords[coords.length - 1][0], coords[coords.length - 1][1]], {icon: this.customIcon}).addTo(this.map);
+    this.map.fitBounds(polyline.getBounds());
   }
 }

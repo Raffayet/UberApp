@@ -45,6 +45,8 @@
           </div>
           <button mat-raised-button class="request-button" style="margin-right:2rem;" [disabled]="!vehicleType || destinations.length < 2" (click)="getPins()">Request now</button>
           <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2">Schedule for later</button>
+          <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2" (click)="automaticallyFindPath(true)">Best path</button>
+          <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2" (click)="automaticallyFindPath(false)">Alternative path</button>
 
     </div>
     <button mat-fab color="accent" aria-label="Example icon button with a home icon" class="back-button" (click)="triggerBack()">
@@ -53,13 +55,14 @@
     <div class="payment-container" *ngIf="secondWindow" [@secondWindowAnimation]>
       <h1 class="additional-info-header">Additional Information</h1>
       
-      <div *ngIf="vehicleType && currentAmount < price">
-        <mat-chip class="final-price-failure" style="background-color: #B22222">{{price}} Tokens</mat-chip>
+      <div *ngIf="vehicleType && currentAmount < pricePerPassenger">
+        <mat-chip class="final-price-failure" style="background-color: #B22222">{{pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
         <mat-icon class="price-icon-failure">report_problem</mat-icon>
         <label class="failure-label">Not enough tokens!</label>
+        <app-paypal-payment *ngIf="loggedUser?.role == 'CLIENT'" [loggedUser]="loggedUser"></app-paypal-payment>
       </div>
-      <div *ngIf="vehicleType && currentAmount >= price">
-        <mat-chip class="final-price-success" style="background-color: #228B22">{{price}} Tokens</mat-chip>
+      <div *ngIf="vehicleType && currentAmount >= pricePerPassenger">
+        <mat-chip class="final-price-success" style="background-color: #228B22">{{pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
         <mat-icon class="price-icon-success">done</mat-icon>
         <label class="success-label">Enough Tokens!</label>
       </div>
@@ -68,13 +71,15 @@
         <button class="split-fare-button">Split Fare</button>
       </div> -->
 
-      <mat-form-field class="example-chip-list" appearance="fill">
+      <mat-form-field class="example-chip-list" appearance="fill" *ngIf="currentAmount >= price / (maxPeoplePerDrive + 1)">
         <mat-label>Add more people</mat-label>
         <mat-chip-grid #chipGrid aria-label="Add more people">
           <mat-chip-row *ngFor="let person of people"
                         (removed)="remove(person)"
-                        [editable]="true"
-                        (edited)="edit(person, $event)">
+                        [editable]="!progressBarVisible"
+                        (edited)="edit(person, $event)"
+                        [removable]="!progressBarVisible"
+                        >
             {{person.name}}
             <button matChipRemove [attr.aria-label]="'remove ' + person">
               <mat-icon>cancel</mat-icon>
@@ -84,12 +89,20 @@
                  [matChipInputFor]="chipGrid"
                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                  [matChipInputAddOnBlur]="addOnBlur"
-                 (matChipInputTokenEnd)="add($event)"/>
+                 (matChipInputTokenEnd)="add($event)"
+                 [disabled]="progressBarVisible || currentAmount < pricePerPassenger || people.length >= maxPeoplePerDrive"/>
         </mat-chip-grid>
       </mat-form-field>
-      <div *ngIf="people.length > 0">
+      <div *ngIf="progressBarVisible && currentAmount >= pricePerPassenger">
         <label class="progress-label">Waiting for people to confirm...</label>
         <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+      </div>
+      <div *ngIf="people.length > 0 && currentAmount >= price">
+        <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="progressBarVisible || currentAmount < pricePerPassenger">Split Fare</button>
+        <button mat-raised-button color="gray" class="your-charge-button" (click)="onYourCharge()" [disabled]="progressBarVisible || currentAmount < pricePerPassenger">On Your Charge</button>
+      </div>
+      <div>
+        <button mat-raised-button class="submit-button" [disabled]="people.length > 0 || currentAmount < pricePerPassenger">SUBMIT</button>
       </div>
     </div>
   </div>

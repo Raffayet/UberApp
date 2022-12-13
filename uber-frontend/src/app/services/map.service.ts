@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import * as L from 'leaflet';
 import { MapComponent } from '../components/map/map.component';
 import { environment } from '../environments/environment';
+import { Point } from '../model/Point';
 
 export type MapSearchResult = {
   displayName: string;
@@ -44,12 +45,13 @@ export class MapService {
 
   calculateTotalDistance(locations: Array<L.Marker>): Number{
     let totalDistance = 0
-    for (let i = 0; i < locations.length; i++)
+    for (let i = 0; i < locations.length - 1; i++)
     {
       if (locations[i].getLatLng().lat !== 0 && locations[i].getLatLng().lng !== 0 && locations[i + 1].getLatLng().lat !== 0 && locations[i + 1].getLatLng().lng !== 0)
-        totalDistance += locations[i].getLatLng().distanceTo(locations[i + 1].getLatLng())
+        totalDistance += locations[i].getLatLng().distanceTo(locations[i + 1].getLatLng());
     }
-    return totalDistance / 1000
+    console.log(totalDistance);
+    return totalDistance / 1000;
   }
 
   calculatePrice(vehicleType: string, locations: Array<L.Marker>) {
@@ -59,8 +61,28 @@ export class MapService {
     vehicleTypeMap.set("Pet Seats", 250);
 
     let totalDistance = this.calculateTotalDistance(locations)
-    let price = (vehicleTypeMap.get(vehicleType) + Number(totalDistance) * 120) / environment.usdRsdRatio
-    let roundedPrice = Math.round(price * 100) / 100
+    let price = (vehicleTypeMap.get(vehicleType) + Number(totalDistance) * 120) / environment.usdRsdRatio;
+    let roundedPrice = Math.round(price * 100) / 100;
     return roundedPrice;
+  }
+
+  getTotalDistance(locations: Array<L.Marker>){
+    let totalDistance = this.calculateTotalDistance(locations)
+    return totalDistance
+  }
+
+  automaticallyFindPath(isBest: boolean, locations: Array<L.Marker>): Observable<any>{
+    console.log(locations)
+    locations = locations.filter(location => {
+      return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0;
+    })
+    console.log(locations)
+    let points = locations.map(location => new Point(location.getLatLng().lat,
+    location.getLatLng().lng));
+
+    // let queryParams = new HttpParams();
+    // queryParams = queryParams.append("points", JSON.stringify(points));
+    
+    return this.http.post<any>(environment.apiURL + "/map/determine-route", points);
   }
 }
