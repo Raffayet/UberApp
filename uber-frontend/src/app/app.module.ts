@@ -3,29 +3,21 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { LoginComponent } from './components/login/login.component';
-import { RideRequestPageComponent } from './components/ride-request-page/ride-request-page.component';
+import { NavbarComponent } from './modules/shared/components/navbar/navbar.component';
+import { LoginComponent } from './modules/auth/pages/login/login.component';
+import { RideRequestPageComponent } from './modules/client/pages/ride-request-page/ride-request-page.component';
 import {PasswordModule} from 'primeng/password';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import {MatButtonModule} from '@angular/material/button';
-import {MatInputModule} from '@angular/material/input';
-import { RegistrationPageComponent } from './components/registration-page/registration-page.component';
-import { MatListModule } from '@angular/material/list';
-import { MapComponent } from './components/map/map.component';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import { GeocodingComponent } from './components/map/geocoding/geocoding.component';
-import { LivechatComponent } from './components/livechat/livechat.component';
-import { MatIconModule } from '@angular/material/icon';
+import { RegistrationPageComponent } from './modules/auth/pages/registration-page/registration-page.component';
+import { MapComponent } from './modules/shared/components/map/map.component';
+import { LivechatComponent } from './modules/shared/components/livechat/livechat.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
-import { ActivatedAccountComponent } from './components/activated-account/activated-account.component';
-import { RegisteredAccountPageComponent } from './components/registered-account-page/registered-account-page.component';
-import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
-import { DriverDashboardComponent } from './components/driver-dashboard/driver-dashboard.component';
-import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { ActivatedAccountComponent } from './modules/auth/pages/activated-account/activated-account.component';
+import { RegisteredAccountPageComponent } from './modules/auth/pages/registered-account-page/registered-account-page.component';
+import { ClientDashboardComponent } from './modules/client/pages/client-dashboard/client-dashboard.component';
+import { DriverDashboardComponent } from './modules/driver/pages/driver-dashboard/driver-dashboard.component';
+import { AdminDashboardComponent } from './modules/admin/pages/admin-dashboard/admin-dashboard.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ToastrModule } from 'ngx-toastr';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
@@ -33,17 +25,13 @@ import {
   GoogleLoginProvider,
   FacebookLoginProvider
 } from '@abacritt/angularx-social-login';
-import { AdditionalLoginInfoComponent } from './components/additional-login-info/additional-login-info.component';
-import { RegisteredSocialAccountComponent } from './components/registered-social-account/registered-social-account.component';
-import { UnauthenticatedDashboard } from './components/unauthenticated-dashboard/unauthenticated-dashboard.component';
-import { UserProfilePageComponent } from './components/user-profile-page/user-profile-page.component';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { PaypalPaymentComponent } from './components/paypal-payment/paypal-payment.component';
-import { MatRadioModule } from '@angular/material/radio';
-import {MatChipsModule} from '@angular/material/chips';
-import {MatSelectModule} from '@angular/material/select';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AdditionalLoginInfoComponent } from './modules/auth/components/additional-login-info/additional-login-info.component';
+import { RegisteredSocialAccountComponent } from './modules/auth/pages/registered-social-account/registered-social-account.component';
+import { UnauthenticatedDashboard } from './modules/auth/pages/unauthenticated-dashboard/unauthenticated-dashboard.component';
+import { UserProfilePageComponent } from './modules/shared/pages/user-profile-page/user-profile-page.component';
+import { MaterialComponentsModule } from './modules/material-components/material-components.module';
+import { PaypalPaymentComponent } from './modules/client/components/paypal-payment/paypal-payment.component';
+import { SharedModule } from './modules/shared/shared.module';
 
 
 @NgModule({
@@ -54,7 +42,6 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     RideRequestPageComponent,
     RegistrationPageComponent,
     MapComponent,
-    GeocodingComponent,
     LivechatComponent,
     ActivatedAccountComponent,
     RegisteredAccountPageComponent,
@@ -75,26 +62,14 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     ReactiveFormsModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatSlideToggleModule,
-    MatButtonModule,
-    MatInputModule,
-    MatDividerModule,
-    MatAutocompleteModule,
-    MatAutocompleteModule,
-    MatListModule,
-    MatIconModule,
     SocialLoginModule,
-    DragDropModule,
-    MatGridListModule,
-    MatSelectModule,
-    MatExpansionModule,
+    DragDropModule,   
+    MaterialComponentsModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-bottom-right',
     }),
-    MatRadioModule,
-    MatChipsModule,
-    MatProgressBarModule,
+    SharedModule
   ],
   providers: [
     {
