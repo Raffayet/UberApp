@@ -1,20 +1,21 @@
-import { trigger, transition, style, animate } from "@angular/animations";
-import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
-import { ENTER, COMMA } from "@angular/cdk/keycodes";
-import { Component, ViewChild } from "@angular/core";
-import { MatChipInputEvent, MatChipEditedEvent } from "@angular/material/chips";
-import { Router } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
-import { Observable, of } from "rxjs";
-import { environment } from "src/app/environments/environment";
-import { Person } from "src/app/model/Person";
-import { Point } from "src/app/model/Point";
-import { User } from "src/app/model/User";
-import { MapComponent } from "src/app/modules/shared/components/map/map.component";
-import { TokenUtilsService } from "src/app/modules/shared/services/token-utils.service";
-import { MapSearchResult, MapService } from "../../services/map.service";
-import { PaypalService } from "../../services/paypal.service";
+import { Component, Input, ViewChild } from '@angular/core';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 
+import { Observable, of } from 'rxjs';
+
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { ToastrService } from 'ngx-toastr';
+import { environment } from './../../environments/environment'
+import { Router } from '@angular/router';
+import { trigger, transition, animate, style } from '@angular/animations'
+import {MatChipEditedEvent, MatChipInputEvent} from '@angular/material/chips';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { Person } from 'src/app/model/Person';
+import { User } from 'src/app/model/User';
+import { MapSearchResult, MapService } from 'src/app/modules/client/services/map.service';
+import { PaypalService } from 'src/app/modules/client/services/paypal.service';
+import { MapComponent } from 'src/app/modules/shared/components/map/map.component';
+import { TokenUtilsService } from 'src/app/modules/shared/services/token-utils.service';
 
 @Component({
   selector: 'ride-request-page',
@@ -233,8 +234,12 @@ export class RideRequestPageComponent {
   automaticallyFindPath(isBest: boolean): void{
     this.mapService.automaticallyFindPath(isBest, this.mapChild.locations).subscribe({
       next: data => {
-          let coords: Array<Point> = data;
-          coords = coords.map(coord => new Point(coord.lng, coord.lat));
+          let coords: Array<[number, number]> = data.paths[0].points.coordinates;
+          coords = coords.map(coord => [
+            coord[1],
+            coord[0]
+          ])
+          console.log(coords)
           this.mapChild.drawRoute(coords)
       },
       error: error => {

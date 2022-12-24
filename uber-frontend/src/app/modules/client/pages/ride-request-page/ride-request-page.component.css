@@ -108,8 +108,7 @@
 
 .example-chip-list{
     margin-top: 2rem;
-    margin-left: 2rem;
-    width: 80%;
+    width: 100%;
 }
 
 .additional-info-header
@@ -127,14 +126,12 @@
 }
 
 .final-price-success{
-    margin-left: 2rem;
     font-size: 1.3rem;
     margin-right: 1rem;
     background-color: #228B22;
 }
 
 .final-price-failure{
-    margin-left: 2rem;
     font-size: 1.3rem;
     margin-right: 1rem;
     background-color: #B22222;
@@ -164,8 +161,7 @@
 }
 
 .progress-bar{
-    width: 80%;
-    margin-left: 2rem;
+    width: 100%;
     margin-bottom: 2rem;
 }
 
@@ -180,7 +176,6 @@
 }
 
 .split-fare-button{
-    margin-left: 2rem;
 }
 
 .split-fare-button:disabled{
