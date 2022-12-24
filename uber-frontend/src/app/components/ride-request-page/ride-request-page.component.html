@@ -32,7 +32,7 @@
               </div>
        
               <mat-form-field appearance="fill" class="vehicle-expansion-panel">
-                <mat-select [(ngModel)]="vehicleType" placeholder="Select vehicle type:">
+                <mat-select [(ngModel)]="vehicleType" placeholder="Select vehicle type">
                   <mat-option *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
                     {{vType}}
                   </mat-option>
@@ -42,7 +42,7 @@
               <mat-chip class="priceChip" *ngIf="vehicleType">$ {{price}}</mat-chip>
 
               <mat-expansion-panel expanded="true" class="route-type-panel">         
-                <mat-label>Select route type:</mat-label><br>
+                <mat-label>Select route type</mat-label><br>
                 <mat-radio-group aria-label="Select an option" [(ngModel)]="routeType" (change)="changeRouteType()" [disabled]="!vehicleType || destinations.length < 2">
                   <mat-radio-button *ngFor="let type of routeTypes" [value]="type">{{type}}</mat-radio-button>
                 </mat-radio-group>
@@ -94,15 +94,15 @@
                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                  [matChipInputAddOnBlur]="addOnBlur"
                  (matChipInputTokenEnd)="add($event)"
-                 [disabled]="progressBarVisible || currentAmount < pricePerPassenger || people.length >= maxPeoplePerDrive"/>
+                 [disabled]="progressBarVisible || currentAmount < price / (maxPeoplePerDrive + 1) || people.length >= maxPeoplePerDrive"/>
         </mat-chip-grid>
       </mat-form-field>
       <div *ngIf="progressBarVisible && currentAmount >= pricePerPassenger">
         <label class="progress-label">Waiting for people to confirm...</label>
         <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
       </div>
-      <div *ngIf="people.length > 0 && currentAmount >= price">
-        <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="progressBarVisible || currentAmount < pricePerPassenger">Split Fare</button>
+      <div *ngIf="people.length > 0 && price / (maxPeoplePerDrive + 1)">
+        <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="progressBarVisible || currentAmount < price / (maxPeoplePerDrive + 1)">Split Fare</button>
         <button mat-raised-button color="gray" class="your-charge-button" (click)="onYourCharge()" [disabled]="progressBarVisible || currentAmount < pricePerPassenger">On Your Charge</button>
       </div>
       <div>

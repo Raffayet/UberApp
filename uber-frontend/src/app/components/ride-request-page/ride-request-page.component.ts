@@ -221,6 +221,8 @@ export class RideRequestPageComponent {
   splitFare(): void{
     this.progressBarVisible = true
     this.pricePerPassenger = this.price / (this.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
+    console.log(this.mapChild.locations)
+    // this.mapService.createDriveInvitation(this.loggedUser, this.pricePerPassenger,);
   }
 
   onYourCharge(): void{
