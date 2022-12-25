@@ -7,11 +7,11 @@ import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Observable, of } from "rxjs";
 import { environment } from "src/app/environments/environment";
-import { Person } from "src/app/model/Person";
 import { Point } from "src/app/model/Point";
 import { User } from "src/app/model/User";
 import { MapComponent } from "src/app/modules/shared/components/map/map.component";
 import { TokenUtilsService } from "src/app/modules/shared/services/token-utils.service";
+import { ClientService } from "../../services/client.service";
 import { MapSearchResult, MapService } from "../../services/map.service";
 import { PaypalService } from "../../services/paypal.service";
 
@@ -80,18 +80,18 @@ export class RideRequestPageComponent {
   //add more people
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  people: Person[] = []
+  people: string[] = []
   
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
     if (value) {
-      this.people.push({name: value});
+      this.people.push(value);
     }
     event.chipInput!.clear();
   }
 
-  remove(person: Person): void {
+  remove(person: string): void {
     const index = this.people.indexOf(person);
 
     if (index >= 0) {
@@ -99,7 +99,7 @@ export class RideRequestPageComponent {
     }
   }
 
-  edit(person: Person, event: MatChipEditedEvent) {
+  edit(person: string, event: MatChipEditedEvent) {
     const value = event.value.trim();
 
     if (!value) {
@@ -109,11 +109,11 @@ export class RideRequestPageComponent {
 
     const index = this.people.indexOf(person);
     if (index > 0) {
-      this.people[index].name = value;
+      this.people[index] = value;
     }
   }
 
-  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService, private tokenUtilsService: TokenUtilsService) {}
+  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService, private tokenUtilsService: TokenUtilsService, private clientService: ClientService) {}
 
   trigger()
   {
@@ -222,12 +222,25 @@ export class RideRequestPageComponent {
   splitFare(): void{
     this.progressBarVisible = true
     this.pricePerPassenger = this.price / (this.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
-    console.log(this.mapChild.locations)
-    // this.mapService.createDriveInvitation(this.loggedUser, this.pricePerPassenger,);
+    this.createDriveInvitation(true)
   }
 
   onYourCharge(): void{
     this.progressBarVisible = true
+    this.createDriveInvitation(false)
+  }
+
+  createDriveInvitation(isSplitFare: boolean){
+    let priceToPay = isSplitFare ? this.pricePerPassenger: 0;
+    this.clientService.createDriveInvitation(this.loggedUser, this.people, this.inputValues, priceToPay)
+    .subscribe({
+      next: data => {
+        console.log(data)
+      },
+      error: error => {
+        console.error(error.ok);
+      }
+    });
   }
 
   automaticallyFindPath(isBest: boolean): void{

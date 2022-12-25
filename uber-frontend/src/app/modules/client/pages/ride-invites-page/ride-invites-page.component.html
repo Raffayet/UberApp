@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="ranije-prijave">
+        <div class="podnosilac-name" *ngFor="let rideInvite of rideInvites; let i = index">
+            <mat-form-field class="ride-invite-field" [style.width.%]="50">
+                <mat-label>Invitation from</mat-label>
+                <input matInput disabled="true" [value]="rideInvite.emailFrom">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field"  [style.width.%]="50">
+                <mat-label>First Location</mat-label>
+                <input matInput disabled="true" [value]="rideInvite.firstLocation">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field"  [style.width.%]="50">
+                <mat-label>Destination</mat-label>
+                <input matInput disabled="true" [value]="rideInvite.destination">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field"  [style.width.%]="50">
+                <mat-label>Price To Pay</mat-label>
+                <input matInput disabled="true" [value]="rideInvite.priceToPay">
+            </mat-form-field>
+            <button class="ride-invite-button" mat-fab (click)="onAcceptRideInvite(i)">
+                <mat-icon>done</mat-icon>
+            </button>
+            <button class="ride-invite-button" mat-fab (click)="onRejectRideInvite(i)">
+                <mat-icon>delete-forever</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>
