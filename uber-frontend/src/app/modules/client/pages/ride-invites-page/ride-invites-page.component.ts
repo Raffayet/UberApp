@@ -33,8 +33,8 @@ export class RideInvitesPageComponent {
       this.loggedUser = this.tokenUtilsService.getUserFromToken();          
       this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/ride-invites", this.onRideInvitesReceived);
 
-      let msgs:Observable<RideInvite[]> = this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string);
-      msgs.subscribe(val => this.rideInvites = val);     
+      this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
+          .subscribe(val => this.rideInvites = val);     
   }
 
   onRideInvitesReceived = (payload: StompMessage) => {
@@ -47,13 +47,25 @@ export class RideInvitesPageComponent {
   }
 
   onAcceptRideInvite(index: number){
+    this.stompClient.send('/app/ride-response', {}, JSON.stringify({
+      email: this.rideInvites.at(index)?.emailFrom,
+      responderEmail: this.loggedUser?.email,
+      isAccepted: true
+    }));
+
     this.clientService.changeDriveInvitationStatus(this.rideInvites.at(index)?.id as number, true).subscribe();
-    this.rideInvites.splice(index, 1)
+    this.rideInvites.splice(index, 1);
   }
 
   onRejectRideInvite(index: number){
+    this.stompClient.send('/app/ride-response', {}, JSON.stringify({
+      email: this.rideInvites.at(index)?.emailFrom,
+      responderEmail: this.loggedUser?.email,
+      isAccepted: false
+    }));
+
     this.clientService.changeDriveInvitationStatus(this.rideInvites.at(index)?.id as number, false).subscribe();
-    this.rideInvites.splice(index, 1)
+    this.rideInvites.splice(index, 1);
   }
 
 }

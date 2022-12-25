@@ -1,7 +1,7 @@
 import { trigger, transition, style, animate } from "@angular/animations";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import { ENTER, COMMA } from "@angular/cdk/keycodes";
-import { Component, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatChipInputEvent, MatChipEditedEvent } from "@angular/material/chips";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
@@ -14,7 +14,8 @@ import { TokenUtilsService } from "src/app/modules/shared/services/token-utils.s
 import { ClientService } from "../../services/client.service";
 import { MapSearchResult, MapService } from "../../services/map.service";
 import { PaypalService } from "../../services/paypal.service";
-
+import * as SockJS from 'sockjs-client';
+import { over, Client, Message as StompMessage} from 'stompjs';
 
 @Component({
   selector: 'ride-request-page',
@@ -42,7 +43,7 @@ import { PaypalService } from "../../services/paypal.service";
   ]
 })
 
-export class RideRequestPageComponent {
+export class RideRequestPageComponent implements OnInit{
 
   @ViewChild(MapComponent)
   private mapChild!: MapComponent;
@@ -77,10 +78,37 @@ export class RideRequestPageComponent {
 
   maxPeoplePerDrive = environment.maxPeoplePerDrive;
 
-  //add more people
-  addOnBlur = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  people: string[] = []
+  private stompClient : Client;
+
+   //add more people
+   addOnBlur = true;
+   readonly separatorKeysCodes = [ENTER, COMMA] as const;
+   people: string[] = [];
+  
+  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService, private tokenUtilsService: TokenUtilsService, private clientService: ClientService) {}
+
+  ngOnInit() { 
+    this.loggedUser = this.tokenUtilsService.getUserFromToken();  
+    this.getAmountOfTokens();
+
+    this.destinations.push({
+      displayName: "",
+      lon: "",
+      lat: ""});
+      
+    let Sock = new SockJS(environment.apiURL + "/ws");
+    this.stompClient = over(Sock);
+    this.stompClient.connect({}, this.onConnected, () => {});    
+  }
+
+  onConnected = () => {
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-ride-invites", this.onRideInviteResponseReceived);
+  }
+
+  onRideInviteResponseReceived(payload: StompMessage){
+    console.log("ODGOVOR:");    
+    console.log(payload.body);
+  }
   
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -113,8 +141,6 @@ export class RideRequestPageComponent {
     }
   }
 
-  constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService, private tokenUtilsService: TokenUtilsService, private clientService: ClientService) {}
-
   trigger()
   {
     this.getTotalDistance()
@@ -146,16 +172,6 @@ export class RideRequestPageComponent {
     this.mapChild.createRoute()   
     this.price = this.mapService.calculatePrice(this.vehicleType, this.mapChild.locations)    
     this.pricePerPassenger = this.price  
-  }
-
-  ngOnInit() { 
-    this.loggedUser = this.tokenUtilsService.getUserFromToken();  
-    this.getAmountOfTokens() 
-    console.log(this.loggedUser)
-    this.destinations.push({
-      displayName: "",
-      lon: "",
-      lat: ""});
   }
 
   searchOptions(index: number) : void {    
@@ -222,17 +238,17 @@ export class RideRequestPageComponent {
   splitFare(): void{
     this.progressBarVisible = true
     this.pricePerPassenger = this.price / (this.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
-    this.createDriveInvitation(true)
+    this.createDriveInvitation(true);
   }
 
   onYourCharge(): void{
     this.progressBarVisible = true
-    this.createDriveInvitation(false)
+    this.createDriveInvitation(false);
   }
 
   createDriveInvitation(isSplitFare: boolean){
     let priceToPay = isSplitFare ? this.pricePerPassenger: 0;
-    this.clientService.createDriveInvitation(this.loggedUser, this.people, this.inputValues, priceToPay)
+    this.clientService.createDriveInvitation(this.loggedUser, this.people, this.inputValues, priceToPay, this.stompClient)
     .subscribe({
       next: data => {
         console.log(data)
