@@ -52,7 +52,7 @@ import { SharedModule } from './modules/shared/shared.module';
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent,
+    PaypalPaymentComponent
   ],
   imports: [
     BrowserModule,

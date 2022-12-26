@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { RideRequestPageComponent } from 'src/app/modules/client/pages/ride-request-page/ride-request-page.component';
 import { UserProfilePageComponent } from '../shared/pages/user-profile-page/user-profile-page.component';
 import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
+import { RideInvitesPageComponent } from './pages/ride-invites-page/ride-invites-page.component';
 
 const routes: Routes = [  
   {
@@ -14,6 +15,12 @@ const routes: Routes = [
   {
     path: 'profile-page',
     component: UserProfilePageComponent,
+    outlet: 'ClientRouter',
+    canActivate: [],
+  },
+  {
+    path: 'ride-invites',
+    component: RideInvitesPageComponent,
     outlet: 'ClientRouter',
     canActivate: [],
   },

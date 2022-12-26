@@ -20,3 +20,5 @@ insert into ride(id) values(4);
 insert into ride(id) values(5);
 insert into ride(id) values(6);
 
+insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('dejanmatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad')
+

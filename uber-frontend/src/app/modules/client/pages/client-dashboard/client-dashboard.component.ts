@@ -13,8 +13,8 @@ import { UserProfilePageComponent } from '../../../shared/pages/user-profile-pag
 export class ClientDashboardComponent {
 
     chatHidden:boolean = false;
-    navbarLabels: string[] = ["Home", "Profile"];
-    navbarPaths: string[] = ["request-ride-page", "profile-page"];
+    navbarLabels: string[] = ["Home", "Profile", "Ride Invites"];
+    navbarPaths: string[] = ["request-ride-page", "profile-page", "ride-invites"];
     option: string = this.navbarPaths[0];
 
     changeOption(eventData: string): void{      
