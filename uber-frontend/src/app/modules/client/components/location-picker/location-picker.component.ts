@@ -76,7 +76,7 @@ export class LocationPickerComponent implements OnInit{
   }
 
   
-  searchOptions(index: number) : void {    
+  searchOptions(index: number) : void {  
     let results : MapSearchResult[];
 
     this.mapService.search(this.inputValues[index])
@@ -92,6 +92,7 @@ export class LocationPickerComponent implements OnInit{
     this.stateManagement.mapa.pinNewResult(option, index);
     this.stateManagement.rideRequest.price = this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations);
     this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
+    this.getTotalDistance()
   }
 
   deleteLocation(index: number) : void {      

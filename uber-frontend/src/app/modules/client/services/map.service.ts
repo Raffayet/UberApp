@@ -50,7 +50,6 @@ export class MapService {
       if (locations[i].getLatLng().lat !== 0 && locations[i].getLatLng().lng !== 0 && locations[i + 1].getLatLng().lat !== 0 && locations[i + 1].getLatLng().lng !== 0)
         totalDistance += locations[i].getLatLng().distanceTo(locations[i + 1].getLatLng());
     }
-    console.log(totalDistance);
     return totalDistance / 1000;
   }
 

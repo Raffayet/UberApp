@@ -10,14 +10,14 @@
             <mat-form-field class="example-full-width" [style.width.rem]=20>
               <mat-label>Enter location</mat-label>
               <input [disabled]="i < destinations.length - 1" matInput [(ngModel)]='inputValues[i]' placeholder="Enter location" [matAutocomplete]="auto"
-                    (input)="searchOptions(i)">
+                    (input)="searchOptions(i)" (click)="getTotalDistance()">
             </mat-form-field>
 
-            <button *ngIf="destinations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
+            <button class="delete-location-button" *ngIf="destinations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
               <mat-icon>delete_forever</mat-icon>
             </button>
 
-            <button *ngIf="i == destinations.length - 1 && i != 4" mat-mini-fab color="primary" (click)="addLocation(i)">
+            <button class="add-location-button" *ngIf="i == destinations.length - 1 && i != 4" mat-mini-fab color="primary" (click)="addLocation(i)">
               <mat-icon>add_circle</mat-icon>
             </button>
 
@@ -27,5 +27,7 @@
               </mat-option>
             </mat-autocomplete>
           </div>
-      <button mat-raised-button class="request-button" style="margin-right:2rem;" [disabled]="destinations.length < 2" (click)="next()">Next</button>
+      <div>
+        <button mat-raised-button class="next-button" [disabled]="!totalDistance || totalDistance === 0" style="margin-right:2rem;" (click)="next()">Next</button>
+      </div>
 </div>
