@@ -1,3 +1,5 @@
+import { RideRequest } from './../../../model/RideRequest';
+import { MapSearchResult } from './map.service';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -5,6 +7,7 @@ import { environment } from 'src/app/environments/environment';
 import { RideInvite } from 'src/app/model/RideInvite';
 import { User } from 'src/app/model/User';
 import { over, Client, Message as StompMessage} from 'stompjs';
+import { RideRequestStateService } from './ride-request-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +16,13 @@ export class ClientService {
   
   constructor(private http: HttpClient) { }
   
-  createDriveInvitation(loggedUser: User | null, people: string[], inputValues: string[], priceToPay: number, stompClient: Client): Observable<String>{
+  createDriveInvitation(loggedUser: User | null, people: string[], locations: MapSearchResult[], priceToPay: number, stompClient: Client): Observable<String>{
     
     let params : RideInvite = {
       emailFrom: loggedUser?.email as string,
       emailsTo: people,
-      firstLocation: inputValues[0],
-      destination: inputValues[inputValues.length - 1],
+      firstLocation: locations[0].displayName,
+      destination: locations[locations.length - 1].displayName,
       priceToPay: priceToPay,
       rideInviteStatus: 2
     }
@@ -39,5 +42,9 @@ export class ClientService {
     queryParams = queryParams.append("format", "json");
     
     return this.http.get<RideInvite[]>(environment.apiURL + "/client/get-ride-invites", { params: queryParams});
+  }
+
+  submitRequest(request: RideRequest): Observable<String> {
+      return this.http.post<String>(environment.apiURL + "/client/create-drive-request", request);
   }
 }

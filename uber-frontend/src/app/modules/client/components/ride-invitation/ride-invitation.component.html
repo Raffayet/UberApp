@@ -1,0 +1,53 @@
+<div class="payment-container">
+    <h1 class="additional-info-header">Additional Information</h1>
+    
+    <div *ngIf="stateManagement.rideRequest.vehicleType && currentAmount < stateManagement.rideRequest.pricePerPassenger">
+      <mat-chip class="final-price-failure" style="background-color: #B22222">{{stateManagement.rideRequest.pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
+      <mat-icon class="price-icon-failure">report_problem</mat-icon>
+      <label class="failure-label">Not enough tokens!</label>
+      <app-paypal-payment *ngIf="loggedUser?.role == 'CLIENT'" [loggedUser]="loggedUser"></app-paypal-payment>
+    </div>
+    <div *ngIf="stateManagement.rideRequest.vehicleType && currentAmount >= stateManagement.rideRequest.pricePerPassenger">
+      <mat-chip class="final-price-success" style="background-color: #228B22">{{stateManagement.rideRequest.pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
+      <mat-icon class="price-icon-success">done</mat-icon>
+      <label class="success-label">Enough Tokens!</label>
+    </div>
+
+    <!-- <div>
+      <button class="split-fare-button">Split Fare</button>
+    </div> -->
+
+    <mat-form-field class="example-chip-list" appearance="fill" *ngIf="currentAmount >= stateManagement.rideRequest.price / (maxPeoplePerDrive + 1)">
+      <mat-label>Add more people</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Add more people">
+        <mat-chip-row *ngFor="let person of stateManagement.rideRequest.people"
+                      (removed)="remove(person)"
+                      [editable]="!progressBarVisible"
+                      (edited)="edit(person, $event)"
+                      [removable]="!progressBarVisible"
+                      >
+          {{person}}
+          <button matChipRemove [attr.aria-label]="'remove ' + person">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <input placeholder="New person..."
+               [matChipInputFor]="chipGrid"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="addOnBlur"
+               (matChipInputTokenEnd)="add($event)"
+               [disabled]="progressBarVisible || currentAmount < stateManagement.rideRequest.price / (maxPeoplePerDrive + 1) || stateManagement.rideRequest.people.length >= maxPeoplePerDrive"/>
+      </mat-chip-grid>
+    </mat-form-field>
+    <div *ngIf="progressBarVisible && currentAmount >= stateManagement.rideRequest.pricePerPassenger && stateManagement.rideRequest.peopleLeftToRespond.length > 0">
+      <label class="progress-label">Waiting for people to confirm...</label>
+      <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div *ngIf="stateManagement.rideRequest.people.length > 0 && stateManagement.rideRequest.price / (maxPeoplePerDrive + 1)">
+      <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="progressBarVisible || currentAmount < stateManagement.rideRequest.price / (maxPeoplePerDrive + 1)">Split Fare</button>
+      <button mat-raised-button color="gray" class="your-charge-button" (click)="onYourCharge()" [disabled]="progressBarVisible || currentAmount < stateManagement.rideRequest.pricePerPassenger">On Your Charge</button>
+    </div>
+    <div>
+      <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="submitRequest()">SUBMIT</button>
+    </div>
+  </div>

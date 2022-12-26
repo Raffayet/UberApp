@@ -1,8 +1,7 @@
 package com.example.uberbackend.controller;
 
-import com.example.uberbackend.dto.DriveInvitationDTO;
-import com.example.uberbackend.dto.MessageDto;
-import com.example.uberbackend.dto.RegisterDto;
+import com.example.uberbackend.dto.DriveInvitationDto;
+import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class ClientController {
     }
 
     @PostMapping("create-drive-invitation")
-    public ResponseEntity<?> createDriveInvitation(@RequestBody DriveInvitationDTO driveInvitationDTO){
+    public ResponseEntity<?> createDriveInvitation(@RequestBody DriveInvitationDto driveInvitationDTO){
         try{
             this.clientService.createDriveInvitation(driveInvitationDTO);
         }catch(Exception ex){
@@ -74,5 +73,15 @@ public class ClientController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(DTO);
+    }
+
+    @PostMapping("create-drive-request")
+    public ResponseEntity<?> createDriveRequest(@RequestBody DriveRequestDto driveRequestDto){
+        try{
+            this.clientService.createDriveRequest(driveRequestDto);
+        }catch(Exception ex){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(driveRequestDto);
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DriveInvitationDTO {
+public class DriveInvitationDto {
     private String emailFrom;
     private List<String> emailsTo;
     private String firstLocation;

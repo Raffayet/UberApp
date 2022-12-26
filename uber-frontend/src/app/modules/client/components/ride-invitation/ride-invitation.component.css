@@ -1,0 +1,196 @@
+.upperContainer{
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    background-image: url("../../../../resources/images/home-page-bg.webp");
+    background-size: cover;
+    background-repeat: no-repeat;    
+}
+
+.vertical-container{
+    width: 35%;
+    height: 70%;    
+    margin-top: 10%;
+    background-color: #F9F9F9;
+    padding: 3%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.vertical-container .formContainer{
+    width: 110%;
+    height: 115%;  
+    background-color: #F9F9F9;
+    padding: 5%;
+    overflow-y: scroll;
+}
+
+.mapContainer{
+    width: 35%;
+    height: 70%;
+    margin-top: 10%;
+    background-color: #F9F9F9;
+}
+
+.vertical-container h1{
+    font-size: 2.5rem;
+    margin-top: -1rem;
+    margin-bottom: 3rem;
+    font-weight: bold;
+}
+
+.vertical-container .example-form{
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.vertical-container .example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    cursor: move;
+    background: white;
+    font-size: 14px;
+  }
+
+.vertical-container .example-list button{
+    margin-left: 1rem;
+}
+
+.vertical-container .route-button-container .create-route-button{
+    background-color: green;
+    margin-bottom: 2rem;
+}
+
+.vertical-container .vehicle-expansion-panel{
+    margin-bottom: 2rem;
+    width: 59.3%;
+}
+
+.route-type-panel{
+    width: 70%;
+    padding-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.vertical-container .radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.vertical-container .radio-button {
+    margin: 5px;
+}
+
+.vertical-container .example-list .priceChip{
+    background-color: rgba(0, 0, 0, 0.87);
+    font-size: 20px;
+    padding: 5px;
+    margin-bottom: 2rem;
+    text-align: right;
+}
+
+.vertical-container .request-button:disabled{
+    background-color: darkgrey;
+}
+
+.vertical-container .schedule-later-button:disabled{
+    background-color: darkgrey;
+}
+
+.example-chip-list{
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.additional-info-header
+{
+   text-align: center;
+}
+
+.payment-container{
+    margin-top: -2.7rem;
+}
+
+.back-button{
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+}
+
+.final-price-success{
+    font-size: 1.3rem;
+    margin-right: 1rem;
+    background-color: #228B22;
+}
+
+.final-price-failure{
+    font-size: 1.3rem;
+    margin-right: 1rem;
+    background-color: #B22222;
+    margin-bottom: 2rem;
+}
+
+.price-icon-success{
+    color: #228B22;
+    margin-right: 1rem;
+    margin-bottom: -0.3rem;
+}
+
+.price-icon-failure{
+    color: #B22222;
+    margin-right: 1rem;
+    margin-bottom: -0.3rem;
+}
+
+.success-label{
+    font-size: 1rem;
+    color: #228B22;
+}
+
+.failure-label{
+    font-size: 1rem;
+    color: #B22222;
+}
+
+.progress-bar{
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.progress-label{
+    margin-left: 10rem;
+    text-align: center;
+    color: #B22222;
+}
+
+.classic-label{
+    font-size: 1rem;
+}
+
+.split-fare-button{
+}
+
+.split-fare-button:disabled{
+    background-color: darkgrey;
+}
+
+.your-charge-button{
+    margin-left: 2rem;
+}
+
+.your-charge-button:disabled{
+    background-color: darkgrey;
+}
+
+.submit-button{
+    margin-top: 2rem;
+    margin-left: 2rem;
+}

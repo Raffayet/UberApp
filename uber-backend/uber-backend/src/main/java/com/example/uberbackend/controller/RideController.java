@@ -1,7 +1,6 @@
 package com.example.uberbackend.controller;
 
-import com.example.uberbackend.dto.DriveInvitationDTO;
-import com.example.uberbackend.dto.MessageDto;
+import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.model.Ride;
 import com.example.uberbackend.service.RideService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class RideController {
     }
 
     @MessageMapping("/ride-invite")
-    public void receiveRideInvite(@Payload DriveInvitationDTO dto){
+    public void receiveRideInvite(@Payload DriveInvitationDto dto){
         for(String email : dto.getEmailsTo()){
             simpMessagingTemplate.convertAndSendToUser(email, "/ride-invites", dto);
         }

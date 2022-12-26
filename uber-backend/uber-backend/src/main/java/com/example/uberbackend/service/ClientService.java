@@ -1,13 +1,12 @@
 package com.example.uberbackend.service;
 
-import com.example.uberbackend.dto.DriveInvitationDTO;
-import com.example.uberbackend.model.Ride;
+import com.example.uberbackend.dto.DriveInvitationDto;
+import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.repositories.ClientRepository;
 import com.example.uberbackend.repositories.RideInviteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class ClientService {
         return this.rideInviteRepository.findAllRideInvites(userEmail);
     }
 
-    public void createDriveInvitation(DriveInvitationDTO driveInvitationDTO) {
+    public void createDriveInvitation(DriveInvitationDto driveInvitationDTO) {
         for(String personEmail : driveInvitationDTO.getEmailsTo())
         {
             RideInvite newRideInvite = new RideInvite();
@@ -49,5 +48,8 @@ public class ClientService {
         boolean isAccepted = Boolean.parseBoolean(dto.get("isAccepted"));
         editedRideInvite.ifPresent(invite -> invite.setRideInviteStatus(isAccepted ? RideInviteStatus.ACCEPTED : RideInviteStatus.REJECTED));
         editedRideInvite.ifPresent(this.rideInviteRepository::save);
+    }
+
+    public void createDriveRequest(DriveRequestDto driveRequestDto) {
     }
 }

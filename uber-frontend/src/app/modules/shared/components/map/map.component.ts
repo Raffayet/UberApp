@@ -5,6 +5,7 @@ import { MapService } from 'src/app/modules/client/services/map.service';
 import 'leaflet-routing-machine';
 import { connect } from 'net';
 import { TitleStrategy } from '@angular/router';
+import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
 
 @Component({
   selector: 'app-map',
@@ -20,7 +21,6 @@ export class MapComponent implements AfterViewInit {
   private featureGroup: L.FeatureGroup;
 
   routingControl: L.Routing.Control
-
   routingPlan: L.Routing.Plan
 
   private initMap(): void {
@@ -46,14 +46,21 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private mapService: MapService) {}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService) {}
+
+  public reset(){
+    this.map.remove();
+    this.initMap();
+  }
 
   ngAfterViewInit(): void {
     this.initMap();
-  
+    
     for(let i=0; i < 5; i++){
       this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
     }        
+
+    this.stateManagement.mapa = this;
   }
   
   pinNewResult(pin: MapSearchResult, i: number): void {  
@@ -67,7 +74,7 @@ export class MapComponent implements AfterViewInit {
     
     this.map.fitBounds(this.featureGroup.getBounds());
 
-    this.createRoute()
+    this.createRoute();
   }
 
   getPins(): Array<L.Marker>{
@@ -83,22 +90,22 @@ export class MapComponent implements AfterViewInit {
   }
 
   removePreviousRoute(): void{
-    this.map.removeControl(this.routingControl)
+    this.map.removeControl(this.routingControl);
     this.map.eachLayer(layer => {
       if (layer instanceof L.Marker)
       { 
         this.map.removeLayer(layer)
       }
     })
-    this.map.remove()
-    this.initMap()
+    this.map.remove();
+    this.initMap();
   }
 
   createRoute(): void{
 
     for (let location of this.locations)
     {
-      this.map.removeLayer(location)
+      this.map.removeLayer(location);
     }
 
     let latlngs = Array();  
@@ -106,7 +113,7 @@ export class MapComponent implements AfterViewInit {
     for (let location of this.locations)
     {
       if (location.getLatLng().lng !== 0 && location.getLatLng().lat !== 0)
-        latlngs.push(location.getLatLng())
+        latlngs.push(location.getLatLng());
     }
 
     this.routingControl = L.Routing.control({
@@ -126,8 +133,8 @@ export class MapComponent implements AfterViewInit {
   }
 
   drawRoute(coords: any) {
-    this.map.remove()
-    this.initMap()
+    this.map.remove();
+    this.initMap();
     var polyline = L.polyline(coords, {color: 'red'}).addTo(this.map);
    
     this.placePinsForFoundPath();

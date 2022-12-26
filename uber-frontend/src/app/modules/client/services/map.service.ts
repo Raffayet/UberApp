@@ -43,7 +43,7 @@ export class MapService {
     return this.http.get<object[]>("https://nominatim.openstreetmap.org/search", { params: queryParams});
   }
 
-  calculateTotalDistance(locations: Array<L.Marker>): Number{
+  calculateTotalDistance(locations: Array<L.Marker>): number{
     let totalDistance = 0
     for (let i = 0; i < locations.length - 1; i++)
     {
