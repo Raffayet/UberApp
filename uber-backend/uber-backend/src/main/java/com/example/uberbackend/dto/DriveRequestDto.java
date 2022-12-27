@@ -17,6 +17,7 @@ public class DriveRequestDto {
     private double price;
     private double pricePerPassenger;
     private String vehicleType;
+    private String routeType;
     private List<String> people;
     private List<MapSearchResultDto> locations;
 }

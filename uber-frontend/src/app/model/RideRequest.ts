@@ -6,6 +6,8 @@ export interface RideRequest{
     price: number,
     pricePerPassenger: number,
     vehicleType: string,
+    routeType: string,
     people: string[],
-    peopleLeftToRespond: string[]
+    peopleLeftToRespond: string[],
+    totalDistance: number,
 }

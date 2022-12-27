@@ -37,7 +37,6 @@ import { SharedModule } from './modules/shared/shared.module';
     ActivatedAccountComponent,
     RegisteredAccountPageComponent,
     ClientDashboardComponent,
-    DriverDashboardComponent,
     AdminDashboardComponent,
     AdditionalLoginInfoComponent,
     RegisteredSocialAccountComponent,

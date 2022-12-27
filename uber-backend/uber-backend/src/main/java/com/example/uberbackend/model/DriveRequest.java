@@ -1,11 +1,13 @@
 package com.example.uberbackend.model;
 
+import com.example.uberbackend.dto.MapSearchResultDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class DriveRequest {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     private Boolean isReserved;
@@ -21,15 +23,20 @@ public class DriveRequest {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private Client client;
+    private Client initiator;
 
+    private double price;
+    private double pricePerPassenger;
+    private String vehicleType;
+    private String routeType;
 
-    @ManyToOne
-    @JoinColumn(name = "driver_id")
-    private Driver driver;
+    @ManyToMany
+    private List<Client> people;
 
-    public DriveRequest(Boolean isReserved, LocalDate reserveDate) {
-        this.isReserved = isReserved;
-        this.reserveDate = reserveDate;
-    }
+    @OneToMany(cascade = {CascadeType.ALL})
+    private List<MapSearchResultDto> locations;
+
+    @ManyToMany
+    List<Driver> driversThatRejected;
+
 }

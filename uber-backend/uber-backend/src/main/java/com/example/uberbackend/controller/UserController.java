@@ -3,6 +3,7 @@ package com.example.uberbackend.controller;
 
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.User;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.EmailService;
 import com.example.uberbackend.service.UserService;
@@ -101,12 +102,11 @@ public class UserController {
     @PostMapping("/change-user-driving-status")
     public ResponseEntity<?> changeUserDrivingStatus(@RequestBody UserDrivingStatus dto){
         try{
-            User u = userService.changeUserDrivingStatus(dto);
+            User u = userService.changeUserDrivingStatus(dto.getEmail(), dto.getStatus());
             String token = tokenGenerator.generateToken(u);
             return ResponseEntity.ok(token);
         }catch(Exception ex){
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
 }

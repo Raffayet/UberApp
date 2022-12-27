@@ -256,12 +256,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(loggedUser);
     }
 
-    public User changeUserDrivingStatus(UserDrivingStatus dto) {
-        Optional<User> u = userRepository.findByEmail(dto.getEmail());
+    public User changeUserDrivingStatus(String email, int status) {
+        Optional<User> u = userRepository.findByEmail(email);
 
         if(u.isPresent()){
             User user = u.get();
-            user.setDrivingStatus(DrivingStatus.valueOf(dto.getStatus()));
+            user.setDrivingStatus(DrivingStatus.valueOf(status));
             userRepository.save(user);
             return user;
         }else{

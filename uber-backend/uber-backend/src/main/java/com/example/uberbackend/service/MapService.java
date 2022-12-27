@@ -1,5 +1,6 @@
 package com.example.uberbackend.service;
 
+import com.example.uberbackend.dto.PathInfoDto;
 import com.example.uberbackend.model.Point;
 import org.springframework.beans.factory.annotation.Value;
 import okhttp3.OkHttpClient;
@@ -17,7 +18,7 @@ public class MapService {
     @Value("${graphhopper.api.key}")
     private String graphhopperApiKey;
     
-    public List<Point> getOptimalRoute(List<Point> points) throws IOException {
+    public PathInfoDto getOptimalRoute(List<Point> points) throws IOException {
         OkHttpClient client = new OkHttpClient();
         String queryParams = new String();
 
@@ -30,22 +31,22 @@ public class MapService {
                 .get()
                 .build();
         Response response = client.newCall(request).execute();
-        List<Point> retList = getCoordinatesFromGraphhoperResponse(response, 0);
 
-        return retList;
+        return getPathInfoGraphhoperResponse(response, 0);
     }
 
-    private List<Point> getCoordinatesFromGraphhoperResponse(Response response, int index) throws IOException {
+    private PathInfoDto getPathInfoGraphhoperResponse(Response response, int index) throws IOException {
         JSONObject obj = new JSONObject(response.body().string());
         JSONArray paths = (JSONArray) obj.get("paths");
+        double distance = paths.getJSONObject(index).getDouble("distance");
         JSONArray coordinates = paths.getJSONObject(index).getJSONObject("points").getJSONArray("coordinates");
         List<Point> retList = new ArrayList<>();
 
-        for(int i = 0; i < coordinates.length(); i++){
+        for (int i = 0; i < coordinates.length(); i++) {
             JSONArray v = (JSONArray) (coordinates.get(i));
             retList.add(new Point(v.get(0).toString(), v.get(1).toString()));
         }
-        return retList;
+        return new PathInfoDto(retList, distance);
     }
 
     private String insertPointString(Point p, String queryParams){
@@ -54,9 +55,10 @@ public class MapService {
         return queryParams;
     }
 
-    public List<Point> getAlternativeRoute(List<Point> points) throws IOException {
+    public PathInfoDto getAlternativeRoute(List<Point> points) throws IOException {
         OkHttpClient client = new OkHttpClient();
         List<Point> retList = new ArrayList<>();
+        double distance = 0;
         int i = 0;
 
         while(i < points.size() - 1){
@@ -69,15 +71,18 @@ public class MapService {
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
-            retList.addAll(getCoordinatesFromGraphhoperResponse(response, 1));
+            PathInfoDto dto = getPathInfoGraphhoperResponse(response, 1);
+            retList.addAll(dto.getPoints());
+            distance += dto.getDistance();
             i++;
         }
-        return retList;
+        return new PathInfoDto(retList, distance);
     }
 
-    public List<Point> getCustomRoute(List<Point> points) throws IOException {
+    public PathInfoDto getCustomRoute(List<Point> points) throws IOException {
         OkHttpClient client = new OkHttpClient();
         List<Point> retList = new ArrayList<>();
+        double distance = 0;
         int i = 0;
 
         while(i < points.size() - 1){
@@ -90,9 +95,11 @@ public class MapService {
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
-            retList.addAll(getCoordinatesFromGraphhoperResponse(response, 1));
+            PathInfoDto dto = getPathInfoGraphhoperResponse(response, 0);
+            retList.addAll(dto.getPoints());
+            distance += dto.getDistance();
             i++;
         }
-        return retList;
+        return new PathInfoDto(retList, distance);
     }
 }

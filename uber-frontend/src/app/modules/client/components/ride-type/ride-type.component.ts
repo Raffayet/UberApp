@@ -15,10 +15,8 @@ export class RideTypeComponent {
   pageNum = new EventEmitter<number>();
   
   vehicleTypes: string[] = ['Regular', 'Baby Seats', 'Pet Seats'];
-  vehicleType: string;
 
   routeTypes: string[] = ['Custom', 'Optimal', 'Alternative'];
-  routeType: string = this.routeTypes[0];
 
   currentAmount: number;
 
@@ -36,11 +34,10 @@ export class RideTypeComponent {
 
   calculatePrice(vType: string): void{
     this.stateManagement.rideRequest.vehicleType = vType;
-    this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations).subscribe({
+    this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.rideRequest.totalDistance).subscribe({
       next: data => {
           this.stateManagement.rideRequest.price = data;
           this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
-          console.log(data)
       },
       error: error => {
           console.error('There was an error!', error);
@@ -51,7 +48,7 @@ export class RideTypeComponent {
   automaticallyFindPath(routeType: string): void{
     this.mapService.automaticallyFindPath(routeType, this.stateManagement.mapa.locations).subscribe({
       next: data => {
-          let coords: Array<Point> = data;
+          let coords: Array<Point> = data.points;
           coords = coords.map(coord => new Point(coord.lng, coord.lat));
           this.stateManagement.mapa.drawRoute(coords)
       },

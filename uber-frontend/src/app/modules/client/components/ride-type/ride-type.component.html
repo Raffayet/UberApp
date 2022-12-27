@@ -16,7 +16,7 @@
             
             <mat-expansion-panel expanded="true" class="route-type-panel">         
             <mat-label>Select route type</mat-label><br>
-            <mat-radio-group aria-label="Select an option" [(ngModel)]="routeType" (change)="automaticallyFindPath(routeType)" [disabled]="!stateManagement.rideRequest.vehicleType">
+            <mat-radio-group aria-label="Select an option" [(ngModel)]="stateManagement.rideRequest.routeType" (change)="automaticallyFindPath(stateManagement.rideRequest.routeType)" [disabled]="!stateManagement.rideRequest.vehicleType">
                 <mat-radio-button *ngFor="let type of routeTypes" [value]="type">{{type}}</mat-radio-button>
             </mat-radio-group>
             </mat-expansion-panel>

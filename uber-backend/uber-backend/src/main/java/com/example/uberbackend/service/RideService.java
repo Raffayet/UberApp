@@ -26,6 +26,6 @@ public class RideService {
          vehicleTypeMap.put("Pet Seats", 250.0);
 
          double price = (vehicleTypeMap.get(vehicleType) + totalDistance * 120) / 109.94;
-         return (double) Math.round(price * 100.0) / 100.0;
+         return (double) Math.round(price * 100.0) / 100.0 / 1000;
     }
 }

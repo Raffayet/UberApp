@@ -2,24 +2,35 @@ package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
+import com.example.uberbackend.model.Client;
+import com.example.uberbackend.model.DriveRequest;
+import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.repositories.ClientRepository;
+import com.example.uberbackend.repositories.DriveRequestRepository;
 import com.example.uberbackend.repositories.RideInviteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ClientService {
 
     private final ClientRepository clientRepository;
 
     private final RideInviteRepository rideInviteRepository;
+
+    private final DriveRequestRepository driveRequestRepository;
+
+    private final DriverService driverService;
 
     public double getTokensByEmail(String email){
         return clientRepository.getTokensByEmail(email);
@@ -50,6 +61,27 @@ public class ClientService {
         editedRideInvite.ifPresent(this.rideInviteRepository::save);
     }
 
-    public void createDriveRequest(DriveRequestDto driveRequestDto) {
+    public void createDriveRequest(DriveRequestDto dto) {
+        DriveRequest request = new DriveRequest();
+        Optional<Client> initiator = clientRepository.findByEmail(dto.getInitiatorEmail());
+        initiator.ifPresent(request::setInitiator);
+
+        List<Client> clients = new ArrayList<>();
+        for(String email : dto.getPeople()){
+            Optional<Client> invited = clientRepository.findByEmail(email);
+            invited.ifPresent(clients::add);
+        }
+        request.setPeople(clients);
+
+        request.setPrice(dto.getPrice());
+        request.setPricePerPassenger(dto.getPricePerPassenger());
+        request.setVehicleType(dto.getVehicleType());
+        request.setRouteType(dto.getRouteType());
+
+        request.setLocations(dto.getLocations());
+        request.setDriversThatRejected(new ArrayList<Driver>());
+
+        driveRequestRepository.save(request);
+        this.driverService.findDriverForRequest(request);
     }
 }

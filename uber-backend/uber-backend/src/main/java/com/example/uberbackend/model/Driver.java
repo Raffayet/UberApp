@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.List;
 
 @Entity
@@ -22,4 +23,6 @@ public class Driver extends User {
     @OneToMany
     private List<Rating> ratingsFromClients;
 
+    @OneToOne
+    private Point currentLocation;
 }

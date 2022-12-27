@@ -2,6 +2,7 @@ package com.example.uberbackend.controller;
 
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
+import com.example.uberbackend.model.DriveRequest;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 
@@ -79,9 +81,9 @@ public class ClientController {
     public ResponseEntity<?> createDriveRequest(@RequestBody DriveRequestDto driveRequestDto){
         try{
             this.clientService.createDriveRequest(driveRequestDto);
+            return ResponseEntity.ok("Success!");
         }catch(Exception ex){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(driveRequestDto);
     }
 }

@@ -10,7 +10,7 @@
             <mat-form-field class="example-full-width" [style.width.rem]=20>
               <mat-label>Enter location</mat-label>
               <input [disabled]="i < stateManagement.rideRequest.locations.length - 1" matInput [(ngModel)]='this.stateManagement.inputValues[i]' placeholder="Enter location" [matAutocomplete]="auto"
-                    (input)="searchOptions(i)" (click)="getTotalDistance()">
+                    (input)="searchOptions(i)">
             </mat-form-field>
 
             <button class="delete-location-button" *ngIf="stateManagement.rideRequest.locations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
@@ -28,6 +28,6 @@
             </mat-autocomplete>
           </div>
       <div>
-        <button mat-raised-button class="next-button" [disabled]="!totalDistance || totalDistance === 0" style="margin-right:2rem;" (click)="next()">Next</button>
+        <button mat-raised-button class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="next()">Next</button>
       </div>
 </div>

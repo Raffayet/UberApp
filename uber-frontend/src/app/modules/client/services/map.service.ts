@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as L from 'leaflet';
-import { MapComponent } from 'src/app/modules/shared/components/map/map.component';
 import { environment } from 'src/app/environments/environment';
 import { Point } from 'src/app/model/Point';
 
@@ -11,6 +10,11 @@ export type MapSearchResult = {
   lon: string;
   lat: string;
 };
+
+export type PathInfoDto = {
+  distance: number,
+  points: Point[]
+}
 
 @Injectable({
   providedIn: 'root'
@@ -43,33 +47,17 @@ export class MapService {
     return this.http.get<object[]>("https://nominatim.openstreetmap.org/search", { params: queryParams});
   }
 
-  calculateTotalDistance(locations: Array<L.Marker>): number{
-    let totalDistance = 0
-    for (let i = 0; i < locations.length - 1; i++)
-    {
-      if (locations[i].getLatLng().lat !== 0 && locations[i].getLatLng().lng !== 0 && locations[i + 1].getLatLng().lat !== 0 && locations[i + 1].getLatLng().lng !== 0)
-        totalDistance += locations[i].getLatLng().distanceTo(locations[i + 1].getLatLng());
-    }
-    return totalDistance / 1000;
-  }
-
-  calculatePrice(vehicleType: string, locations: Array<L.Marker>) {
-    let totalDistance = this.calculateTotalDistance(locations)
+  calculatePrice(vehicleType: string, distance: number) {
 
     let queryParams = new HttpParams();
-    queryParams = queryParams.append("totalDistance", totalDistance);
+    queryParams = queryParams.append("totalDistance", distance);
     queryParams = queryParams.append("vehicleType", vehicleType);
     queryParams = queryParams.append("format", "json");
 
     return this.http.get<number>(environment.apiURL + "/rides/calculate-price", { params: queryParams});
   }
 
-  getTotalDistance(locations: Array<L.Marker>){
-    let totalDistance = this.calculateTotalDistance(locations)
-    return totalDistance
-  }
-
-  automaticallyFindPath(routeType: string, locations: Array<L.Marker>): Observable<Array<Point>>{
+  automaticallyFindPath(routeType: string, locations: Array<L.Marker>): Observable<PathInfoDto>{
     locations = locations.filter(location => {
       return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0;
     });
@@ -79,13 +67,13 @@ export class MapService {
 
     switch(routeType){
       case 'Custom':
-        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-custom-route", points);
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-custom-route", points);
       case 'Optimal':
-        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-optimal-route", points);
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-optimal-route", points);
       case 'Alternative':
-        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-alternative-route", points);
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-alternative-route", points);
       default:
-        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-custom-route", points);
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-custom-route", points);
     }
   }
 }

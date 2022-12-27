@@ -63,8 +63,7 @@ export class RideRequestPageComponent implements OnInit, OnDestroy{
   }  
 
   ngOnDestroy(): void {
-    this.stateManagement.reset();
-    console.log('gadsgsa')
+    // this.stateManagement.reset();
   }
 
   changePage(eventData: number): void{      

@@ -18,8 +18,10 @@ export class RideRequestStateService {
     price: 0,
     pricePerPassenger: 0,
     vehicleType: "",
+    routeType: "Custom",
     people: [],
-    peopleLeftToRespond: []
+    peopleLeftToRespond: [],
+    totalDistance: 0,
   }
 
   inputValues: string[] = [];
@@ -40,8 +42,10 @@ export class RideRequestStateService {
       price: 0,
       pricePerPassenger: 0,
       vehicleType: "",
+      routeType: "Custom",
       people: [],
-      peopleLeftToRespond: []
+      peopleLeftToRespond: [],
+      totalDistance: 0,
     };
     
     this.mapa.reset();
