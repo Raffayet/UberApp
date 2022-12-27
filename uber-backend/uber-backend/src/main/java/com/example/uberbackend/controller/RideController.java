@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -41,5 +43,16 @@ public class RideController {
     @MessageMapping("/ride-response")
     public void responseToRideInvite(@Payload HashMap<String, String> dto){
         simpMessagingTemplate.convertAndSendToUser(dto.get("email"), "/response-ride-invites", dto);
+    }
+
+    @GetMapping("calculate-price")
+    public ResponseEntity<?> calculatePrice(@RequestParam("vehicleType") String vehicleType, @RequestParam("totalDistance") double totalDistance) {
+        try {
+            double calculatedPrice = this.rideService.calculatePrice(vehicleType, totalDistance);
+            return ResponseEntity.ok(calculatedPrice);
+        }
+        catch (RuntimeException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

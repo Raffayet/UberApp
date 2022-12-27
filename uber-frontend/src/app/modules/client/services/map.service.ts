@@ -54,15 +54,14 @@ export class MapService {
   }
 
   calculatePrice(vehicleType: string, locations: Array<L.Marker>) {
-    let vehicleTypeMap = new Map();
-    vehicleTypeMap.set("Regular", 200);   //pocetna cena u zavisnosti od tipa vozila
-    vehicleTypeMap.set("Baby Seats", 300);
-    vehicleTypeMap.set("Pet Seats", 250);
-
     let totalDistance = this.calculateTotalDistance(locations)
-    let price = (vehicleTypeMap.get(vehicleType) + Number(totalDistance) * 120) / environment.usdRsdRatio;
-    let roundedPrice = Math.round(price * 100) / 100;
-    return roundedPrice;
+
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("totalDistance", totalDistance);
+    queryParams = queryParams.append("vehicleType", vehicleType);
+    queryParams = queryParams.append("format", "json");
+
+    return this.http.get<number>(environment.apiURL + "/rides/calculate-price", { params: queryParams});
   }
 
   getTotalDistance(locations: Array<L.Marker>){
@@ -70,7 +69,7 @@ export class MapService {
     return totalDistance
   }
 
-  automaticallyFindPath(isBest: boolean, locations: Array<L.Marker>): Observable<Array<Point>>{
+  automaticallyFindPath(routeType: string, locations: Array<L.Marker>): Observable<Array<Point>>{
     locations = locations.filter(location => {
       return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0;
     });
@@ -78,9 +77,15 @@ export class MapService {
     let points = locations.map(location => new Point(location.getLatLng().lat,
     location.getLatLng().lng));
 
-    let routeParam: string = isBest ? "determine-optimal-route" : "determine-alternative-route"; 
-    
-    return this.http.post<Array<Point>>(environment.apiURL + "/map/" + routeParam, points);
+    switch(routeType){
+      case 'Custom':
+        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-custom-route", points);
+      case 'Optimal':
+        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-optimal-route", points);
+      case 'Alternative':
+        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-alternative-route", points);
+      default:
+        return this.http.post<Array<Point>>(environment.apiURL + "/map/determine-custom-route", points);
+    }
   }
-  
 }

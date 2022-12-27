@@ -9,13 +9,20 @@ export class RideRequestStateService {
 
   rideRequest: RideRequest = {
     initiatorEmail: "",
-    locations: [],
+
+    locations: [{
+      displayName: "",
+      lon: "",
+      lat: ""}],
+
     price: 0,
     pricePerPassenger: 0,
     vehicleType: "",
     people: [],
     peopleLeftToRespond: []
   }
+
+  inputValues: string[] = [];
 
   mapa: MapComponent;
 
@@ -24,7 +31,12 @@ export class RideRequestStateService {
   reset(){
     this.rideRequest = {
       initiatorEmail: "",
-      locations: [],
+
+      locations: [{
+        displayName: "",
+        lon: "",
+        lat: ""}],
+        
       price: 0,
       pricePerPassenger: 0,
       vehicleType: "",

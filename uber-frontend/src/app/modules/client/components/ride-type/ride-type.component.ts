@@ -34,33 +34,22 @@ export class RideTypeComponent {
     this.pageNum.emit(3);
   }
 
-
-  changeRouteType(): void{
-    switch(this.routeType){
-      case "Custom":
-        this.createRoute();
-        break;
-      case "Optimal":
-        this.automaticallyFindPath(true);
-        break;
-      case "Alternative":
-        this.automaticallyFindPath(false);
-        break;
-    }
-  }
-
-  createRoute(): void{
-    this.stateManagement.mapa.createRoute();
-  } 
-
   calculatePrice(vType: string): void{
     this.stateManagement.rideRequest.vehicleType = vType;
-    this.stateManagement.rideRequest.price = this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations)
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
+    this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations).subscribe({
+      next: data => {
+          this.stateManagement.rideRequest.price = data;
+          this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
+          console.log(data)
+      },
+      error: error => {
+          console.error('There was an error!', error);
+      }
+    });
   }
 
-  automaticallyFindPath(isBest: boolean): void{
-    this.mapService.automaticallyFindPath(isBest, this.stateManagement.mapa.locations).subscribe({
+  automaticallyFindPath(routeType: string): void{
+    this.mapService.automaticallyFindPath(routeType, this.stateManagement.mapa.locations).subscribe({
       next: data => {
           let coords: Array<Point> = data;
           coords = coords.map(coord => new Point(coord.lng, coord.lat));

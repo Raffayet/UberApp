@@ -45,4 +45,14 @@ public class MapController {
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value = "/determine-custom-route")
+    public ResponseEntity<?> determineCustomRoute(@RequestBody List<Point> points){
+        try{
+            List<Point> response = mapService.getCustomRoute(points);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
 }

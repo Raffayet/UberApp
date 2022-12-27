@@ -74,7 +74,7 @@ export class MapComponent implements AfterViewInit {
     
     this.map.fitBounds(this.featureGroup.getBounds());
 
-    this.createRoute();
+    this.mapService.automaticallyFindPath("Custom", this.locations);
   }
 
   getPins(): Array<L.Marker>{
@@ -86,7 +86,7 @@ export class MapComponent implements AfterViewInit {
     this.locations.splice(index, 1);
     this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
     this.removePreviousRoute()
-    this.createRoute()
+    this.mapService.automaticallyFindPath("Custom", this.locations);
   }
 
   removePreviousRoute(): void{
@@ -99,37 +99,6 @@ export class MapComponent implements AfterViewInit {
     })
     this.map.remove();
     this.initMap();
-  }
-
-  createRoute(): void{
-
-    for (let location of this.locations)
-    {
-      this.map.removeLayer(location);
-    }
-
-    let latlngs = Array();  
-
-    for (let location of this.locations)
-    {
-      if (location.getLatLng().lng !== 0 && location.getLatLng().lat !== 0)
-        latlngs.push(location.getLatLng());
-    }
-
-    this.routingControl = L.Routing.control({
-      waypoints: latlngs,
-      waypointMode: "connect",
-      routeWhileDragging: true,
-      autoRoute: true,
-      show: false,
-      plan: L.Routing.plan(latlngs, {
-        createMarker: function(i, wp) {
-          return L.marker(wp.latLng, {
-            draggable: false
-          });
-        }
-      }),
-    }).addTo(this.map);
   }
 
   drawRoute(coords: any) {

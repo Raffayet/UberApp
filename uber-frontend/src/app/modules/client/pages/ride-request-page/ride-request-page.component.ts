@@ -1,7 +1,7 @@
 import { RideRequestStateService } from './../../services/ride-request-state.service';
 import { trigger, transition, style, animate } from "@angular/animations";
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
@@ -44,7 +44,7 @@ import { NumberValueAccessor } from '@angular/forms';
   ]
 })
 
-export class RideRequestPageComponent implements OnInit{
+export class RideRequestPageComponent implements OnInit, OnDestroy{
 
   loggedUser: User | null;
 
@@ -61,6 +61,11 @@ export class RideRequestPageComponent implements OnInit{
   ngOnInit() { 
     this.loggedUser = this.tokenUtilsService.getUserFromToken();   
   }  
+
+  ngOnDestroy(): void {
+    this.stateManagement.reset();
+    console.log('gadsgsa')
+  }
 
   changePage(eventData: number): void{      
     this.currentPage = eventData;

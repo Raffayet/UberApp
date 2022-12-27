@@ -30,8 +30,6 @@ export class LocationPickerComponent implements OnInit{
 
   pricePerPassenger: number;
 
-  inputValues: string[] = [];
-
   options: Observable<MapSearchResult[]>[] = [];
 
   totalDistance: number;
@@ -40,11 +38,7 @@ export class LocationPickerComponent implements OnInit{
     private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {}
 
   ngOnInit(): void {
-
-    this.destinations.push({
-      displayName: "",
-      lon: "",
-      lat: ""});
+    this.getTotalDistance();  
   }
 
   changePageNumber(){
@@ -53,33 +47,29 @@ export class LocationPickerComponent implements OnInit{
 
   next()
   {
-    this.getTotalDistance();
-
-    if (this.destinations.length < 2)
+    if (this.stateManagement.rideRequest.locations.length < 2)
       this.toastr.warning('You must pick locations for ride!');
     else if (this.totalDistance === 0)
       this.toastr.warning('There should be distance between locations!');
     else{
-      this.stateManagement.rideRequest.locations = [...this.destinations];
+      // this.stateManagement.rideRequest.locations = [...this.destinations];
       this.changePageNumber();
     }
   }
 
   drop(event: CdkDragDrop<MapSearchResult[]>) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    moveItemInArray(this.inputValues, event.previousIndex, event.currentIndex);      
+    moveItemInArray(this.stateManagement.inputValues, event.previousIndex, event.currentIndex);      
     moveItemInArray(this.stateManagement.mapa.locations, event.previousIndex, event.currentIndex);  
     this.stateManagement.mapa.removePreviousRoute();
-    this.stateManagement.mapa.createRoute();
-    this.stateManagement.rideRequest.price = this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations);
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
+    this.automaticallyFindPath("Custom")
+    this.getTotalDistance();
   }
 
-  
   searchOptions(index: number) : void {  
     let results : MapSearchResult[];
 
-    this.mapService.search(this.inputValues[index])
+    this.mapService.search(this.stateManagement.inputValues[index])
     .subscribe(res => {      
       results = this.mapService.convertSearchResultsToList(res);
       this.options[index] = of(results);
@@ -87,28 +77,27 @@ export class LocationPickerComponent implements OnInit{
   }
 
   pinLocation(option: MapSearchResult, index: number) : void {
-    this.destinations[index] = option;
+    this.stateManagement.rideRequest.locations[index] = option;
     
     this.stateManagement.mapa.pinNewResult(option, index);
-    this.stateManagement.rideRequest.price = this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations);
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
-    this.getTotalDistance()
+    this.getTotalDistance();
+    this.automaticallyFindPath("Custom");
   }
 
-  deleteLocation(index: number) : void {      
-      this.destinations.splice(index, 1);
-      this.inputValues.splice(index, 1);
+  deleteLocation(index: number) : void {   
+      this.stateManagement.rideRequest.locations.splice(index, 1);
+      this.stateManagement.inputValues.splice(index, 1);
       this.stateManagement.mapa.deletePin(index);    
-      this.stateManagement.rideRequest.price = this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations);
-      this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
+      this.getTotalDistance();  
+      this.automaticallyFindPath("Custom");
   }
 
-  addLocation(index: number) : void {    
-    this.destinations.length < 5 ? (this.destinations[index].displayName === "") ?  this.toastr.warning('Choose location for current stop!') : 
-    this.destinations.push({
-      displayName: this.destinations.length + "",
-      lon: "",
-      lat: ""}) : this.toastr.warning('Maximum number of stops is 5!');
+  addLocation(index: number) : void { 
+    this.stateManagement.rideRequest.locations.length < 5 ? (this.stateManagement.rideRequest.locations[index].displayName === "") ?  this.toastr.warning('Choose location for current stop!') : 
+    this.stateManagement.rideRequest.locations.push({
+    displayName: this.stateManagement.rideRequest.locations.length + "",
+    lon: "",
+    lat: ""}) : this.toastr.warning('Maximum number of stops is 5!');
   }
 
   getPins(){
@@ -118,18 +107,8 @@ export class LocationPickerComponent implements OnInit{
       this.router.navigateByUrl('login') 
   }
 
-  createRoute(): void{
-    this.stateManagement.mapa.createRoute();
-  } 
-
-  calculatePrice(vType: string): void{
-    this.stateManagement.rideRequest.vehicleType = vType;
-    this.stateManagement.rideRequest.price = this.mapService.calculatePrice(this.stateManagement.rideRequest.vehicleType, this.stateManagement.mapa.locations)
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price;
-  }
-
-  automaticallyFindPath(isBest: boolean): void{
-    this.mapService.automaticallyFindPath(isBest, this.stateManagement.mapa.locations).subscribe({
+  automaticallyFindPath(routeType: string): void{
+    this.mapService.automaticallyFindPath(routeType, this.stateManagement.mapa.locations).subscribe({
       next: data => {
           let coords: Array<Point> = data;
           coords = coords.map(coord => new Point(coord.lng, coord.lat));

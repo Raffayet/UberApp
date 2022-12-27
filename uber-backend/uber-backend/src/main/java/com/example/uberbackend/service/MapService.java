@@ -74,4 +74,25 @@ public class MapService {
         }
         return retList;
     }
+
+    public List<Point> getCustomRoute(List<Point> points) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        List<Point> retList = new ArrayList<>();
+        int i = 0;
+
+        while(i < points.size() - 1){
+            String queryParams = new String();
+            queryParams = insertPointString(points.get(i), queryParams);
+            queryParams = insertPointString(points.get(i + 1), queryParams);
+
+            Request request = new Request.Builder()
+                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=1&key=").concat(graphhopperApiKey))
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            retList.addAll(getCoordinatesFromGraphhoperResponse(response, 1));
+            i++;
+        }
+        return retList;
+    }
 }
