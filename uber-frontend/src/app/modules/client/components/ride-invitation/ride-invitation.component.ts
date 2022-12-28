@@ -27,8 +27,6 @@ export class RideInvitationComponent implements OnInit{
 
   animationsStarted: boolean = false;
 
-  progressBarVisible: boolean;
-
   maxPeoplePerDrive = environment.maxPeoplePerDrive;
 
   private stompClient : Client;
@@ -115,13 +113,13 @@ export class RideInvitationComponent implements OnInit{
 
   
   splitFare(): void{
-    this.progressBarVisible = true
+    this.stateManagement.rideRequest.invitesSent = true
     this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
     this.createDriveInvitation(true);
   }
 
   onYourCharge(): void{
-    this.progressBarVisible = true
+    this.stateManagement.rideRequest.invitesSent = true
     this.createDriveInvitation(false);
   }
 

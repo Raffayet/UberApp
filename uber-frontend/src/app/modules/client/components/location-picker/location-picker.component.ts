@@ -36,7 +36,7 @@ export class LocationPickerComponent implements OnInit{
 
   ngOnInit(): void {
   }
-
+  
   changePageNumber(){
     this.pageNum.emit(2);
   }
@@ -80,7 +80,7 @@ export class LocationPickerComponent implements OnInit{
   deleteLocation(index: number) : void {   
       this.stateManagement.rideRequest.locations.splice(index, 1);
       this.stateManagement.inputValues.splice(index, 1);
-      this.stateManagement.mapa.deletePin(index);    
+      this.stateManagement.mapa.deletePin(index);   
       this.automaticallyFindPath("Custom");
   }
 
@@ -100,8 +100,7 @@ export class LocationPickerComponent implements OnInit{
   }
 
   automaticallyFindPath(routeType: string): void{
-    this.stateManagement.mapa.reset();
-    console.log(this.stateManagement.mapa.locations);
+    this.stateManagement.mapa.reset()
     
     this.mapService.automaticallyFindPath(routeType, this.stateManagement.mapa.locations).subscribe({
       next: data => {

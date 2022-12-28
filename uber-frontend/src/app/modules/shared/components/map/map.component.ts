@@ -85,7 +85,7 @@ export class MapComponent implements AfterViewInit {
     this.locations[index].removeFrom(this.map);
     this.locations.splice(index, 1);
     this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
-    this.removePreviousRoute();
+    // this.removePreviousRoute();
     this.mapService.automaticallyFindPath("Custom", this.locations);
   }
 

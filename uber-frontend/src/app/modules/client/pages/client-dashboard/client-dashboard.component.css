@@ -11,3 +11,14 @@
   bottom: 2rem;
   left: 2rem;
 }
+
+.notification-container {
+  position: fixed;
+}
+
+.notification-container .notification{
+  cursor: pointer;
+  bottom: 2rem;
+  left: 50rem;
+  border-radius: 5px;
+}

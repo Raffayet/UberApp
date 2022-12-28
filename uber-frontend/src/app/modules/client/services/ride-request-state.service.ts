@@ -22,6 +22,7 @@ export class RideRequestStateService {
     people: [],
     peopleLeftToRespond: [],
     totalDistance: 0,
+    invitesSent: false
   }
 
   inputValues: string[] = [];
@@ -46,8 +47,10 @@ export class RideRequestStateService {
       people: [],
       peopleLeftToRespond: [],
       totalDistance: 0,
+      invitesSent: false
     };
     
+    this.inputValues = [];
     this.mapa.reset();
   }
 }

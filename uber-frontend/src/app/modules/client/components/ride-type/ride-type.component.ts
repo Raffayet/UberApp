@@ -48,6 +48,8 @@ export class RideTypeComponent {
   automaticallyFindPath(routeType: string): void{
     this.mapService.automaticallyFindPath(routeType, this.stateManagement.mapa.locations).subscribe({
       next: data => {
+          this.stateManagement.rideRequest.totalDistance = data.distance;
+          this.calculatePrice(this.stateManagement.rideRequest.vehicleType);
           let coords: Array<Point> = data.points;
           coords = coords.map(coord => new Point(coord.lng, coord.lat));
           this.stateManagement.mapa.drawRoute(coords)

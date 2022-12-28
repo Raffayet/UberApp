@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { RideInvitationComponent } from './components/ride-invitation/ride-invitation.component';
 import { RideTypeComponent } from './components/ride-type/ride-type.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RideInviteDialogComponent } from './components/ride-invite-dialog/ride-invite-dialog.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,7 @@ import { RideTypeComponent } from './components/ride-type/ride-type.component';
     LocationPickerComponent,
     RideInvitationComponent,
     RideTypeComponent,
+    RideInviteDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,7 @@ import { RideTypeComponent } from './components/ride-type/ride-type.component';
     SharedModule,
     FormsModule,
     DragDropModule,
+    MatDialogModule
   ]
 })
 export class ClientModule { }

@@ -22,26 +22,6 @@ import { NumberValueAccessor } from '@angular/forms';
   selector: 'ride-request-page',
   templateUrl: './ride-request-page.component.html',
   styleUrls: ['./ride-request-page.component.css'],
-  animations: [
-    trigger('firstWindowAnimation', [
-      transition(':enter', [
-        style({transform: 'translateX(-100%)'}),
-        animate('300ms ease-in', style({transform: 'translateX(0%)'}))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in', style({transform: 'translateX(-100%)'}))
-      ])
-    ]),
-    trigger('secondWindowAnimation', [
-      transition(':enter', [
-        style({transform: 'translateX(100%)'}),
-        animate('300ms ease-in', style({transform: 'translateX(0%)'}))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in', style({transform: 'translateX(100%)'}))
-      ])
-    ])
-  ]
 })
 
 export class RideRequestPageComponent implements OnInit, OnDestroy{
@@ -63,7 +43,7 @@ export class RideRequestPageComponent implements OnInit, OnDestroy{
   }  
 
   ngOnDestroy(): void {
-    // this.stateManagement.reset();
+    this.stateManagement.reset();
   }
 
   changePage(eventData: number): void{      

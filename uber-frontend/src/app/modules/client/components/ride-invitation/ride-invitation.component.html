@@ -22,9 +22,9 @@
       <mat-chip-grid #chipGrid aria-label="Add more people">
         <mat-chip-row *ngFor="let person of stateManagement.rideRequest.people"
                       (removed)="remove(person)"
-                      [editable]="!progressBarVisible"
+                      [editable]="!stateManagement.rideRequest.invitesSent"
                       (edited)="edit(person, $event)"
-                      [removable]="!progressBarVisible"
+                      [removable]="!stateManagement.rideRequest.invitesSent"
                       >
           {{person}}
           <button matChipRemove [attr.aria-label]="'remove ' + person">
@@ -36,16 +36,16 @@
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                [matChipInputAddOnBlur]="addOnBlur"
                (matChipInputTokenEnd)="add($event)"
-               [disabled]="progressBarVisible || currentAmount < stateManagement.rideRequest.price / (maxPeoplePerDrive + 1) || stateManagement.rideRequest.people.length >= maxPeoplePerDrive"/>
+               [disabled]="this.stateManagement.rideRequest.invitesSent || currentAmount < stateManagement.rideRequest.price / (maxPeoplePerDrive + 1) || stateManagement.rideRequest.people.length >= maxPeoplePerDrive"/>
       </mat-chip-grid>
     </mat-form-field>
-    <div *ngIf="progressBarVisible && currentAmount >= stateManagement.rideRequest.pricePerPassenger && stateManagement.rideRequest.peopleLeftToRespond.length > 0">
+    <div *ngIf="this.stateManagement.rideRequest.invitesSent && currentAmount >= stateManagement.rideRequest.pricePerPassenger && stateManagement.rideRequest.peopleLeftToRespond.length > 0">
       <label class="progress-label">Waiting for people to confirm...</label>
       <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
     </div>
     <div *ngIf="stateManagement.rideRequest.people.length > 0 && stateManagement.rideRequest.price / (maxPeoplePerDrive + 1)">
-      <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="progressBarVisible || currentAmount < stateManagement.rideRequest.price / (maxPeoplePerDrive + 1)">Split Fare</button>
-      <button mat-raised-button color="gray" class="your-charge-button" (click)="onYourCharge()" [disabled]="progressBarVisible || currentAmount < stateManagement.rideRequest.pricePerPassenger">On Your Charge</button>
+      <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="this.stateManagement.rideRequest.invitesSent || currentAmount < stateManagement.rideRequest.price / (maxPeoplePerDrive + 1)">Split Fare</button>
+      <button mat-raised-button color="gray" class="your-charge-button" (click)="onYourCharge()" [disabled]="this.stateManagement.rideRequest.invitesSent || currentAmount < stateManagement.rideRequest.pricePerPassenger">On Your Charge</button>
     </div>
     <div>
       <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="submitRequest()">SUBMIT</button>

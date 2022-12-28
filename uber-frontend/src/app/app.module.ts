@@ -58,7 +58,7 @@ import { SharedModule } from './modules/shared/shared.module';
       timeOut: 2000,
       positionClass: 'toast-bottom-right',
     }),
-    SharedModule
+    SharedModule,
   ],
   providers: [
     {
