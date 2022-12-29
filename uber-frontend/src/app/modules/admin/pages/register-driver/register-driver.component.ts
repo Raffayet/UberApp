@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { DriverRegister } from 'src/app/model/DriverRegister';
@@ -89,17 +90,19 @@ export class RegisterDriverComponent {
   registerDriver(){
     let registerDto:DriverRegister = this.firstFormGroup.value;
     registerDto.vehicle = this.secondFormGroup.value;
+    console.log(registerDto);
 
-    // this.registerService.register(registerDto)
-    //   .subscribe({
-    //     next: () => {
-    //       console.log("USpeh")
-    //       this.router.navigateByUrl("/registeredAccount");
-    //     },
-    //     error: (err) => {
-    //       console.log("Greskaa");
-    //       console.log(err);
-    //     }
-    //   });
+    this.registerService.registerDriver(registerDto)
+      .subscribe({
+        next: () => {
+          console.log("Uspeh")
+          this.router.navigateByUrl("/admin");
+        },
+        error: (err) => {
+          console.log("Greskaa");
+          console.log(err);
+        }
+      });
   }
+
 }

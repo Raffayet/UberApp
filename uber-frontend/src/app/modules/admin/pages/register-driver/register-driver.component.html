@@ -99,7 +99,7 @@
           <div>
             <button mat-button matStepperPrevious class="button">Back</button>
             <button mat-button (click)="stepper.reset()" class="button" color="primary">Reset</button>
-            <button mat-button (click)="registerDriver()" class="button" color="accent">Register Driver</button>
+            <button mat-raised-button matStepperNext (click)="registerDriver()" class="button" color="accent">Register Driver</button>
           </div>
         </mat-step>
     </mat-stepper>

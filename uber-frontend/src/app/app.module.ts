@@ -1,3 +1,4 @@
+import { RegisteredDriverComponent } from './modules/auth/pages/registered-driver/registered-driver.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -32,7 +33,6 @@ import { UserProfilePageComponent } from './modules/shared/pages/user-profile-pa
 import { MaterialComponentsModule } from './modules/material-components/material-components.module';
 import { PaypalPaymentComponent } from './modules/client/components/paypal-payment/paypal-payment.component';
 import { SharedModule } from './modules/shared/shared.module';
-import { RegisterDriverComponent } from './modules/admin/pages/register-driver/register-driver.component';
 
 
 @NgModule({
@@ -53,7 +53,9 @@ import { RegisterDriverComponent } from './modules/admin/pages/register-driver/r
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent
+    PaypalPaymentComponent,
+    RegisteredAccountPageComponent,
+    RegisteredDriverComponent
   ],
   imports: [
     BrowserModule,
