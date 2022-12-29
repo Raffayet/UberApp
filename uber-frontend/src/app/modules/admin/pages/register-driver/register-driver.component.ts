@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+import { DriverRegister } from 'src/app/model/DriverRegister';
 import { identityRevealedValidator } from 'src/app/modules/auth/pages/registration-page/registration-page.component';
 import { RegisterService } from 'src/app/modules/auth/services/register.service';
-import { DriverService } from 'src/app/modules/driver/services/driver.service';
+import { DriverService } from '../../services/driver.service';
 
 @Component({
   selector: 'app-register-driver',

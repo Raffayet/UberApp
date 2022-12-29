@@ -1,5 +1,5 @@
 .backgroundDiv{
-    background-image: url("../../resources/images/login-background.jpg");
+    background-image: url("/src/app/resources/images/login-background.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100%;

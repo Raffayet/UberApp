@@ -53,8 +53,7 @@ import { RegisterDriverComponent } from './modules/admin/pages/register-driver/r
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent,
-    RegisterDriverComponent
+    PaypalPaymentComponent
   ],
   imports: [
     BrowserModule,

@@ -3,17 +3,19 @@ import { CommonModule } from '@angular/common';
 import { AdminRoutingModule } from './admin-routing.module';
 import { RegisterDriverComponent } from './pages/register-driver/register-driver.component';
 import { MaterialComponentsModule } from '../material-components/material-components.module';
-import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    AdminDashboardComponent
+    RegisterDriverComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
-    MaterialComponentsModule
+    MaterialComponentsModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class AdminModule { }
