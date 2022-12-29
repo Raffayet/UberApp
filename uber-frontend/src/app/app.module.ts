@@ -32,6 +32,7 @@ import { UserProfilePageComponent } from './modules/shared/pages/user-profile-pa
 import { MaterialComponentsModule } from './modules/material-components/material-components.module';
 import { PaypalPaymentComponent } from './modules/client/components/paypal-payment/paypal-payment.component';
 import { SharedModule } from './modules/shared/shared.module';
+import { RegisterDriverComponent } from './modules/admin/pages/register-driver/register-driver.component';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { SharedModule } from './modules/shared/shared.module';
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent
+    PaypalPaymentComponent,
+    RegisterDriverComponent
   ],
   imports: [
     BrowserModule,
