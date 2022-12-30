@@ -1,15 +1,26 @@
-.chat-button{
-    cursor: pointer;
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-  }
+.toolbar-item-spacer {
+  flex: 1 1 auto;
+}
 
-.logout-button{
-  cursor: pointer;
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  background-color: rgb(150, 59, 59);
-  color: white;
+.app-container {
+  height: 93.2vh;
+  margin: 0;
+}  
+.app-sidenav {
+  width: 230px;
+}
+.app-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+} 
+
+.menuItem{
+  display: flex;
+  padding-top: 12px;
+}
+
+.itemName{
+  padding-left: 10px;
 }

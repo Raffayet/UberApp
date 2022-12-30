@@ -36,6 +36,7 @@ const routes: Routes = [
   },
   {
     path: 'admin',
+    component: AdminDashboardComponent,
     loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
   {

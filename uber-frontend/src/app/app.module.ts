@@ -1,3 +1,4 @@
+import { RegisteredDriverComponent } from './modules/auth/pages/registered-driver/registered-driver.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -52,7 +53,9 @@ import { SharedModule } from './modules/shared/shared.module';
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent
+    PaypalPaymentComponent,
+    RegisteredAccountPageComponent,
+    RegisteredDriverComponent
   ],
   imports: [
     BrowserModule,
