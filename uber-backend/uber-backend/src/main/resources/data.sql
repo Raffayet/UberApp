@@ -13,6 +13,11 @@ insert into message(sender_email, receiver_email, date, content, status) values(
 
 insert into client(id, tokens) values(1, 10);
 
+insert into vehicle_type(coefficient, type) values (1, 'Standard');
+insert into vehicle_type(coefficient, type) values (1.2, 'Baby Seat');
+insert into vehicle_type(coefficient, type) values (1.3, 'Pet Friendly');
+insert into vehicle_type(coefficient, type) values (1.5, 'Baby Seat and Pet Friendly');
+
 insert into ride(id) values(1);
 insert into ride(id) values(2);
 insert into ride(id) values(3);

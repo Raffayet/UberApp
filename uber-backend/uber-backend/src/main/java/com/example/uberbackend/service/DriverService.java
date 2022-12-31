@@ -1,14 +1,21 @@
 package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
-import com.example.uberbackend.model.DriverInfoChangeRequest;
-import com.example.uberbackend.model.User;
-import com.example.uberbackend.repositories.ClientRepository;
-import com.example.uberbackend.repositories.DriverInfoChangeRequestRepository;
-import com.example.uberbackend.repositories.UserRepository;
+import com.example.uberbackend.dto.RegisterDriverDto;
+import com.example.uberbackend.exception.CustomValidationException;
+import com.example.uberbackend.exception.EmailAlreadyTakenException;
+import com.example.uberbackend.model.*;
+import com.example.uberbackend.model.enums.AccountStatus;
+import com.example.uberbackend.model.enums.DrivingStatus;
+import com.example.uberbackend.model.enums.Provider;
+import com.example.uberbackend.model.enums.RoleType;
+import com.example.uberbackend.repositories.*;
+import com.example.uberbackend.security.SecurityConfig;
+import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -38,4 +45,6 @@ public class DriverService {
             throw new UsernameNotFoundException("User with the given email does not exist!");
         }
     }
+
+
 }
