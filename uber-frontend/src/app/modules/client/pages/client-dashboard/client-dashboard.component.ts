@@ -48,7 +48,9 @@ export class ClientDashboardComponent {
     }
 
     onRideInvitesReceived = (payload: StompMessage) => {
-        let payloadData = JSON.parse(payload.body);      
+        let payloadData = JSON.parse(payload.body); 
+        console.log('evo ovde')
+        console.log(payloadData)     
         this.rideInvites.push(payloadData);
     }
 

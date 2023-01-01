@@ -1,13 +1,14 @@
 package com.example.uberbackend.service;
 
-import com.example.uberbackend.dto.DriverNotificationDto;
+import com.example.uberbackend.dto.ResponseToIniciatorDto;
+import com.example.uberbackend.dto.RideToTakeDto;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
 import com.example.uberbackend.exception.NoAvailableDriversException;
 import com.example.uberbackend.model.DriveRequest;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.DriverInfoChangeRequest;
 import com.example.uberbackend.model.User;
-import com.example.uberbackend.repositories.ClientRepository;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.DriverInfoChangeRequestRepository;
 import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.repositories.UserRepository;
@@ -48,18 +49,21 @@ public class DriverService {
     }
 
     public void findDriverForRequest(DriveRequest request){
-        List<Driver> availableDrivers = driverRepository.findAvailableDrivers();
+        List<Driver> availableDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE);
         boolean found = false;
         for(Driver d : availableDrivers){
             if(!request.getDriversThatRejected().contains(d)){
                 found = true;
-                // send driver notification via socket with this request
+                // send driver notification v
+                // ia socket with this request
                 String email = d.getEmail();
-                simpMessagingTemplate.convertAndSendToUser(email, "/driver-notification", new DriverNotificationDto(request.getId(), request.getLocations().get(0)));
+                RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail());
+                simpMessagingTemplate.convertAndSendToUser(email, "/driver-notification", rideToTakeDto);       //ova notifikacija treba kasnije da se posalje kad se uspesno izvrsi transakcija
+                simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("success", "Driver " + d.getEmail() + " has been assigned to your ride request."));
             }
         }
         if(!found){ // svi su zauzeti
-            throw new NoAvailableDriversException("Currently, there are no available drivers.");
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/bad-response-to-iniciator", new ResponseToIniciatorDto("error", "No available drivers. Please try later."));
         }
     }
 }

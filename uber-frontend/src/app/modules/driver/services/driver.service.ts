@@ -4,6 +4,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/app/environments/environment';
 import { TokenUtilsService } from '../../shared/services/token-utils.service';
+import { RideToTake } from 'src/app/model/RideToTake';
 
 @Injectable({
   providedIn: 'root'
@@ -19,5 +20,12 @@ export class DriverService {
     return this.http.put<string>(environment.apiURL + '/driver/update-personal-info', params, { headers, responseType: 'text' as 'json' });      
   }
 
+  findAllRidesToTake(driverEmail: string) : Observable<RideToTake[]>{
+   
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("format", "json");
+    
+    return this.http.get<RideToTake[]>(environment.apiURL + "/driver/get-rides-to-take", { params: queryParams});
+  }
   
 }

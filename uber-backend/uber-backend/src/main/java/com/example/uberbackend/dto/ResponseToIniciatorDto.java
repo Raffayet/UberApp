@@ -1,6 +1,5 @@
 package com.example.uberbackend.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DriverNotificationDto {
-    private Long requestId;
-    private MapSearchResultDto firstLocation;
+public class ResponseToIniciatorDto {
+    private String messageType;
+    private String messageContent;
 }

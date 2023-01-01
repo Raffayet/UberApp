@@ -1,1 +1,3 @@
-<p>driver-notification works!</p>
+<div class="notification-container">
+    <button mat-fab class="notification" (click)="openDialog(i)" *ngFor="let rideToTake of ridesToTake; let i = index">New Ride Invite</button>
+</div>

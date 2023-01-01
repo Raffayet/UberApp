@@ -15,6 +15,7 @@ import { MapSearchResult, MapService } from "../../services/map.service";
 import { PaypalService } from 'src/app/modules/shared/services/paypal.service';
 import * as SockJS from 'sockjs-client';
 import { over, Client, Message as StompMessage} from 'stompjs';
+import { ResponseToIniciator } from 'src/app/model/ResponseToIniciator';
 
 @Component({
   selector: 'app-ride-invitation',
@@ -33,14 +34,14 @@ export class RideInvitationComponent implements OnInit{
 
   currentAmount: number;
 
+  allDriversBusy: boolean;
+
   //add more people
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService,
     private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {}
-
-
     
   ngOnInit() { 
     this.loggedUser = this.tokenUtilsService.getUserFromToken();  
@@ -53,6 +54,19 @@ export class RideInvitationComponent implements OnInit{
 
   onConnected = () => {
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-ride-invites", (data) => this.onRideInviteResponseReceived(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/bad-response-to-iniciator", (data) => this.onResponseToIniciator(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/good-response-to-iniciator", (data) => this.onResponseToIniciator(data));
+  }
+
+  onResponseToIniciator = (payload: StompMessage) => {
+    let payloadData = JSON.parse(payload.body);
+    let responseToIniciator: ResponseToIniciator;
+    responseToIniciator = payloadData;
+
+    if(responseToIniciator.messageType == "success")
+      this.toastr.success(responseToIniciator.messageContent);
+    else
+      this.toastr.error(responseToIniciator.messageContent); 
   }
 
   getAmountOfTokens(){
@@ -67,12 +81,11 @@ export class RideInvitationComponent implements OnInit{
     const index = this.stateManagement.rideRequest.people.indexOf(dto.responderEmail);
     let isAccepted = Boolean(dto.isAccepted);
     
-    
     if (index >= 0) {
       if(!isAccepted){
         this.stateManagement.rideRequest.people.splice(index, 1);
       }
-      this.stateManagement.rideRequest.peopleLeftToRespond.splice(index, 1);  
+      this.stateManagement.rideRequest.peopleLeftToRespond.splice(index, 1); 
     }
   }
 

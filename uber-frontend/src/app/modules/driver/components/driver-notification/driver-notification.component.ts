@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import * as SockJS from 'sockjs-client';
 import { environment } from "../../../../environments/environment";
-import { Observable } from "rxjs";
 import { over, Client, Message as StompMessage} from 'stompjs';
 import { User } from 'src/app/model/User';
 import { TokenUtilsService } from 'src/app/modules/shared/services/token-utils.service';
+import { RideToTake } from 'src/app/model/RideToTake';
+import { MatDialog } from '@angular/material/dialog';
+import { RideToTakeDialogComponent } from '../ride-to-take-dialog/ride-to-take-dialog.component';
+import { DriverService } from '../../services/driver.service';
 
 @Component({
   selector: 'app-driver-notification',
@@ -15,8 +18,9 @@ export class DriverNotificationComponent implements OnInit{
 
   private stompClient : Client;
   loggedUser: User | null;
+  ridesToTake: RideToTake[] = [];
 
-  constructor(private tokenUtilsService: TokenUtilsService){}
+  constructor(private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService){}
 
   ngOnInit() {
     this.loggedUser = this.tokenUtilsService.getUserFromToken();
@@ -28,6 +32,8 @@ export class DriverNotificationComponent implements OnInit{
 
   onConnected = () => {
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/driver-notification", this.onNotificationReceived);
+    this.driverService.findAllRidesToTake(this.loggedUser?.email as string)
+          .subscribe(val => this.ridesToTake = val);  
   }
 
   onError = () => {
@@ -36,8 +42,39 @@ export class DriverNotificationComponent implements OnInit{
 
   onNotificationReceived = (payload: StompMessage) => {
     let payloadData = JSON.parse(payload.body);
-    console.log("STIGAO REQUEST SA BEKA:");    
-    console.log(payloadData);    
+    console.log("STIGAO REQUEST SA BEKA:"); 
+    console.log(payloadData); 
+    this.ridesToTake.push(payloadData)      
+  }
+
+  openDialog(index: number) {
+    const dialogRef = this.dialog.open(RideToTakeDialogComponent,{
+      data:{
+        message: `Ride request from ${this.ridesToTake[index]?.initiatorEmail}\nFirst location: ${this.ridesToTake[index]?.firstLocation}\nDestination: ${this.ridesToTake[index]?.destination}`,
+        buttonText: {
+          accept: 'Accept',
+          reject: 'Reject'
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+          this.onAcceptRideToTake(index);
+      }
+
+      else{
+          this.onRejectRideToTake(index);
+      }
+    });
+  }
+
+  onAcceptRideToTake(index: number) {
+    console.log('prihvatio')
+  }
+  
+  onRejectRideToTake(index: number) {
+    console.log('odbio')
   }
 
 }

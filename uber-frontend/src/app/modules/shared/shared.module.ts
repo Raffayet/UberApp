@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
     LivechatComponent,
     NavbarComponent,
     MapComponent,
-    PaypalPaymentComponent
+    PaypalPaymentComponent,
   ],
   imports: [
     CommonModule,
