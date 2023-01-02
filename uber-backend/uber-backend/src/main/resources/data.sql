@@ -14,6 +14,7 @@ insert into message(sender_email, receiver_email, date, content, status) values(
 insert into point(lat, lng) values(45.34, 19.78);
 
 insert into client(id, tokens) values(1, 10);
+insert into client(id, tokens) values(3, 2);
 insert into driver(id, current_location_id) values(2, 1);
 
 insert into ride(id) values(1);

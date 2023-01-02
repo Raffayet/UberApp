@@ -56,6 +56,7 @@ export class RideInvitationComponent implements OnInit{
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-ride-invites", (data) => this.onRideInviteResponseReceived(data));
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/bad-response-to-iniciator", (data) => this.onResponseToIniciator(data));
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/good-response-to-iniciator", (data) => this.onResponseToIniciator(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/invited-person-not-have-tokens", (data) => this.notEnoughTokens(data));
   }
 
   onResponseToIniciator = (payload: StompMessage) => {
@@ -67,6 +68,13 @@ export class RideInvitationComponent implements OnInit{
       this.toastr.success(responseToIniciator.messageContent);
     else
       this.toastr.error(responseToIniciator.messageContent); 
+  }
+
+  notEnoughTokens = (payload: StompMessage) => {
+    let payloadData = JSON.parse(payload.body);
+    let responseToIniciator: ResponseToIniciator;
+    responseToIniciator = payloadData;
+    this.toastr.error(responseToIniciator.messageContent);
   }
 
   getAmountOfTokens(){
@@ -98,6 +106,7 @@ export class RideInvitationComponent implements OnInit{
       this.stateManagement.rideRequest.peopleLeftToRespond.push(value);
     }
     event.chipInput!.clear();
+    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
   }
 
   remove(person: string): void {
@@ -107,6 +116,7 @@ export class RideInvitationComponent implements OnInit{
       this.stateManagement.rideRequest.people.splice(index, 1);
       this.stateManagement.rideRequest.peopleLeftToRespond.splice(index, 1);
     }
+    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
   }
 
   edit(person: string, event: MatChipEditedEvent) {
@@ -126,9 +136,18 @@ export class RideInvitationComponent implements OnInit{
 
   
   splitFare(): void{
-    this.stateManagement.rideRequest.invitesSent = true
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
-    this.createDriveInvitation(true);
+    this.clientService.invitedHasTokens(this.loggedUser?.email as string, this.stateManagement.rideRequest.people, this.stateManagement.rideRequest.pricePerPassenger).subscribe({
+      next: data => {
+        if (data)
+        {
+          this.stateManagement.rideRequest.invitesSent = true
+          this.createDriveInvitation(true);
+        }
+      },
+      error: error => {
+        console.error(error.ok);
+      }
+    });
   }
 
   onYourCharge(): void{

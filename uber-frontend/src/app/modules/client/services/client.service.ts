@@ -8,6 +8,7 @@ import { RideInvite } from 'src/app/model/RideInvite';
 import { User } from 'src/app/model/User';
 import { over, Client, Message as StompMessage} from 'stompjs';
 import { RideRequestStateService } from './ride-request-state.service';
+import { CheckForEnoughTokens } from 'src/app/model/CheckForEnoughTokens';
 
 @Injectable({
   providedIn: 'root'
@@ -46,5 +47,14 @@ export class ClientService {
 
   submitRequest(request: RideRequest): Observable<String> {
       return this.http.post<String>(environment.apiURL + "/client/create-drive-request", request);
+  }
+
+  invitedHasTokens(initiatorEmail: string, peopleEmails: string[], pricePerPassenger: number): Observable<Boolean> {
+    let checkForEnoughTokens: CheckForEnoughTokens = {
+      initiatorEmail: initiatorEmail,
+      peopleEmails: peopleEmails,
+      pricePerPassenger: pricePerPassenger
+    }
+    return this.http.post<Boolean>(environment.apiURL + "/client/invited-has-money", checkForEnoughTokens);
   }
 }

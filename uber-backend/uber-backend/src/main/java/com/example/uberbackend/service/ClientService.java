@@ -1,7 +1,9 @@
 package com.example.uberbackend.service;
 
+import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
+import com.example.uberbackend.dto.ResponseToIniciatorDto;
 import com.example.uberbackend.model.Client;
 import com.example.uberbackend.model.DriveRequest;
 import com.example.uberbackend.model.Driver;
@@ -11,6 +13,7 @@ import com.example.uberbackend.repositories.ClientRepository;
 import com.example.uberbackend.repositories.DriveRequestRepository;
 import com.example.uberbackend.repositories.RideInviteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,6 +34,8 @@ public class ClientService {
     private final DriveRequestRepository driveRequestRepository;
 
     private final DriverService driverService;
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public double getTokensByEmail(String email){
         return clientRepository.getTokensByEmail(email);
@@ -83,5 +88,27 @@ public class ClientService {
 
         driveRequestRepository.save(request);
         this.driverService.findDriverForRequest(request);
+    }
+
+    public boolean invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {
+        boolean allHaveTokens = true;
+        for (String email: checkForEnoughTokens.getPeopleEmails())
+        {
+            Optional<Client> client = this.clientRepository.findByEmail(email);
+            if (client.isPresent()){
+                if (client.get().getTokens() < checkForEnoughTokens.getPricePerPassenger())
+                {
+                    allHaveTokens = false;
+                    this.invitedNotHaveTokens(checkForEnoughTokens, client);
+                    break;
+                }
+            }
+        }
+
+        return allHaveTokens;
+    }
+
+    private void invitedNotHaveTokens(CheckForEnoughTokens checkForEnoughTokens, Optional<Client> invitedClient) {
+        invitedClient.ifPresent(client -> simpMessagingTemplate.convertAndSendToUser(checkForEnoughTokens.getInitiatorEmail(), "/invited-person-not-have-tokens", new ResponseToIniciatorDto("error", "Invited person " + client.getEmail() + " doesn't have enough tokens for ride")));
     }
 }

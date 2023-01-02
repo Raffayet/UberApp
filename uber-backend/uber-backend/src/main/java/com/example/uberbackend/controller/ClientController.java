@@ -1,5 +1,6 @@
 package com.example.uberbackend.controller;
 
+import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.model.DriveRequest;
@@ -82,6 +83,16 @@ public class ClientController {
         try{
             this.clientService.createDriveRequest(driveRequestDto);
             return ResponseEntity.ok("Success!");
+        }catch(Exception ex){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("invited-has-money")
+    public ResponseEntity<?> invitedHasTokens(@RequestBody CheckForEnoughTokens checkForEnoughTokens){
+        try{
+            boolean hasEnoughTokens = this.clientService.invitedHasTokens(checkForEnoughTokens);
+            return ResponseEntity.ok(hasEnoughTokens);
         }catch(Exception ex){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }

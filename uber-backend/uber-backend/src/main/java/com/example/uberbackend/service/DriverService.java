@@ -58,7 +58,7 @@ public class DriverService {
                 // ia socket with this request
                 String email = d.getEmail();
                 RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail());
-                simpMessagingTemplate.convertAndSendToUser(email, "/driver-notification", rideToTakeDto);       //ova notifikacija treba kasnije da se posalje kad se uspesno izvrsi transakcija
+//                simpMessagingTemplate.convertAndSendToUser(email, "/driver-notification", rideToTakeDto);  ovde treba uraditi skidanje tokena sa racuna
                 simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("success", "Driver " + d.getEmail() + " has been assigned to your ride request."));
             }
         }
