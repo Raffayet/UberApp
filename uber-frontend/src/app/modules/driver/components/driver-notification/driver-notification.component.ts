@@ -32,8 +32,8 @@ export class DriverNotificationComponent implements OnInit{
 
   onConnected = () => {
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/driver-notification", this.onNotificationReceived);
-    this.driverService.findAllRidesToTake(this.loggedUser?.email as string)
-          .subscribe(val => this.ridesToTake = val);  
+    // this.driverService.findAllRidesToTake(this.loggedUser?.email as string)
+    //       .subscribe(val => this.ridesToTake = val);  
   }
 
   onError = () => {
@@ -70,11 +70,12 @@ export class DriverNotificationComponent implements OnInit{
   }
 
   onAcceptRideToTake(index: number) {
-    console.log('prihvatio')
+    this.driverService.assignDriveToDriver(this.loggedUser?.email as string, this.ridesToTake.at(index)?.requestId as number).subscribe();
+    this.ridesToTake.splice(index, 1);
   }
   
   onRejectRideToTake(index: number) {
-    console.log('odbio')
+    this.ridesToTake.splice(index, 1);
   }
 
 }

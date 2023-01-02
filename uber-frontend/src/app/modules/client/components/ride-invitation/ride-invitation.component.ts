@@ -145,7 +145,7 @@ export class RideInvitationComponent implements OnInit{
         }
       },
       error: error => {
-        console.error(error.ok);
+        console.error(error);
       }
     });
   }
@@ -163,7 +163,7 @@ export class RideInvitationComponent implements OnInit{
           console.log(data)
         },
         error: error => {
-          console.error(error.ok);
+          console.error(error);
         }
       });
   }
@@ -176,7 +176,7 @@ export class RideInvitationComponent implements OnInit{
           console.log(data)
         },
         error: error => {
-          console.error(error.ok);
+          console.error(error);
         }
       });
       

@@ -1,9 +1,6 @@
 package com.example.uberbackend.service;
 
-import com.example.uberbackend.dto.CheckForEnoughTokens;
-import com.example.uberbackend.dto.DriveInvitationDto;
-import com.example.uberbackend.dto.DriveRequestDto;
-import com.example.uberbackend.dto.ResponseToIniciatorDto;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.Client;
 import com.example.uberbackend.model.DriveRequest;
 import com.example.uberbackend.model.Driver;
@@ -87,7 +84,12 @@ public class ClientService {
         request.setDriversThatRejected(new ArrayList<Driver>());
 
         driveRequestRepository.save(request);
-        this.driverService.findDriverForRequest(request);
+        DriverFoundDto driverFoundDto = this.driverService.findDriverForRequest(request);
+        boolean passedCharge = false;
+        if (driverFoundDto.isFound())
+            passedCharge = this.drivingCharge(request);
+            if (passedCharge)
+                this.driverService.sendRequestToDriver(request, driverFoundDto);
     }
 
     public boolean invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {
@@ -110,5 +112,37 @@ public class ClientService {
 
     private void invitedNotHaveTokens(CheckForEnoughTokens checkForEnoughTokens, Optional<Client> invitedClient) {
         invitedClient.ifPresent(client -> simpMessagingTemplate.convertAndSendToUser(checkForEnoughTokens.getInitiatorEmail(), "/invited-person-not-have-tokens", new ResponseToIniciatorDto("error", "Invited person " + client.getEmail() + " doesn't have enough tokens for ride")));
+    }
+
+    public boolean drivingCharge(DriveRequest request) {
+        Client initiator = request.getInitiator();
+
+        if(request.getPricePerPassenger() == 0)     //situacija kada inicijator casti sve za placanje voznje
+        {
+            if (initiator.getTokens() < request.getPrice())
+                return false;
+
+            initiator.setTokens(initiator.getTokens() - request.getPrice());
+            this.clientRepository.save(initiator);
+
+            return true;
+        }
+
+        if(initiator.getTokens() < request.getPricePerPassenger())          //situacija kada je split fare izabran
+            return false;
+
+        initiator.setTokens(initiator.getTokens() - request.getPricePerPassenger());
+        this.clientRepository.save(initiator);
+
+        for (Client client : request.getPeople())
+        {
+            if(client.getTokens() < request.getPricePerPassenger())
+                return false;
+
+            client.setTokens(client.getTokens() - request.getPricePerPassenger());
+            this.clientRepository.save(client);
+        }
+
+        return true;
     }
 }

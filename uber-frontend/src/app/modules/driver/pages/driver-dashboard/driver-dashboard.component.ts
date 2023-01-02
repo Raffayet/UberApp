@@ -30,13 +30,16 @@ export class DriverDashboardComponent {
   constructor(private router: Router, private userService: UserService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService){}
 
   ngOnInit() {
+    this.loggedDriver = this.tokenUtilsService.getUserFromToken(); 
   }
 
   toggleChat = () => {
     this.chatHidden = !this.chatHidden;
   }
 
-  logout = () => {      
+  logout = () => {     
+    this.driverService.resetAfterLogout(this.loggedDriver?.email as string).subscribe();
+
     this.userService.changeUserDrivingStatus(this.tokenUtilsService.getUsernameFromToken() as string, 1).subscribe();
     localStorage.removeItem("user");
     this.router.navigateByUrl('/');

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,7 @@ public class DriveRequest {
     private Long id;
 
     private Boolean isReserved;
-    private LocalDate reserveDate;
+    private LocalDateTime reserveDate;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

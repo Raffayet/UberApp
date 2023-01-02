@@ -1,5 +1,5 @@
 export interface RideToTake {
-    requestId?: number,
+    requestId: number,
     firstLocation: string,
     destination: string,
     initiatorEmail: string

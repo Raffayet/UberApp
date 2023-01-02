@@ -3,8 +3,10 @@ package com.example.uberbackend.controller;
 import com.example.uberbackend.dto.AuthResponseDto;
 import com.example.uberbackend.dto.LoginDto;
 import com.example.uberbackend.dto.RegisterDto;
+import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.User;
 import com.example.uberbackend.model.enums.DrivingStatus;
+import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.repositories.RoleRepository;
 import com.example.uberbackend.repositories.UserRepository;
 import com.example.uberbackend.security.JwtTokenGenerator;
@@ -22,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -32,16 +37,17 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     private JwtTokenGenerator jwtTokenGenerator;
     private UserService userService;
+    private DriverRepository driverRepository;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenGenerator jwtTokenGenerator, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenGenerator jwtTokenGenerator, UserService userService, DriverRepository driverRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenGenerator = jwtTokenGenerator;
         this.userService = userService;
+        this.driverRepository = driverRepository;
     }
 
     @PostMapping("login")
@@ -53,6 +59,12 @@ public class AuthController {
         userService.save(loggedUser);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenGenerator.generateToken(loggedUser);
+
+        Optional<Driver> driver = this.driverRepository.findByEmail(loginDto.getEmail());
+
+        driver.ifPresent(value -> value.setLastTimeOfLogin(LocalDateTime.now()));
+
+        driver.ifPresent(value -> this.driverRepository.save(value));
 
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }

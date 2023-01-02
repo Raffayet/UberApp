@@ -1,18 +1,24 @@
 package com.example.uberbackend.controller;
 
-import com.example.uberbackend.dto.PersonalInfoUpdateDto;
-import com.example.uberbackend.dto.UserDrivingStatus;
+import com.example.uberbackend.dto.*;
+import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.model.User;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/driver")
@@ -43,4 +49,25 @@ public class DriverController {
 //        }
 //        return ResponseEntity.ok(rideInvites);
 //    }
+
+    @PostMapping("driver-logout")
+    public ResponseEntity<?> logout(@RequestBody String driverEmail){
+        try{
+            this.driverService.resetAfterLogout(driverEmail);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("assign-drive-to-driver")
+    public ResponseEntity<?> assignDriveToDriver(@RequestBody DriveAssignatureDto driveAssignatureDto){
+        try{
+            this.driverService.assignDriveToDriver(driveAssignatureDto);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
