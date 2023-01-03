@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/modules/shared/services/user.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -9,18 +10,14 @@ import { Router } from '@angular/router';
 export class AdminDashboardComponent {
   chatHidden:boolean = false;
 
-  constructor(private router: Router){}
+  constructor(private router: Router, private userService:UserService){}
 
   ngOnInit() {
     
   }
 
-  toggleChat = () => {
-    this.chatHidden = !this.chatHidden;
+  LogOut(){
+    this.userService.logOut();
   }
 
-  logout = () => {
-    localStorage.removeItem("user");
-    this.router.navigateByUrl('/login');
-  }
 }

@@ -18,6 +18,11 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
   declarations: [],
@@ -41,7 +46,12 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatPaginatorModule,
     MatSortModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatStepperModule,
   ],
   exports: [
     MatSlideToggleModule,
@@ -62,7 +72,12 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatPaginatorModule,
     MatSortModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatStepperModule,
   ]
 })
 export class MaterialComponentsModule { }

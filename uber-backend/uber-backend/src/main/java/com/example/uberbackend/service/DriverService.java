@@ -4,11 +4,24 @@ import com.example.uberbackend.exception.NoAvailableDriversException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.*;
+import com.example.uberbackend.dto.PersonalInfoUpdateDto;
+import com.example.uberbackend.dto.RegisterDriverDto;
+import com.example.uberbackend.exception.CustomValidationException;
+import com.example.uberbackend.exception.EmailAlreadyTakenException;
+import com.example.uberbackend.model.*;
+import com.example.uberbackend.model.enums.AccountStatus;
+import com.example.uberbackend.model.enums.DrivingStatus;
+import com.example.uberbackend.model.enums.Provider;
+import com.example.uberbackend.model.enums.RoleType;
+import com.example.uberbackend.repositories.*;
+import com.example.uberbackend.security.SecurityConfig;
+import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -132,4 +145,6 @@ public class DriverService {
             simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
         }
     }
+
+
 }

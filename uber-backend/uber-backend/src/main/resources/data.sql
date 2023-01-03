@@ -17,6 +17,7 @@ insert into point(lat, lng) values(45.34, 19.78);
 insert into client(id, tokens) values(1, 10);
 insert into client(id, tokens) values(3, 10);
 insert into client(id, tokens) values(5, 10);
+
 insert into driver(id, current_location_id, daily_active_interval) values(2, 1, 350.0);
 
 -- insert into vehicle_type(type, coefficent) values('Regular', 2.3);
@@ -33,11 +34,16 @@ insert into ride_locations(ride_id, locations_id) values (1, 1);
 insert into ride_locations(ride_id, locations_id) values (1, 2);
 
 insert into driver_rides(driver_id, rides_id) values (2, 1);
+-- insert into ride(id) values(1);
 -- insert into ride(id) values(2);
 -- insert into ride(id) values(3);
 -- insert into ride(id) values(4);
 -- insert into ride(id) values(5);
 -- insert into ride(id) values(6);
+insert into vehicle_type(coefficient, type) values (1, 'Standard');
+insert into vehicle_type(coefficient, type) values (1.2, 'Baby Seat');
+insert into vehicle_type(coefficient, type) values (1.3, 'Pet Friendly');
+insert into vehicle_type(coefficient, type) values (1.5, 'Baby Seat and Pet Friendly');
 
 insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('dejanmatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad')
 

@@ -4,16 +4,12 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.CustomValidationException;
 import com.example.uberbackend.exception.EmailAlreadyTakenException;
 import com.example.uberbackend.exceptions.InvalidPasswordException;
-import com.example.uberbackend.model.ActivateAccountToken;
-import com.example.uberbackend.model.Role;
-import com.example.uberbackend.model.User;
+import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.AccountStatus;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.Provider;
 import com.example.uberbackend.model.enums.RoleType;
-import com.example.uberbackend.repositories.ActivateAccountTokenRepository;
-import com.example.uberbackend.repositories.RoleRepository;
-import com.example.uberbackend.repositories.UserRepository;
+import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.security.SecurityConfig;
 import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
@@ -48,7 +44,9 @@ public class UserService implements UserDetailsService {
     private final EmailService emailService;
     private final ActivateAccountTokenRepository accountTokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ResourceLoader resourceLoader;
+    private final DriverRepository driverRepository;
+    private final VehicleTypeRepository vehicleTypeRepository;
+    private final VehicleRepository vehicleRepository;
 
 
     @Override
@@ -102,6 +100,7 @@ public class UserService implements UserDetailsService {
 
         return "Success";
     }
+
 
     private void sendAccountActivationEmail(User user){
         String token = UUID.randomUUID().toString();
@@ -267,5 +266,50 @@ public class UserService implements UserDetailsService {
         }else{
             throw new UsernameNotFoundException("User with the given email does not exist!");
         }
+    }
+
+    @Transactional
+    public String registerDriver(RegisterDriverDto registerDriverDto, BindingResult result) {
+        passwordMatchValidator.validate(registerDriverDto, result);
+
+        if(result.hasErrors()){
+            throw new CustomValidationException(mapErrorService.mapValidationErrors(result));
+        }
+        if(driverRepository.findByEmail(registerDriverDto.getEmail()).isPresent()){
+            throw new EmailAlreadyTakenException("Driver with email "+registerDriverDto.getEmail()+" already exists.");
+        }
+
+        Optional<Role> optionalRole = roleRepository.findByName(RoleType.DRIVER.name());
+        if(optionalRole.isEmpty()){
+            throw new RuntimeException("Failed Registration due to database problem");
+        }
+
+        Vehicle vehicle = new Vehicle();
+        Optional<VehicleType> vehicleTypeOpt = vehicleTypeRepository.findByType(registerDriverDto.getVehicle().getVehicleType());
+        if(vehicleTypeOpt.isEmpty())
+            throw new RuntimeException("Failed Registration due to database problem");
+        vehicle.setVehicleType(vehicleTypeOpt.get());
+        vehicle.setModel(registerDriverDto.getVehicle().getModel());
+        vehicleRepository.save(vehicle);
+
+        Driver driver = new Driver();
+        driver.setName(registerDriverDto.getFirstName());
+        driver.setSurname(registerDriverDto.getLastName());
+        driver.setEmail(registerDriverDto.getEmail());
+        driver.setPassword(SecurityConfig.passwordEncoder().encode(registerDriverDto.getPassword()));
+        driver.setAccountStatus(AccountStatus.INACTIVE);
+        driver.setActiveAccount(true);
+        driver.setBlocked(false);
+        driver.setDrivingStatus(DrivingStatus.OFFLINE);
+        driver.setCity(registerDriverDto.getCity());
+        driver.setPhoneNumber(registerDriverDto.getTelephone());
+        driver.setProfileImage(null);
+        driver.setProvider(Provider.valueOf(registerDriverDto.getProvider().toUpperCase()));
+        driver.setRole(optionalRole.get());
+        driver.setVehicle(vehicle);
+        driverRepository.save(driver);
+
+        return "Success";
+
     }
 }

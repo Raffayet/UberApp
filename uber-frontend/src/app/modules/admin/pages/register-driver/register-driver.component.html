@@ -1,0 +1,107 @@
+<div class="containerForm">
+    <mat-stepper linear #stepper>
+        <mat-step [stepControl]="firstFormGroup" [editable]="true">
+          <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Basic data</ng-template>
+            <mat-form-field class="formFieldName" >
+                <mat-label>First name</mat-label>
+                <input matInput formControlName="firstName">
+                <mat-error *ngIf="firstName && firstName.errors?.['required'] && (firstName.touched || firstName.dirty || firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field class="formFieldLastName" >
+                <mat-label>Last name</mat-label>
+                <input matInput formControlName="lastName">
+                <mat-error *ngIf="lastName && lastName.errors?.['required'] && (lastName.touched || lastName.dirty|| firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="formField">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput formControlName="email"
+                       placeholder="Ex. pat@example.com" >
+                <mat-error *ngIf="email && email.errors?.['required'] && (email.touched || email.dirty|| firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+                <mat-error *ngIf="email && email.errors?.['email']">
+                    Invalid email address
+                </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field class="formField" >
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password">
+                <mat-error *ngIf="password && password.errors?.['required'] && (password.touched || password.dirty|| firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+                <mat-error *ngIf="password && password.errors?.['pattern'] && (password.touched|| password.dirty || firstFormGroup.invalid) ">
+                    Password must have 8 to 20 characters with at least one uppercase, one lowercase character and one digit
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="formField" style="padding-top: 20px;">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput type="password" formControlName="confirmPassword">
+                <mat-error *ngIf="confirmPassword && confirmPassword.errors?.['required'] && (confirmPassword.touched || confirmPassword.dirty|| firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+                <mat-error *ngIf="password && confirmPassword && password.value !== confirmPassword.value">
+                    Passwords must match
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="formField" >
+                <mat-label>City</mat-label>
+                <input matInput placeholder="Ex. Novi Sad" formControlName="city">
+                <mat-error *ngIf="city && city.errors?.['required'] && (city.touched || city.dirty|| firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="formField" >
+                <mat-label>Telephone</mat-label>
+                <input type="tel" matInput placeholder="555-555-1234" formControlName="telephone">
+                <mat-error *ngIf="telephone && telephone.errors?.['required'] && (telephone.touched || telephone.dirty|| firstFormGroup.invalid)">
+                    This field is required
+                </mat-error>
+            </mat-form-field>
+            <div class="buttonDiv">
+                <button mat-raised-button class="button" matStepperNext color="accent">Next</button>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup" [editable]="true">
+          <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Vehicle info</ng-template>
+            <mat-form-field appearance="fill" class="formField">
+              <mat-label>Model</mat-label>
+              <input matInput formControlName="model" placeholder="Ex. Skoda octavia, Dacia sandero..."
+                     required>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="formField">
+                <mat-label>Select an option</mat-label>
+                <mat-select formControlName="vehicleType" [value]="vehicleType?.value">
+                    <mat-option *ngFor="let option of vehicleTypeOptions" [value]="option">{{option}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="buttonDiv">
+              <button mat-raised-button matStepperPrevious class="button">Back</button>
+              <button mat-raised-button matStepperNext color="accent" class="button">Next</button>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Done</ng-template>
+          <p>You are now done.</p>
+          <div>
+            <button mat-button matStepperPrevious class="button">Back</button>
+            <button mat-button (click)="stepper.reset()" class="button" color="primary">Reset</button>
+            <button mat-raised-button matStepperNext (click)="registerDriver()" class="button" color="accent">Register Driver</button>
+          </div>
+        </mat-step>
+    </mat-stepper>
+</div>
+

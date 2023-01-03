@@ -4,13 +4,15 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TokenUtilsService } from './token-utils.service';
 import { environment } from 'src/app/environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+ 
 
-  constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService) { }
+  constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService, private router: Router) { }
 
   getProfilePicture(email: string){
     let headers = new HttpHeaders();
@@ -51,5 +53,10 @@ export class UserService {
     return this.http.put<string>(environment.apiURL + '/client/update-profile-picture', params, { headers, responseType: 'text' as 'json' });      
   }
 
+
+  logOut() {
+    localStorage.removeItem("user");
+    this.router.navigateByUrl('/login');
+  }
 
 }

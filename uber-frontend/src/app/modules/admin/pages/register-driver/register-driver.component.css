@@ -1,36 +1,17 @@
-.backgroundDiv{
-<<<<<<< HEAD
-    background-image: url("../../../../resources/images/login-background.jpg");
-=======
-    background-image: url("/src/app/resources/images/login-background.jpg");
->>>>>>> develop
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-    width: 100%;
-    top:0;
-    padding-top: 100px;
-}
-
-.container{
+.containerForm{
     height: 800px;
-    width: 500px;
-    background-color: white;
+    width: 700px;
     margin: 0 auto;
     text-align: center;
+    margin-top: 50px;
 }
 
 .header{
     font-size: 50px;
     font-weight: 600;
     padding-top: 50px;
+    color: black;
 }
-
-.example-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-  }
 
 .formDiv{
     display: block;
@@ -71,3 +52,11 @@
 .button{
     margin-inline: 10px;
 }
+
+.mat-stepper-horizontal {
+    margin-top: 8px;
+  }
+  
+  .mat-mdc-form-field {
+    margin-top: 16px;
+  }
