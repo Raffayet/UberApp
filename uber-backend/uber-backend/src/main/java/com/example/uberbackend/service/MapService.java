@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.json.*;
 import java.io.IOException;
@@ -72,7 +71,7 @@ public class MapService {
                     .build();
             Response response = client.newCall(request).execute();
             PathInfoDto dto = getPathInfoGraphhoperResponse(response, 1);
-            retList.addAll(dto.getPoints());
+            retList.addAll(dto.getAtomicPoints());
             distance += dto.getDistance();
             i++;
         }
@@ -96,7 +95,7 @@ public class MapService {
                     .build();
             Response response = client.newCall(request).execute();
             PathInfoDto dto = getPathInfoGraphhoperResponse(response, 0);
-            retList.addAll(dto.getPoints());
+            retList.addAll(dto.getAtomicPoints());
             distance += dto.getDistance();
             i++;
         }

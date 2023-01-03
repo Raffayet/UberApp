@@ -24,6 +24,7 @@ public class Ride {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Client> clients;
 
+    @Enumerated(EnumType.STRING)
     private RideStatus rideStatus;
     @ManyToOne
     @JoinColumn(name = "initiator_id")

@@ -4,7 +4,6 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.model.Ride;
-import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.RideService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,10 +55,10 @@ public class RideController {
         return new ResponseEntity<>(mapDriverDto, HttpStatus.OK);
     }
 
-    @GetMapping("/active-ride")
+    @GetMapping(path="/active-rides", produces = "application/json")
     public ResponseEntity<?> getActiveRides(){
-        MapRideDto ride = rideService.getRide();
-        return new ResponseEntity<>(ride, HttpStatus.OK);
+        List<MapRideDto> rides = rideService.getActiveRides();
+        return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
     @PutMapping(

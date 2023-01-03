@@ -18,7 +18,7 @@ public class MapSearchResultDto {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String displayName;
-    private String lon;
     private String lat;
+    private String lon;
 
 }

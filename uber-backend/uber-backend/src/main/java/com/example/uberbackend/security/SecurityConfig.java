@@ -88,7 +88,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/oauth/**").permitAll()
+                .antMatchers("/", "/login", "/oauth/**", "api/rides/active-rides").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()

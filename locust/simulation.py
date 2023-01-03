@@ -1,7 +1,7 @@
 import requests
 import json
 
-from locust import HttpUser, task, between, events
+from locust import HttpUser, task, between, events, run_single_user
 from random import randrange
 
 
@@ -34,6 +34,7 @@ license_plates = [
     'NS-001-AC'
 ]
 
+
 #
 # @events.test_start.add_listener
 # def on_test_start(environment, **kwargs):
@@ -42,13 +43,18 @@ license_plates = [
 
 
 class QuickstartUser(HttpUser):
-    host = 'http://localhost:8081'
+    host = 'http://localhost:8081/api'
     wait_time = between(0.5, 2)
     taken_ride_ids = []
 
     def on_start(self):
-        random_taxi_stop = taxi_stops[randrange(0, len(taxi_stops))]
-        self.ride = self.client.get('/api/rides/active-rides').json()
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        response = self.client.post("/auth/login", json={"email": "sasalukic@gmail.com", "password": "sasa123"}, headers=headers)
+        accessToken = json.loads(response.text)["accessToken"]
+        self.header = {'Authorization': 'Bearer '+accessToken}
+
+        self.rides = self.client.get('/rides/active-rides', headers=self.header).json()
+        print(self.rides)
         self.points = self.ride.routePoints
         self.pointIndex = 0
 

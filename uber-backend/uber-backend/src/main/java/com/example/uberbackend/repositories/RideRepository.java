@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface RideRepository extends PagingAndSortingRepository<Ride, Long> {
 
-    @Query("select r from Ride r where r.driver is not null")
+    @Query("select r from Ride r where r.rideStatus = 'WAITING' ")
     List<Ride> findAllActive();
 
     @Query(value="SELECT r FROM Ride r  WHERE r.initiator.email = ?1", nativeQuery=true)

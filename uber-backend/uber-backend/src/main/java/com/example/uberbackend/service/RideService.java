@@ -1,8 +1,7 @@
 package com.example.uberbackend.service;
-import com.example.uberbackend.dto.LocationDto;
-import com.example.uberbackend.dto.MapDriverDto;
-import com.example.uberbackend.dto.MapRideDto;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.NotFoundException;
+import com.example.uberbackend.model.Point;
 import com.example.uberbackend.model.Ride;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.RideRepository;
@@ -13,9 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,29 +25,54 @@ public class RideService {
 
     private final RideRepository rideRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final MapService mapService;
 
     public Page<Ride> findAll(Pageable pageable) {
         return rideRepository.findAll(pageable);
     }
 
 
-    public MapRideDto getRide(){
-        MapDriverDto mapDriverDto = new MapDriverDto();
-        mapDriverDto.setId(1L);
-        mapDriverDto.setLatitude(45.235866);
-        mapDriverDto.setLongitude(19.807387);
+    public List<MapRideDto> getActiveRides(){
+        List<Ride> rides = rideRepository.findAllActive();
 
-        MapRideDto mapRideDto = new MapRideDto();
-        mapRideDto.setDriver(mapDriverDto);
-        mapRideDto.setRideId(1L);
-        mapRideDto.setStatus(RideStatus.WAITING);
-        List<LocationDto> locations = new ArrayList<>();
-        locations.add(new LocationDto(45.265435, 19.847805));
-        locations.add(new LocationDto(45.255521, 19.845071));
-        locations.add(new LocationDto(45.223481, 19.847990));
-        mapRideDto.setRoutePoints(locations);
+        List<MapRideDto> mapRideDtos = new ArrayList<>();
 
-        return mapRideDto;
+        for (Ride ride :rides) {
+            PathInfoDto pathInfoDto = null;
+            List<Point> points = ride.getLocations()
+                    .stream()
+                    .map(c -> new Point(c.getLat(), c.getLon()))
+                    .collect(Collectors.toList());
+            if(ride.getRouteType().equals("Custom") ) {
+                try {
+                    pathInfoDto = mapService.getCustomRoute(points);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if(ride.getRouteType().equals("Alternative")){
+                try {
+                    pathInfoDto = mapService.getAlternativeRoute(points);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                try {
+                    pathInfoDto = mapService.getOptimalRoute(points);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            MapRideDto mapRideDto = new MapRideDto(ride);
+            List<LocationDto> locationDtos = pathInfoDto.getAtomicPoints()
+                    .stream().map(c -> new LocationDto(c.getLat(), c.getLng())).collect(Collectors.toList());
+            mapRideDto.setAtomicPoints(locationDtos);
+
+            mapRideDtos.add(mapRideDto);
+        }
+
+        return mapRideDtos;
 
     }
 
