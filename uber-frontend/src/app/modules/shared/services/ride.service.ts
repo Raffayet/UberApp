@@ -12,9 +12,12 @@ export class RideService {
 
   constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService) { }
 
-  getHistoryOfRides(request: Request): Observable<any>{
+  getHistoryOfRides(request: Request, email: string): Observable<any>{
     let queryParams = new HttpParams();
     queryParams = queryParams.append("format", "json");
+    queryParams = queryParams.append("page", request.page);
+    queryParams = queryParams.append("size", request.size);
+    queryParams = queryParams.append("email", email);
 
     return this.http.get<any>(environment.apiURL + "/rides/get-all", { params: queryParams});
   }

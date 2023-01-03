@@ -11,3 +11,10 @@
   bottom: 2rem;
   left: 2rem;
 }
+
+.notification-container {
+  cursor: pointer;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+}

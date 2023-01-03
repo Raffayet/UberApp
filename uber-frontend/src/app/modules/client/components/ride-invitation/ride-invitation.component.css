@@ -1,0 +1,88 @@
+.example-chip-list{
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.additional-info-header
+{
+    font-size: 2.5rem;
+    margin-top: -2.7rem;
+    margin-left: 5rem;
+    margin-bottom: 4rem;
+    font-weight: bold;
+}
+
+.payment-container{
+    margin-top: -2.7rem;
+}
+
+.back-button{
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+}
+
+.final-price-success{
+    font-size: 1.3rem;
+    margin-right: 1rem;
+    background-color: #228B22;
+}
+
+.final-price-failure{
+    font-size: 1.3rem;
+    margin-right: 1rem;
+    background-color: #B22222;
+    margin-bottom: 2rem;
+}
+
+.price-icon-success{
+    color: #228B22;
+    margin-right: 1rem;
+    margin-bottom: -0.3rem;
+}
+
+.price-icon-failure{
+    color: #B22222;
+    margin-right: 1rem;
+    margin-bottom: -0.3rem;
+}
+
+.success-label{
+    font-size: 1rem;
+    color: #228B22;
+}
+
+.failure-label{
+    font-size: 1rem;
+    color: #B22222;
+}
+
+.progress-bar{
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.progress-label{
+    margin-left: 10rem;
+    text-align: center;
+    color: #B22222;
+}
+
+.split-fare-button{
+}
+
+.split-fare-button:disabled{
+    background-color: darkgrey;
+}
+
+.your-charge-button{
+    margin-left: 2rem;
+}
+
+.your-charge-button:disabled{
+    background-color: darkgrey;
+}
+
+.submit-button{
+    margin-top: 2rem;
+    margin-left: 2rem;
+}

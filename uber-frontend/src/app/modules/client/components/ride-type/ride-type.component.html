@@ -1,0 +1,26 @@
+<div class="formContainer">
+      <h1 class="display-1" >Define your ride</h1>
+      <div class="info-container"
+          cdkDropList
+          class="example-list">
+          
+          <mat-form-field appearance="fill" class="vehicle-expansion-panel">
+            <mat-select [(ngModel)]="stateManagement.rideRequest.vehicleType" placeholder="Select vehicle type">
+                <mat-option *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
+                {{vType}}
+                </mat-option>
+            </mat-select>
+            </mat-form-field>
+            <br>
+            <mat-chip class="priceChip" *ngIf="stateManagement.rideRequest.vehicleType">$ {{stateManagement.rideRequest.price}}</mat-chip>
+            
+            <mat-expansion-panel expanded="true" class="route-type-panel">         
+            <mat-label>Select route type</mat-label><br>
+            <mat-radio-group aria-label="Select an option" [(ngModel)]="stateManagement.rideRequest.routeType" (change)="automaticallyFindPath(stateManagement.rideRequest.routeType)" [disabled]="!stateManagement.rideRequest.vehicleType">
+                <mat-radio-button *ngFor="let type of routeTypes" [value]="type">{{type}}</mat-radio-button>
+            </mat-radio-group>
+            </mat-expansion-panel>
+
+        </div>
+      <button mat-raised-button class="next-button" style="margin-right:2rem;" [disabled]="!stateManagement.rideRequest.vehicleType" (click)="next()">Next</button>
+</div>

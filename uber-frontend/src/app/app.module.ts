@@ -4,14 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './modules/shared/components/navbar/navbar.component';
 import { LoginComponent } from './modules/auth/pages/login/login.component';
-import { RideRequestPageComponent } from './modules/client/pages/ride-request-page/ride-request-page.component';
 import {PasswordModule} from 'primeng/password';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RegistrationPageComponent } from './modules/auth/pages/registration-page/registration-page.component';
-import { MapComponent } from './modules/shared/components/map/map.component';
-import { LivechatComponent } from './modules/shared/components/livechat/livechat.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
 import { ActivatedAccountComponent } from './modules/auth/pages/activated-account/activated-account.component';
@@ -31,29 +27,22 @@ import { RegisteredSocialAccountComponent } from './modules/auth/pages/registere
 import { UnauthenticatedDashboard } from './modules/auth/pages/unauthenticated-dashboard/unauthenticated-dashboard.component';
 import { UserProfilePageComponent } from './modules/shared/pages/user-profile-page/user-profile-page.component';
 import { MaterialComponentsModule } from './modules/material-components/material-components.module';
-import { PaypalPaymentComponent } from './modules/client/components/paypal-payment/paypal-payment.component';
 import { SharedModule } from './modules/shared/shared.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
     LoginComponent,
-    RideRequestPageComponent,
     RegistrationPageComponent,
-    MapComponent,
-    LivechatComponent,
     ActivatedAccountComponent,
     RegisteredAccountPageComponent,
     ClientDashboardComponent,
-    DriverDashboardComponent,
     AdminDashboardComponent,
     AdditionalLoginInfoComponent,
     RegisteredSocialAccountComponent,
     UnauthenticatedDashboard,
     UserProfilePageComponent,
-    PaypalPaymentComponent,
     RegisteredAccountPageComponent,
     RegisteredDriverComponent
   ],
@@ -66,13 +55,13 @@ import { SharedModule } from './modules/shared/shared.module';
     FormsModule,
     BrowserAnimationsModule,
     SocialLoginModule,
-    DragDropModule,   
+    // DragDropModule,   
     MaterialComponentsModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-bottom-right',
     }),
-    SharedModule
+    SharedModule,
   ],
   providers: [
     {

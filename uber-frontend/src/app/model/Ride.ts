@@ -1,3 +1,13 @@
+import { MapSearchResult } from "../modules/client/services/map.service";
+import { User } from "./User";
+
 export interface Ride{
-    id: string
+    id: number,
+    driver: User,
+    clients: User[],
+    intiator: User,
+    price: number,
+    pricePerPassenger: number,
+    locations: MapSearchResult[],
+    routeType: string
 }

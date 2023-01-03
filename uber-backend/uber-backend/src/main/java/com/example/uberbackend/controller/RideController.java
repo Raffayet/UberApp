@@ -1,13 +1,14 @@
 package com.example.uberbackend.controller;
 
-import com.example.uberbackend.dto.DriveInvitationDTO;
-import com.example.uberbackend.dto.MessageDto;
+import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.model.Ride;
 import com.example.uberbackend.service.RideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -27,13 +28,13 @@ public class RideController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("get-all")
-    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
         Pageable paging = PageRequest.of(page, size);
-        return rideService.findAll(paging);
+        return rideService.findAllByUserEmail(paging, email);
     }
 
     @MessageMapping("/ride-invite")
-    public void receiveRideInvite(@Payload DriveInvitationDTO dto){
+    public void receiveRideInvite(@Payload DriveInvitationDto dto){
         for(String email : dto.getEmailsTo()){
             simpMessagingTemplate.convertAndSendToUser(email, "/ride-invites", dto);
         }
@@ -42,5 +43,16 @@ public class RideController {
     @MessageMapping("/ride-response")
     public void responseToRideInvite(@Payload HashMap<String, String> dto){
         simpMessagingTemplate.convertAndSendToUser(dto.get("email"), "/response-ride-invites", dto);
+    }
+
+    @GetMapping("calculate-price")
+    public ResponseEntity<?> calculatePrice(@RequestParam("vehicleType") String vehicleType, @RequestParam("totalDistance") double totalDistance) {
+        try {
+            double calculatedPrice = this.rideService.calculatePrice(vehicleType, totalDistance);
+            return ResponseEntity.ok(calculatedPrice);
+        }
+        catch (RuntimeException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

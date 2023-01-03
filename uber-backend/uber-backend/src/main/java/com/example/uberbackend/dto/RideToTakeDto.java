@@ -1,21 +1,19 @@
 package com.example.uberbackend.dto;
-import com.example.uberbackend.model.enums.RideInviteStatus;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DriveInvitationDTO {
-    private String emailFrom;
-    private List<String> emailsTo;
+public class RideToTakeDto {
+    private Long requestId;
     private String firstLocation;
     private String destination;
-    private RideInviteStatus rideInviteStatus;
-    private double priceToPay;
+    private String initiatorEmail;
+    private Boolean reserved;
 }

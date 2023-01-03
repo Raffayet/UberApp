@@ -1,4 +1,5 @@
 package com.example.uberbackend.controller;
+import com.example.uberbackend.dto.PathInfoDto;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
 import com.example.uberbackend.model.Point;
 import com.example.uberbackend.security.JwtTokenGenerator;
@@ -29,7 +30,7 @@ public class MapController {
     @PostMapping(value = "/determine-optimal-route")
     public ResponseEntity<?> determineOptimalRoute(@RequestBody List<Point> points){
         try{
-            List<Point> response = mapService.getOptimalRoute(points);
+            PathInfoDto response = mapService.getOptimalRoute(points);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception ex){
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
@@ -39,7 +40,17 @@ public class MapController {
     @PostMapping(value = "/determine-alternative-route")
     public ResponseEntity<?> determineAlternativeRoute(@RequestBody List<Point> points){
         try{
-            List<Point> response = mapService.getAlternativeRoute(points);
+            PathInfoDto response = mapService.getAlternativeRoute(points);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception ex){
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/determine-custom-route")
+    public ResponseEntity<?> determineCustomRoute(@RequestBody List<Point> points){
+        try{
+            PathInfoDto response = mapService.getCustomRoute(points);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception ex){
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);

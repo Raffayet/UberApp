@@ -4,7 +4,7 @@ import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { ViewportScroller } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PaypalPaymentComponent } from 'src/app/modules/client/components/paypal-payment/paypal-payment.component';
+import { PaypalPaymentComponent } from '../../components/paypal-payment/paypal-payment.component';
 import { TokenUtilsService } from '../../services/token-utils.service';
 import { UserService } from '../../services/user.service';
 import { DriverService } from 'src/app/modules/driver/services/driver.service';
