@@ -21,7 +21,12 @@ export class RideToTakeDialogComponent {
     }
       }
   }
+
   onConfirmClick(): void {
     this.dialogRef.close(true);
+  }
+
+  onCancelClick(): void {
+    this.dialogRef.close(false);
   }
 }

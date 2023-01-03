@@ -19,8 +19,8 @@ import { ClientService } from '../../services/client.service';
 export class ClientDashboardComponent {
 
     chatHidden:boolean = false;
-    navbarLabels: string[] = ["Home", "Profile", "Ride Invites"];
-    navbarPaths: string[] = ["request-ride-page", "profile-page", "ride-invites"];
+    navbarLabels: string[] = ["Home", "Profile", "Ride Invites", "History"];
+    navbarPaths: string[] = ["request-ride-page", "profile-page", "ride-invites", "history"];
     option: string = this.navbarPaths[0];
 
     rideInvites: RideInvite[];
@@ -105,7 +105,6 @@ export class ClientDashboardComponent {
         if (confirmed) {
             this.onAcceptRideInvite(index);
         }
-
         else{
             this.onRejectRideInvite(index);
         }

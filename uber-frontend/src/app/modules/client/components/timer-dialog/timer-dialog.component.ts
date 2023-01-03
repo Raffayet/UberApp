@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { RideRequestStateService } from '../../services/ride-request-state.service';
 
 @Component({
   selector: 'app-timer-dialog',
@@ -7,8 +8,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./timer-dialog.component.css']
 })
 export class TimerDialogComponent {
-
-  pickedTime: Date;
 
   minReserveTime: Date;
 
@@ -19,20 +18,22 @@ export class TimerDialogComponent {
   cancelButtonText = "Cancel"
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
-    private dialogRef: MatDialogRef<TimerDialogComponent>) {
+    private dialogRef: MatDialogRef<TimerDialogComponent>,
+    protected stateManagement: RideRequestStateService) {
+
       if(data){
-    this.message = data.message || this.message;
-    if (data.buttonText) {
-      this.confirmButtonText = data.buttonText.ok || this.confirmButtonText;
-      this.cancelButtonText = data.buttonText.cancel || this.cancelButtonText;
-    }
+        this.message = data.message || this.message;
+        if (data.buttonText) {
+          this.confirmButtonText = data.buttonText.ok || this.confirmButtonText;
+          this.cancelButtonText = data.buttonText.cancel || this.cancelButtonText;
+        }
       }
   }
   onConfirmClick(): void {
     this.dialogRef.close(true);
   }
 
-  onCancel(): void {
+  onCancelClick(): void {
     this.dialogRef.close(false);
   }
 

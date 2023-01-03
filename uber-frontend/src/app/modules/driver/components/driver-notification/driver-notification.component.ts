@@ -51,8 +51,8 @@ export class DriverNotificationComponent implements OnInit{
       data:{
         message: `Ride request from ${this.ridesToTake[index]?.initiatorEmail}\nFirst location: ${this.ridesToTake[index]?.firstLocation}\nDestination: ${this.ridesToTake[index]?.destination}`,
         buttonText: {
-          accept: 'Accept',
-          reject: 'Reject'
+          ok: 'Accept',
+          cancel: 'Reject'
         }
       }
     });
@@ -61,7 +61,6 @@ export class DriverNotificationComponent implements OnInit{
       if (confirmed) {
           this.onAcceptRideToTake(index);
       }
-
       else{
           this.onRejectRideToTake(index);
       }

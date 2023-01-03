@@ -1,13 +1,11 @@
 <div class="confirm-container">
     <h1 mat-dialog-title>Choose time for drive</h1>
     
-    <p-calendar [timeOnly]="true" [(ngModel)]="pickedTime" [minDate]="minReserveTime" [maxDate]="maxReserveTime" (onSelect)="changeTime()" placeholder="HH:MM" [readonlyInput]="true"></p-calendar>
+    <p-calendar [timeOnly]="true" [(ngModel)]="stateManagement.rideRequest.timeOfReservation" [minDate]="minReserveTime" [maxDate]="maxReserveTime" (onSelect)="changeTime()" placeholder="HH:MM" [readonlyInput]="true"></p-calendar>
 
-    <div mat-dialog-actions style="float:right;margin:20px;">
+    <div mat-dialog-actions style="float:right;margin:20px;" class="buttons">
       <button mat-button [mat-dialog-close]="{ clicked: 'Accept' }" (click)="onConfirmClick()">Ok</button>
-      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }" (click)="onCancel()">
-        Cancel
-      </button>
+      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }" (click)="onCancelClick()">Cancel</button>
     </div>
 </div>
   

@@ -4,7 +4,6 @@ import com.example.uberbackend.repositories.RideRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashMap;
@@ -27,5 +26,9 @@ public class RideService {
 
          double price = (vehicleTypeMap.get(vehicleType) + (totalDistance / 1000) * 120) / 109.94;
          return Math.round(price * 100.0) / 100.0;
+    }
+
+    public Page<Ride> findAllByUserEmail(Pageable paging, String email) {
+        return rideRepository.findAllByInitiatorEmail(email, paging);
     }
 }

@@ -98,7 +98,7 @@ public class ClientController {
     @PostMapping("create-reservation-drive-request")
     public ResponseEntity<?> createReservationDriveRequest(@RequestBody DriveRequestDto driveRequestDto){
         try{
-            Date scheduledFor = driveRequestDto.getTimeOfRequestForReservation();
+            Date scheduledFor = driveRequestDto.getTimeOfReservation();
             taskScheduler.schedule(new ReservationScheduler(this.clientService, driveRequestDto), scheduledFor);
             return ResponseEntity.ok("Success!");
         }catch(Exception ex){

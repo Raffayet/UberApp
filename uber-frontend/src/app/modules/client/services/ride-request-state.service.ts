@@ -22,7 +22,9 @@ export class RideRequestStateService {
     people: [],
     peopleLeftToRespond: [],
     totalDistance: 0,
-    invitesSent: false
+    invitesSent: false,
+    isReserved: false,
+    timeOfReservation: new Date()
   }
 
   inputValues: string[] = [];
@@ -47,7 +49,9 @@ export class RideRequestStateService {
       people: [],
       peopleLeftToRespond: [],
       totalDistance: 0,
-      invitesSent: false
+      invitesSent: false,
+      isReserved: false,
+      timeOfReservation: new Date()
     };
     
     this.inputValues = [];

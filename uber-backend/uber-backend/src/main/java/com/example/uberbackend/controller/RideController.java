@@ -28,9 +28,9 @@ public class RideController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("get-all")
-    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
         Pageable paging = PageRequest.of(page, size);
-        return rideService.findAll(paging);
+        return rideService.findAllByUserEmail(paging, email);
     }
 
     @MessageMapping("/ride-invite")

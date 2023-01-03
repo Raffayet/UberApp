@@ -3,8 +3,8 @@
     <div mat-dialog-content> {{ message }}</div>
   
     <div mat-dialog-actions style="float:right;margin:20px;">
-      <button mat-button [mat-dialog-close]="{ clicked: 'Accept' }">Accept</button>
-      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }">
+      <button mat-button [mat-dialog-close]="{ clicked: 'Accept' }" (click)="onConfirmClick()">Accept</button>
+      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }" (click)="onCancelClick()">
         Reject
       </button>
     </div>

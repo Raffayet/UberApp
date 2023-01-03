@@ -191,6 +191,7 @@ export class RideInvitationComponent implements OnInit{
 
   submitReservation(): void {    
     this.stateManagement.rideRequest.initiatorEmail = this.loggedUser?.email as string;
+
     this.clientService.submitReservation(this.stateManagement.rideRequest)
       .subscribe({
         next: data => {

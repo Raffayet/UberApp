@@ -52,7 +52,6 @@ export class ClientService {
 
   submitReservation(request: RideRequest): Observable<String> {
     request.isReserved = true;
-    request.timeOfReservation = new Date();
     request.timeOfRequestForReservation = new Date();
 
     let headers = new HttpHeaders();

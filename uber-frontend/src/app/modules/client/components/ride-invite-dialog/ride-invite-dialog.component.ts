@@ -25,17 +25,7 @@ export class RideInviteDialogComponent {
     this.dialogRef.close(true);
   }
 
-  onCancel(): void {
+  onCancelClick(): void {
     this.dialogRef.close(false);
   }
 }
-
-// @Component({
-//   selector: 'app-base-dialog',
-//   templateUrl: '../base-dialog/base-dialog.component.html'
-// })
-// export class BaseDialogComponent {
-//   constructor(public dialogRef: MatDialogRef<BaseDialogComponent>) {}
-// }
-
-

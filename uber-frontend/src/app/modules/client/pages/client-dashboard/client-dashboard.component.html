@@ -7,7 +7,9 @@
 </button>
 
 <div class="notification-container">
-    <button mat-fab class="notification" (click)="openDialog(i)" *ngFor="let rideInvite of rideInvites; let i = index">New Ride Invite</button>
+    <button mat-mini-fab class="notification" color="warn" (click)="openDialog(i)" *ngFor="let rideInvite of rideInvites; let i = index">
+        <mat-icon>plus_one</mat-icon>
+    </button>
 </div>
 
 <button mat-fab aria-label="Example icon button with a home icon" class="logout-button" (click)="logout()">
