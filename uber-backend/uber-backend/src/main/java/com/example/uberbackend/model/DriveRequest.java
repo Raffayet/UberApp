@@ -20,7 +20,8 @@ public class DriveRequest {
     private Long id;
 
     private Boolean isReserved;
-    private LocalDateTime reserveDate;
+    private LocalDateTime timeOfReservation;
+    private LocalDateTime timeOfRequestForReservation;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

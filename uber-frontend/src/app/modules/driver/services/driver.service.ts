@@ -29,15 +29,16 @@ export class DriverService {
     return this.http.get<RideToTake[]>(environment.apiURL + "/driver/get-rides-to-take", { params: queryParams});
   }
 
-  resetAfterLogout(driverEmail: string)
-  {
-    return this.http.post<string>(environment.apiURL + "/driver/driver-logout", driverEmail);
+  resetAfterLogout(driverEmail: string){
+    let headers = new HttpHeaders();
+    return this.http.post<string>(environment.apiURL + "/driver/driver-logout", driverEmail, { headers, responseType: 'text' as 'json' });
   }
 
-  assignDriveToDriver(driverEmail: string, id: number) {
+  assignDriveToDriver(driverEmail: string, id: number, initiatorEmail: string) {
     let driveAssignatureDto : DriveAssignature = {
       requestId: id,
-      driverEmail: driverEmail
+      driverEmail: driverEmail,
+      initiatorEmail: initiatorEmail
     }
 
     return this.http.post<string>(environment.apiURL + "/driver/assign-drive-to-driver", driveAssignatureDto);

@@ -42,9 +42,8 @@ export class DriverNotificationComponent implements OnInit{
 
   onNotificationReceived = (payload: StompMessage) => {
     let payloadData = JSON.parse(payload.body);
-    console.log("STIGAO REQUEST SA BEKA:"); 
     console.log(payloadData); 
-    this.ridesToTake.push(payloadData)      
+    this.ridesToTake.push(payloadData);
   }
 
   openDialog(index: number) {
@@ -70,7 +69,7 @@ export class DriverNotificationComponent implements OnInit{
   }
 
   onAcceptRideToTake(index: number) {
-    this.driverService.assignDriveToDriver(this.loggedUser?.email as string, this.ridesToTake.at(index)?.requestId as number).subscribe();
+    this.driverService.assignDriveToDriver(this.loggedUser?.email as string, this.ridesToTake.at(index)?.requestId as number, this.ridesToTake.at(index)?.initiatorEmail as string).subscribe();
     this.ridesToTake.splice(index, 1);
   }
   

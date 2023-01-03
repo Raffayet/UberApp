@@ -1,6 +1,6 @@
 import { RideRequest } from './../../../model/RideRequest';
 import { MapSearchResult } from './map.service';
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/app/environments/environment';
@@ -46,8 +46,18 @@ export class ClientService {
   }
 
   submitRequest(request: RideRequest): Observable<String> {
-      return this.http.post<String>(environment.apiURL + "/client/create-drive-request", request);
+      let headers = new HttpHeaders();
+      return this.http.post<String>(environment.apiURL + "/client/create-drive-request", request, { headers, responseType: 'text' as 'json' });
   }
+
+  submitReservation(request: RideRequest): Observable<String> {
+    request.isReserved = true;
+    request.timeOfReservation = new Date();
+    request.timeOfRequestForReservation = new Date();
+
+    let headers = new HttpHeaders();
+    return this.http.post<String>(environment.apiURL + "/client/create-reservation-drive-request", request, { headers, responseType: 'text' as 'json' });
+}
 
   invitedHasTokens(initiatorEmail: string, peopleEmails: string[], pricePerPassenger: number): Observable<Boolean> {
     let checkForEnoughTokens: CheckForEnoughTokens = {

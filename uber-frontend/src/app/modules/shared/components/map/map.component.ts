@@ -106,16 +106,24 @@ export class MapComponent implements AfterViewInit {
     this.initMap();
     var polyline = L.polyline(coords, {color: 'red'}).addTo(this.map);
    
-    this.placePinsForFoundPath();
-
-    this.map.fitBounds(polyline.getBounds());
+    let locationCounter = this.placePinsForFoundPath();
+    console.log(locationCounter);
+    
+    if(locationCounter > 1){
+      this.map.fitBounds(polyline.getBounds());
+    }
   }
 
-  placePinsForFoundPath(): void{
-    let locations = this.locations.filter((location) => { return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0; });
+  placePinsForFoundPath(): number{
+    let locationCounter: number = 0;
+    let locations = this.locations.filter((location) => {
+      return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0;
+    });
 
     for(let location of locations){
+      locationCounter += 1;
       location.addTo(this.map);
     }
+    return locationCounter;
   }
 }

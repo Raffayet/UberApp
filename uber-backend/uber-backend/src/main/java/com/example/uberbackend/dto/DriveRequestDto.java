@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -20,4 +22,7 @@ public class DriveRequestDto {
     private String routeType;
     private List<String> people;
     private List<MapSearchResultDto> locations;
+    private Boolean isReserved;
+    private Date timeOfReservation;
+    private Date timeOfRequestForReservation;
 }

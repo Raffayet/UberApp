@@ -1,6 +1,7 @@
 package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.*;
+import com.example.uberbackend.exception.PaymentFailedException;
 import com.example.uberbackend.model.Client;
 import com.example.uberbackend.model.DriveRequest;
 import com.example.uberbackend.model.Driver;
@@ -14,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +65,7 @@ public class ClientService {
         editedRideInvite.ifPresent(this.rideInviteRepository::save);
     }
 
-    public void createDriveRequest(DriveRequestDto dto) {
+    public void createDriveRequest(DriveRequestDto dto) throws IOException {
         DriveRequest request = new DriveRequest();
         Optional<Client> initiator = clientRepository.findByEmail(dto.getInitiatorEmail());
         initiator.ifPresent(request::setInitiator);
@@ -85,11 +87,14 @@ public class ClientService {
 
         driveRequestRepository.save(request);
         DriverFoundDto driverFoundDto = this.driverService.findDriverForRequest(request);
-        boolean passedCharge = false;
-        if (driverFoundDto.isFound())
-            passedCharge = this.drivingCharge(request);
-            if (passedCharge)
-                this.driverService.sendRequestToDriver(request, driverFoundDto);
+
+        if (driverFoundDto.isFound()){
+            if (!this.drivingCharge(request)){
+                throw new PaymentFailedException("Payment failed!");
+            }
+
+            this.driverService.sendRequestToDriver(request, driverFoundDto);
+        }
     }
 
     public boolean invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {

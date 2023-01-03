@@ -1,4 +1,5 @@
 export interface DriveAssignature{
     requestId: number,
-    driverEmail: string
+    driverEmail: string,
+    initiatorEmail: string
 }

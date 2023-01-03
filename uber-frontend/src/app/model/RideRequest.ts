@@ -10,5 +10,8 @@ export interface RideRequest{
     people: string[],
     peopleLeftToRespond: string[],
     totalDistance: number,
-    invitesSent: boolean
+    invitesSent: boolean,
+    isReserved?: boolean,
+    timeOfReservation?: Date,
+    timeOfRequestForReservation?: Date
 }

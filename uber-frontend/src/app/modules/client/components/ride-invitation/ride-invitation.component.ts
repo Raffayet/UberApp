@@ -64,10 +64,14 @@ export class RideInvitationComponent implements OnInit{
     let responseToIniciator: ResponseToIniciator;
     responseToIniciator = payloadData;
 
-    if(responseToIniciator.messageType == "success")
+    if(responseToIniciator.messageType === "success"){
       this.toastr.success(responseToIniciator.messageContent);
-    else
+    }
+    else if(responseToIniciator.messageType === "driver-accepted"){
+      this.toastr.success(responseToIniciator.messageContent);
+    }else{
       this.toastr.error(responseToIniciator.messageContent); 
+    }
   }
 
   notEnoughTokens = (payload: StompMessage) => {
@@ -151,7 +155,7 @@ export class RideInvitationComponent implements OnInit{
   }
 
   onYourCharge(): void{
-    this.stateManagement.rideRequest.invitesSent = true
+    this.stateManagement.rideRequest.invitesSent = true;
     this.createDriveInvitation(false);
   }
 
@@ -160,7 +164,7 @@ export class RideInvitationComponent implements OnInit{
     this.clientService.createDriveInvitation(this.loggedUser, this.stateManagement.rideRequest.people, this.stateManagement.rideRequest.locations, priceToPay, this.stompClient)
       .subscribe({
         next: data => {
-          console.log(data)
+          console.log(data);
         },
         error: error => {
           console.error(error);
@@ -173,7 +177,22 @@ export class RideInvitationComponent implements OnInit{
     this.clientService.submitRequest(this.stateManagement.rideRequest)
       .subscribe({
         next: data => {
-          console.log(data)
+          console.log(data);
+        },
+        error: error => {
+          console.error(error);
+        }
+      });
+      
+    this.stateManagement.reset();
+  }
+
+  submitReservation(): void {    
+    this.stateManagement.rideRequest.initiatorEmail = this.loggedUser?.email as string;
+    this.clientService.submitReservation(this.stateManagement.rideRequest)
+      .subscribe({
+        next: data => {
+          console.log(data);
         },
         error: error => {
           console.error(error);

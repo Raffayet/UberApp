@@ -11,4 +11,5 @@ import lombok.Setter;
 public class DriveAssignatureDto {
     private Long requestId;
     private String driverEmail;
+    private String initiatorEmail;
 }

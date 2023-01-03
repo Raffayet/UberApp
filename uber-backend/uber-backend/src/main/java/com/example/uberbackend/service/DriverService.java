@@ -1,16 +1,20 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
+import com.example.uberbackend.exception.NoAvailableDriversException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.*;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +29,7 @@ public class DriverService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final DriveRequestRepository driveRequestRepository;
     private final RideRepository rideRepository;
+    private final MapService mapService;
 
     public void updatePersonalInfo(PersonalInfoUpdateDto newInfo) {
         Optional<User> u = userRepository.findByEmail(newInfo.getEmail());
@@ -43,22 +48,39 @@ public class DriverService {
         throw new UsernameNotFoundException("User with the given email does not exist!");
     }
 
-    public DriverFoundDto findDriverForRequest(DriveRequest request){
+    public DriverFoundDto findDriverForRequest(DriveRequest request) throws IOException {
         List<Driver> availableDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE);
-        boolean found = false;
-        String foundDriverEmail = "";
-        for(Driver d : availableDrivers){
+
+        Optional<Driver> driver = findClosestAvailableDriver(availableDrivers, request);
+        if(driver.isPresent()){
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("success", "Driver " + driver.get().getEmail() + " has been found for your ride request."));
+            return new DriverFoundDto(driver.get().getEmail(), true);
+        }else{
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/bad-response-to-iniciator", new ResponseToIniciatorDto("error", "No available drivers. Please try later."));
+            throw new NoAvailableDriversException("There is no available drivers!");
+        }
+    }
+
+    private Optional<Driver> findClosestAvailableDriver(List<Driver> drivers, DriveRequest request) throws IOException {
+        Optional<Driver> closest = Optional.empty();
+        double minDistance = 9999;
+        for(Driver d : drivers){
             if(!request.getDriversThatRejected().contains(d) && d.getDailyActiveInterval() <= 480){
-                found = true;
-                foundDriverEmail = d.getEmail();
-                simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("success", "Driver " + d.getEmail() + " has been assigned to your ride request."));
+                minDistance = Math.min(minDistance, calculateDistance(request.getLocations().get(0), d.getCurrentLocation()));
+                closest = Optional.of(d);
             }
         }
-        if(!found){ // svi su zauzeti
-            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/bad-response-to-iniciator", new ResponseToIniciatorDto("error", "No available drivers. Please try later."));
-        }
 
-        return new DriverFoundDto(foundDriverEmail, found);
+        return closest;
+    }
+
+    private double calculateDistance(MapSearchResultDto mapSearchResultDto, Point driversLocation) throws IOException {
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(mapSearchResultDto.getLat(), mapSearchResultDto.getLon()));
+        points.add(driversLocation);
+
+        PathInfoDto dto = this.mapService.getOptimalRoute(points);
+        return dto.getDistance();
     }
 
     public void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
@@ -96,7 +118,9 @@ public class DriverService {
             Ride ride = new Ride(driveRequest.get(), driver.get());
             this.rideRepository.save(ride);
             driver.get().getRides().add(ride);
+            driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
             this.driverRepository.save(driver.get());
+            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("driver-accepted", "Driver has accepted. Enjoy your ride!"));
         }
     }
 }

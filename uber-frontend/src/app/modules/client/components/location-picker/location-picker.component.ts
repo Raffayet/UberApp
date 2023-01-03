@@ -107,7 +107,7 @@ export class LocationPickerComponent implements OnInit{
           let coords: Array<Point> = data.points;
           this.stateManagement.rideRequest.totalDistance = data.distance;
           coords = coords.map(coord => new Point(coord.lng, coord.lat));
-          this.stateManagement.mapa.drawRoute(coords)
+          this.stateManagement.mapa.drawRoute(coords);
       },
       error: error => {
           console.error('There was an error!', error);
