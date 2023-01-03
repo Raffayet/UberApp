@@ -97,7 +97,7 @@ public class ClientService {
         }
     }
 
-    public boolean invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {
+    public String invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {
         boolean allHaveTokens = true;
         for (String email: checkForEnoughTokens.getPeopleEmails())
         {
@@ -112,7 +112,7 @@ public class ClientService {
             }
         }
 
-        return allHaveTokens;
+        return String.valueOf(allHaveTokens);
     }
 
     private void invitedNotHaveTokens(CheckForEnoughTokens checkForEnoughTokens, Optional<Client> invitedClient) {

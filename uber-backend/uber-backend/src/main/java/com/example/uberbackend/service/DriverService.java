@@ -53,10 +53,10 @@ public class DriverService {
 
         Optional<Driver> driver = findClosestAvailableDriver(availableDrivers, request);
         if(driver.isPresent()){
-            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("success", "Driver " + driver.get().getEmail() + " has been found for your ride request."));
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + driver.get().getEmail() + " has been found for your ride request."));
             return new DriverFoundDto(driver.get().getEmail(), true);
         }else{
-            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/bad-response-to-iniciator", new ResponseToIniciatorDto("error", "No available drivers. Please try later."));
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("noDrivers", "No available drivers. Please try later."));
             throw new NoAvailableDriversException("There is no available drivers!");
         }
     }
@@ -84,7 +84,7 @@ public class DriverService {
     }
 
     public void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
-        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail());
+        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved());
         simpMessagingTemplate.convertAndSendToUser(driverFoundDto.getDriverEmail(), "/driver-notification", rideToTakeDto);
     }
 
@@ -120,7 +120,16 @@ public class DriverService {
             driver.get().getRides().add(ride);
             driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
             this.driverRepository.save(driver.get());
-            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/good-response-to-iniciator", new ResponseToIniciatorDto("driver-accepted", "Driver has accepted. Enjoy your ride!"));
+            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
+
+            sendResponseToClients(driveRequest.get());
+        }
+    }
+
+    private void sendResponseToClients(DriveRequest driveRequest) {
+        for(Client client: driveRequest.getPeople())
+        {
+            simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
         }
     }
 }

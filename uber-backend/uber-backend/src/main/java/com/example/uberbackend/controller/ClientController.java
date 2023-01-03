@@ -109,7 +109,7 @@ public class ClientController {
     @PostMapping("invited-has-money")
     public ResponseEntity<?> invitedHasTokens(@RequestBody CheckForEnoughTokens checkForEnoughTokens){
         try{
-            boolean hasEnoughTokens = this.clientService.invitedHasTokens(checkForEnoughTokens);
+            String hasEnoughTokens = this.clientService.invitedHasTokens(checkForEnoughTokens);
             return ResponseEntity.ok(hasEnoughTokens);
         }catch(Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);

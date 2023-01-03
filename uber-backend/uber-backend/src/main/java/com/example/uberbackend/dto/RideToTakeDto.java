@@ -15,4 +15,5 @@ public class RideToTakeDto {
     private String firstLocation;
     private String destination;
     private String initiatorEmail;
+    private Boolean reserved;
 }

@@ -58,12 +58,15 @@ export class ClientService {
     return this.http.post<String>(environment.apiURL + "/client/create-reservation-drive-request", request, { headers, responseType: 'text' as 'json' });
 }
 
-  invitedHasTokens(initiatorEmail: string, peopleEmails: string[], pricePerPassenger: number): Observable<Boolean> {
+  invitedHasTokens(initiatorEmail: string, peopleEmails: string[], pricePerPassenger: number): Observable<String> {
     let checkForEnoughTokens: CheckForEnoughTokens = {
       initiatorEmail: initiatorEmail,
       peopleEmails: peopleEmails,
       pricePerPassenger: pricePerPassenger
     }
-    return this.http.post<Boolean>(environment.apiURL + "/client/invited-has-money", checkForEnoughTokens);
+
+    let headers = new HttpHeaders();
+
+    return this.http.post<String>(environment.apiURL + "/client/invited-has-money", checkForEnoughTokens, { headers, responseType: 'text' as 'json' });
   }
 }

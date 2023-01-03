@@ -56,23 +56,22 @@ export class RideInvitationComponent implements OnInit{
 
   onConnected = () => {
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-ride-invites", (data) => this.onRideInviteResponseReceived(data));
-    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/bad-response-to-iniciator", (data) => this.onResponseToIniciator(data));
-    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/good-response-to-iniciator", (data) => this.onResponseToIniciator(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-to-client", (data) => this.onResponseToClient(data));
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/invited-person-not-have-tokens", (data) => this.notEnoughTokens(data));
   }
 
-  onResponseToIniciator = (payload: StompMessage) => {
+  onResponseToClient = (payload: StompMessage) => {
     let payloadData = JSON.parse(payload.body);
-    let responseToIniciator: ResponseToIniciator;
-    responseToIniciator = payloadData;
+    let responseToClient: ResponseToIniciator;
+    responseToClient = payloadData;
 
-    if(responseToIniciator.messageType === "success"){
-      this.toastr.success(responseToIniciator.messageContent);
+    if(responseToClient.messageType === "noDrivers")
+    {
+      this.toastr.error(responseToClient.messageContent);
     }
-    else if(responseToIniciator.messageType === "driver-accepted"){
-      this.toastr.success(responseToIniciator.messageContent);
-    }else{
-      this.toastr.error(responseToIniciator.messageContent); 
+
+    else{
+      this.toastr.success(responseToClient.messageContent);
     }
   }
 
@@ -92,14 +91,26 @@ export class RideInvitationComponent implements OnInit{
   onRideInviteResponseReceived(payload: StompMessage){
     let dto = JSON.parse(payload.body);
     
+    console.log(dto);
     const index = this.stateManagement.rideRequest.people.indexOf(dto.responderEmail);
-    let isAccepted = Boolean(dto.isAccepted);
-    
+
+    let isAccepted = (dto.isAccepted === 'true');
+
+    if(isAccepted)
+    {
+      this.toastr.success(`${dto.responderEmail} has accepted your ride invite`);
+    }
+    else
+    {
+      this.toastr.error(`${dto.responderEmail} has rejected your ride invite`);
+    }
+    console.log(index);
     if (index >= 0) {
       if(!isAccepted){
         this.stateManagement.rideRequest.people.splice(index, 1);
+        this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1);  
       }
-      this.stateManagement.rideRequest.peopleLeftToRespond.splice(index, 1); 
+      this.stateManagement.rideRequest.peopleLeftToRespond.splice(index, 1);
     }
   }
 
@@ -112,7 +123,7 @@ export class RideInvitationComponent implements OnInit{
       this.stateManagement.rideRequest.peopleLeftToRespond.push(value);
     }
     event.chipInput!.clear();
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
+    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1);    //+ 1 se odnosi i na coveka koji je rezervisao voznju
   }
 
   remove(person: string): void {
@@ -122,7 +133,7 @@ export class RideInvitationComponent implements OnInit{
       this.stateManagement.rideRequest.people.splice(index, 1);
       this.stateManagement.rideRequest.peopleLeftToRespond.splice(index, 1);
     }
-    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1)    //+ 1 se odnosi i na coveka koji je rezervisao voznju
+    this.stateManagement.rideRequest.pricePerPassenger = this.stateManagement.rideRequest.price / (this.stateManagement.rideRequest.people.length + 1);   //+ 1 se odnosi i na coveka koji je rezervisao voznju
   }
 
   edit(person: string, event: MatChipEditedEvent) {
@@ -146,7 +157,7 @@ export class RideInvitationComponent implements OnInit{
       next: data => {
         if (data)
         {
-          this.stateManagement.rideRequest.invitesSent = true
+          this.stateManagement.rideRequest.invitesSent = true;
           this.createDriveInvitation(true);
         }
       },
