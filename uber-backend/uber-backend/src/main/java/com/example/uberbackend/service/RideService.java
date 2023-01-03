@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +28,7 @@ public class RideService {
     public Page<Ride> findAll(Pageable pageable) {
         return rideRepository.findAll(pageable);
     }
+
 
     public MapRideDto getRide(){
         MapDriverDto mapDriverDto = new MapDriverDto();
@@ -52,5 +54,20 @@ public class RideService {
         Ride ride = this.rideRepository.findById(id).orElseThrow(() -> new NotFoundException("Ride does not exist!"));
         ride.setRideStatus(RideStatus.ENDED);
         return this.rideRepository.save(ride);
+
+    }
+
+    public Double calculatePrice(String vehicleType, double totalDistance) {
+         HashMap<String, Double> vehicleTypeMap = new HashMap<String, Double>();
+         vehicleTypeMap.put("Regular", 200.0);   //pocetna cena u zavisnosti od tipa vozila
+         vehicleTypeMap.put("Baby Seats", 300.0);
+         vehicleTypeMap.put("Pet Seats", 250.0);
+
+         double price = (vehicleTypeMap.get(vehicleType) + (totalDistance / 1000) * 120) / 109.94;
+         return Math.round(price * 100.0) / 100.0;
+    }
+
+    public Page<Ride> findAllByUserEmail(Pageable paging, String email) {
+        return rideRepository.findAllByInitiatorEmail(email, paging);
     }
 }

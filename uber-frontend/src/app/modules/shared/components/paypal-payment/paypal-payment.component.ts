@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { User } from 'src/app/model/User';
-import { PaypalService } from 'src/app/modules/client/services/paypal.service';
+import { PaypalService } from '../../services/paypal.service';
 
 @Component({
   selector: 'app-paypal-payment',

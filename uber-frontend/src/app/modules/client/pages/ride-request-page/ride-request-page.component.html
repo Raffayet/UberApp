@@ -1,114 +1,11 @@
 <div class="upperContainer">
   <div class="vertical-container">
-    <div class="formContainer" *ngIf="firstWindow" [@firstWindowAnimation]="!firstWindow">
-        <h1 class="display-1">Request a ride now</h1>
-          <h2 class="display-1" *ngIf="destinations.length == 0">Pick locations for your ride</h2>
-          <button (click)="trigger()">click me</button>
-          <div
-              cdkDropList
-              [cdkDropListData]="destinations"
-              class="example-list"
-              (cdkDropListDropped)="drop($event)">
-              <div *ngFor="let item of destinations; index as i;" cdkDrag>
-                <mat-form-field class="example-full-width" [style.width.rem]=20>
-                  <mat-label>Enter location</mat-label>
-                  <input [disabled]="i < destinations.length - 1" matInput [(ngModel)]='inputValues[i]' placeholder="Enter location" [matAutocomplete]="auto"
-                        (input)="searchOptions(i)">
-                </mat-form-field>
-
-                <button *ngIf="destinations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
-                  <mat-icon>delete_forever</mat-icon>
-                </button>
-
-                <button *ngIf="i == destinations.length - 1 && i != 4" mat-mini-fab color="primary" (click)="addLocation(i)">
-                  <mat-icon>add_circle</mat-icon>
-                </button>
-
-                <mat-autocomplete #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of options[i] | async" [value]="option.displayName" (click)="pinLocation(option, i)">
-                    {{option.displayName}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-       
-              <mat-form-field appearance="fill" class="vehicle-expansion-panel">
-                <mat-select [(ngModel)]="vehicleType" placeholder="Select vehicle type">
-                  <mat-option *ngFor="let vType of vehicleTypes" [value]="vType" (click)="calculatePrice(vType)">
-                    {{vType}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-              <br>
-              <mat-chip class="priceChip" *ngIf="vehicleType">$ {{price}}</mat-chip>
-
-              <mat-expansion-panel expanded="true" class="route-type-panel">         
-                <mat-label>Select route type</mat-label><br>
-                <mat-radio-group aria-label="Select an option" [(ngModel)]="routeType" (change)="changeRouteType()" [disabled]="!vehicleType || destinations.length < 2">
-                  <mat-radio-button *ngFor="let type of routeTypes" [value]="type">{{type}}</mat-radio-button>
-                </mat-radio-group>
-              </mat-expansion-panel>
-             
-          </div>
-          <button mat-raised-button class="request-button" style="margin-right:2rem;" [disabled]="!vehicleType || destinations.length < 2" (click)="getPins()">Request now</button>
-          <button mat-raised-button color="gray" class="schedule-later-button" [disabled]="!vehicleType || destinations.length < 2">Schedule for later</button>
-
-    </div>
-    <button mat-fab color="accent" aria-label="Example icon button with a home icon" class="back-button" (click)="triggerBack()">
+    <app-location-picker *ngIf="currentPage == 1" (pageNum)="changePage($event)"></app-location-picker>
+    <button mat-fab color="accent" *ngIf="currentPage == 2 || currentPage === 3" aria-label="Example icon button with a home icon" class="back-button" (click)="triggerBack()">
       <mat-icon>arrow_left</mat-icon>
     </button>
-    <div class="payment-container" *ngIf="secondWindow" [@secondWindowAnimation]>
-      <h1 class="additional-info-header">Additional Information</h1>
-      
-      <div *ngIf="vehicleType && currentAmount < pricePerPassenger">
-        <mat-chip class="final-price-failure" style="background-color: #B22222">{{pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
-        <mat-icon class="price-icon-failure">report_problem</mat-icon>
-        <label class="failure-label">Not enough tokens!</label>
-        <app-paypal-payment *ngIf="loggedUser?.role == 'CLIENT'" [loggedUser]="loggedUser"></app-paypal-payment>
-      </div>
-      <div *ngIf="vehicleType && currentAmount >= pricePerPassenger">
-        <mat-chip class="final-price-success" style="background-color: #228B22">{{pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
-        <mat-icon class="price-icon-success">done</mat-icon>
-        <label class="success-label">Enough Tokens!</label>
-      </div>
-
-      <!-- <div>
-        <button class="split-fare-button">Split Fare</button>
-      </div> -->
-
-      <mat-form-field class="example-chip-list" appearance="fill" *ngIf="currentAmount >= price / (maxPeoplePerDrive + 1)">
-        <mat-label>Add more people</mat-label>
-        <mat-chip-grid #chipGrid aria-label="Add more people">
-          <mat-chip-row *ngFor="let person of people"
-                        (removed)="remove(person)"
-                        [editable]="!progressBarVisible"
-                        (edited)="edit(person, $event)"
-                        [removable]="!progressBarVisible"
-                        >
-            {{person}}
-            <button matChipRemove [attr.aria-label]="'remove ' + person">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </mat-chip-row>
-          <input placeholder="New person..."
-                 [matChipInputFor]="chipGrid"
-                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                 [matChipInputAddOnBlur]="addOnBlur"
-                 (matChipInputTokenEnd)="add($event)"
-                 [disabled]="progressBarVisible || currentAmount < price / (maxPeoplePerDrive + 1) || people.length >= maxPeoplePerDrive"/>
-        </mat-chip-grid>
-      </mat-form-field>
-      <div *ngIf="progressBarVisible && currentAmount >= pricePerPassenger">
-        <label class="progress-label">Waiting for people to confirm...</label>
-        <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
-      </div>
-      <div *ngIf="people.length > 0 && price / (maxPeoplePerDrive + 1)">
-        <button mat-raised-button class="split-fare-button" (click)="splitFare()" [disabled]="progressBarVisible || currentAmount < price / (maxPeoplePerDrive + 1)">Split Fare</button>
-        <button mat-raised-button color="gray" class="your-charge-button" (click)="onYourCharge()" [disabled]="progressBarVisible || currentAmount < pricePerPassenger">On Your Charge</button>
-      </div>
-      <div>
-        <button mat-raised-button class="submit-button" [disabled]="people.length > 0 || currentAmount < pricePerPassenger">SUBMIT</button>
-      </div>
-    </div>
+    <app-ride-type *ngIf="currentPage == 2" (pageNum)="changePage($event)"></app-ride-type>
+    <app-ride-invitation *ngIf="currentPage == 3"></app-ride-invitation>
   </div>
   <div class="mapContainer">
     <app-map></app-map>

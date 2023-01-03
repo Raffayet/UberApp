@@ -5,8 +5,14 @@
 <button mat-fab color="accent" aria-label="Example icon button with a home icon" class="chat-button" (click)="toggleChat()">
     <mat-icon>chat</mat-icon>
 </button>
-<button mat-fab color="accent" aria-label="Example icon button with a home icon" class="logout-button" (click)="logout()">
+
+<div class="notification-container">
+    <button mat-mini-fab class="notification" color="warn" (click)="openDialog(i)" *ngFor="let rideInvite of rideInvites; let i = index">
+        <mat-icon>plus_one</mat-icon>
+    </button>
+</div>
+
+<button mat-fab aria-label="Example icon button with a home icon" class="logout-button" (click)="logout()">
     <mat-icon>logout</mat-icon>
 </button>
-
-<app-livechat *ngIf="chatHidden" ></app-livechat>
+<app-livechat *ngIf="chatHidden"></app-livechat>

@@ -78,7 +78,7 @@ export class LivechatComponent {
   }
 
   onError = () => {
-    console.log("Error");    
+    console.log("Socket error.");    
   }
 
   sendPublicMessage = () => {

@@ -2,6 +2,7 @@ package com.example.uberbackend.controller;
 
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.Driver;
+import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.model.Ride;
 import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.service.DriverService;
@@ -31,13 +32,13 @@ public class RideController {
     private final DriverService driverService;
 
     @GetMapping("get-all")
-    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
         Pageable paging = PageRequest.of(page, size);
-        return rideService.findAll(paging);
+        return rideService.findAllByUserEmail(paging, email);
     }
 
     @MessageMapping("/ride-invite")
-    public void receiveRideInvite(@Payload DriveInvitationDTO dto){
+    public void receiveRideInvite(@Payload DriveInvitationDto dto){
         for(String email : dto.getEmailsTo()){
             simpMessagingTemplate.convertAndSendToUser(email, "/ride-invites", dto);
         }
@@ -74,4 +75,14 @@ public class RideController {
     }
 
 
+    @GetMapping("calculate-price")
+    public ResponseEntity<?> calculatePrice(@RequestParam("vehicleType") String vehicleType, @RequestParam("totalDistance") double totalDistance) {
+        try {
+            double calculatedPrice = this.rideService.calculatePrice(vehicleType, totalDistance);
+            return ResponseEntity.ok(calculatedPrice);
+        }
+        catch (RuntimeException ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

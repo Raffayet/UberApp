@@ -3,10 +3,7 @@ package com.example.uberbackend.dto;
 import com.example.uberbackend.model.Message;
 import com.example.uberbackend.model.User;
 import com.example.uberbackend.model.enums.MessageStatus;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class MessageDto implements Serializable {
 
     private String senderEmail;

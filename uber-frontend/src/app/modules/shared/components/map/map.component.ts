@@ -10,6 +10,7 @@ import * as Stomp from 'stompjs';
 import { environment } from 'src/app/environments/environment';
 import { MapDriver } from 'src/app/model/MapDriver';
 import { geoJSON, icon, LayerGroup, marker } from 'leaflet';
+import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
 
 @Component({
   selector: 'app-map',
@@ -25,7 +26,6 @@ export class MapComponent implements AfterViewInit, OnInit {
   private featureGroup: L.FeatureGroup;
 
   routingControl: L.Routing.Control
-
   routingPlan: L.Routing.Plan
 
   private stompClient: any;
@@ -55,7 +55,12 @@ export class MapComponent implements AfterViewInit, OnInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private mapService: MapService) {}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService) {}
+
+  public reset(){
+    this.map.remove();
+    this.initMap();
+  }
 
 
   ngOnInit(): void {
@@ -87,10 +92,12 @@ export class MapComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.initMap();
-  
+    
     for(let i=0; i < 5; i++){
       this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
     }        
+
+    this.stateManagement.mapa = this;
   }
   
   pinNewResult(pin: MapSearchResult, i: number): void {  
@@ -104,7 +111,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     
     this.map.fitBounds(this.featureGroup.getBounds());
 
-    this.createRoute()
+    this.mapService.automaticallyFindPath("Custom", this.locations);
   }
 
   getPins(): Array<L.Marker>{
@@ -115,68 +122,45 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.locations[index].removeFrom(this.map);
     this.locations.splice(index, 1);
     this.locations.push(L.marker([0, 0], {icon: this.customIcon}));
-    this.removePreviousRoute()
-    this.createRoute()
+    // this.removePreviousRoute();
+    this.mapService.automaticallyFindPath("Custom", this.locations);
   }
 
   removePreviousRoute(): void{
-    this.map.removeControl(this.routingControl)
+    this.map.removeControl(this.routingControl);
     this.map.eachLayer(layer => {
       if (layer instanceof L.Marker)
       { 
         this.map.removeLayer(layer)
       }
     })
-    this.map.remove()
-    this.initMap()
-  }
-
-  createRoute(): void{
-
-    for (let location of this.locations)
-    {
-      this.map.removeLayer(location)
-    }
-
-    let latlngs = Array();  
-
-    for (let location of this.locations)
-    {
-      if (location.getLatLng().lng !== 0 && location.getLatLng().lat !== 0)
-        latlngs.push(location.getLatLng())
-    }
-
-    this.routingControl = L.Routing.control({
-      waypoints: latlngs,
-      waypointMode: "connect",
-      routeWhileDragging: true,
-      autoRoute: true,
-      show: false,
-      plan: L.Routing.plan(latlngs, {
-        createMarker: function(i, wp) {
-          return L.marker(wp.latLng, {
-            draggable: false
-          });
-        }
-      }),
-    }).addTo(this.map);
+    this.map.remove();
+    this.initMap();
   }
 
   drawRoute(coords: any) {
-    this.map.remove()
-    this.initMap()
+    this.map.remove();
+    this.initMap();
     var polyline = L.polyline(coords, {color: 'red'}).addTo(this.map);
    
-    this.placePinsForFoundPath();
-
-    this.map.fitBounds(polyline.getBounds());
+    let locationCounter = this.placePinsForFoundPath();
+    console.log(locationCounter);
+    
+    if(locationCounter > 1){
+      this.map.fitBounds(polyline.getBounds());
+    }
   }
 
-  placePinsForFoundPath(): void{
-    let locations = this.locations.filter((location) => { return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0; });
+  placePinsForFoundPath(): number{
+    let locationCounter: number = 0;
+    let locations = this.locations.filter((location) => {
+      return location.getLatLng().lat !== 0 && location.getLatLng().lng !== 0;
+    });
 
     for(let location of locations){
+      locationCounter += 1;
       location.addTo(this.map);
     }
+    return locationCounter;
   }
 }
