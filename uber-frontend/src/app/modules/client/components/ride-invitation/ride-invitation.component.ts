@@ -16,6 +16,8 @@ import { PaypalService } from 'src/app/modules/shared/services/paypal.service';
 import * as SockJS from 'sockjs-client';
 import { over, Client, Message as StompMessage} from 'stompjs';
 import { ResponseToIniciator } from 'src/app/model/ResponseToIniciator';
+import { TimerDialogComponent } from '../timer-dialog/timer-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-ride-invitation',
@@ -41,7 +43,7 @@ export class RideInvitationComponent implements OnInit{
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router, private paypalService: PaypalService,
-    private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {}
+    private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService, private dialog: MatDialog) {}
     
   ngOnInit() { 
     this.loggedUser = this.tokenUtilsService.getUserFromToken();  
@@ -200,6 +202,23 @@ export class RideInvitationComponent implements OnInit{
       });
       
     this.stateManagement.reset();
+  }
+
+  openTimer() {
+    const dialogRef = this.dialog.open(TimerDialogComponent,{
+      data:{
+        buttonText: {
+          accept: 'Accept',
+          reject: 'Reject'
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+          this.submitReservation();
+      }
+    });
   }
 
 }

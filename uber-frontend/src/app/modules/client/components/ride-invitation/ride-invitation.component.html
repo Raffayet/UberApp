@@ -49,6 +49,6 @@
     </div>
     <div>
       <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="submitRequest()">SUBMIT</button>
-      <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="submitReservation()">SCHEDULE</button>
+      <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="openTimer()">SCHEDULE</button>
     </div>
   </div>

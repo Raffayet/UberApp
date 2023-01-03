@@ -12,6 +12,8 @@ import { RideInvitationComponent } from './components/ride-invitation/ride-invit
 import { RideTypeComponent } from './components/ride-type/ride-type.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RideInviteDialogComponent } from './components/ride-invite-dialog/ride-invite-dialog.component';
+import { CalendarModule } from 'primeng/calendar';
+import { TimerDialogComponent } from './components/timer-dialog/timer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,7 @@ import { RideInviteDialogComponent } from './components/ride-invite-dialog/ride-
     RideInvitationComponent,
     RideTypeComponent,
     RideInviteDialogComponent,
+    TimerDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -29,7 +32,8 @@ import { RideInviteDialogComponent } from './components/ride-invite-dialog/ride-
     SharedModule,
     FormsModule,
     DragDropModule,
-    MatDialogModule
+    MatDialogModule,
+    CalendarModule
   ]
 })
 export class ClientModule { }

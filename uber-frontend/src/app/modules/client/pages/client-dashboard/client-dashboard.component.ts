@@ -95,8 +95,8 @@ export class ClientDashboardComponent {
         data:{
           message: `Invite from ${this.rideInvites[index]?.emailFrom}\nFirst location: ${this.rideInvites[index]?.firstLocation}\nDestination: ${this.rideInvites[index]?.destination}`,
           buttonText: {
-            accept: 'Accept',
-            reject: 'Reject'
+            ok: 'Accept',
+            cancel: 'Reject'
           }
         }
       });
