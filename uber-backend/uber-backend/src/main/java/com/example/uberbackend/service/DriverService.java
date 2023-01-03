@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
+import java.util.EmptyStackException;
 import java.util.Optional;
 
 @Service
@@ -27,6 +28,8 @@ public class DriverService {
 
     private final UserRepository userRepository;
     private final DriverInfoChangeRequestRepository driverInfoChangeRequestRepository;
+    private final DriverRepository driverRepository;
+    private final PointRepository pointRepository;
 
     public void updatePersonalInfo(PersonalInfoUpdateDto newInfo) {
         Optional<User> u = userRepository.findByEmail(newInfo.getEmail());
@@ -47,4 +50,25 @@ public class DriverService {
     }
 
 
+    public Driver updateDriverLocation(long id, double latitude, double longitude) {
+        Optional<Driver> optDriver = this.driverRepository.findById(id);
+        if(optDriver.isEmpty())
+            throw new EmptyStackException();
+        Driver driver = optDriver.get();
+        Point newPoint = new Point();
+        newPoint.setLat(latitude);
+        newPoint.setLng(longitude);
+        pointRepository.save(newPoint);
+
+        driver.setCurrentLocation(newPoint);
+        driverRepository.save(driver);
+
+        return driver;
+    }
+
+    public Driver getDriver(long driverId) {
+        Driver driver = driverRepository.findById(driverId).orElse(null);
+
+        return driver;
+    }
 }

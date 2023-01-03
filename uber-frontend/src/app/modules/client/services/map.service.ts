@@ -84,4 +84,12 @@ export class MapService {
     return this.http.post<Array<Point>>(environment.apiURL + "/map/" + routeParam, points);
   }
   
+  getActiveDriver():Observable<any>{
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("format", "json");
+
+    return this.http.get<any>(environment.apiURL + "/rides/active-driver", { params: queryParams});
+
+  }
+  
 }

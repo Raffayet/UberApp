@@ -1,17 +1,22 @@
 import * as L from 'leaflet';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MapSearchResult } from 'src/app/modules/client/services/map.service';
 import { MapService } from 'src/app/modules/client/services/map.service';
 import 'leaflet-routing-machine';
 import { connect } from 'net';
 import { TitleStrategy } from '@angular/router';
+import * as SockJS from 'sockjs-client';
+import * as Stomp from 'stompjs';
+import { environment } from 'src/app/environments/environment';
+import { MapDriver } from 'src/app/model/MapDriver';
+import { geoJSON, icon, LayerGroup, marker } from 'leaflet';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnInit {
 
   private map: L.Map;
   private customIcon : L.Icon;
@@ -22,6 +27,10 @@ export class MapComponent implements AfterViewInit {
   routingControl: L.Routing.Control
 
   routingPlan: L.Routing.Plan
+
+  private stompClient: any;
+  driver: any = {};
+  rides: any = {};
 
   private initMap(): void {
 
@@ -47,6 +56,34 @@ export class MapComponent implements AfterViewInit {
   }
 
   constructor(private mapService: MapService) {}
+
+
+  ngOnInit(): void {
+    let ws = new SockJS(environment.apiURL + "/ws");
+    this.stompClient = Stomp.over(ws);
+    this.stompClient.debug = null;
+    let that = this;
+    this.stompClient.connect({}, function () {
+      that.openGlobalSocket();
+    });
+    this.getActiveRide();
+  }
+
+  getActiveRide():void{
+    
+  }
+
+
+  openGlobalSocket() {
+    this.stompClient.subscribe('/ride-created', (message: { body: string }) => {
+      let msg = JSON.parse(message.body);
+      console.log(msg);
+      // let mapDriver: MapDriver= JSON.parse(message.body);
+      // let existingVehicle = this.driver;
+      // existingVehicle.setLatLng([mapDriver.longitude, mapDriver.latitude]);
+      // existingVehicle.update();
+    });
+  }
 
   ngAfterViewInit(): void {
     this.initMap();

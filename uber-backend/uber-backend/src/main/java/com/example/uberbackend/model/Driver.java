@@ -24,4 +24,7 @@ public class Driver extends User {
     @OneToMany
     private List<Rating> ratingsFromClients;
 
+    @OneToOne
+    private Point currentLocation;
+
 }

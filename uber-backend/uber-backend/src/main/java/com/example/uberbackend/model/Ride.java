@@ -1,5 +1,6 @@
 package com.example.uberbackend.model;
 
+import com.example.uberbackend.model.enums.RideStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,5 +27,7 @@ public class Ride {
 
     @ManyToMany
     private List<Client> clients;
+
+    private RideStatus rideStatus;
 
 }

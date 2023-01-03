@@ -7,6 +7,9 @@ insert into my_user(account_status, active_account, blocked, city, driving_statu
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, false, 'Beograd', 1, 'milicamatic@gmail.com', 'Milica', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '063454890', 'https://buffer.com/library/content/images/2022/03/amina.png', 'LOCAL', 'Matic', 1);
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, false, 'Kragujevac', 1, 'marinapantic@gmail.com', 'Marina', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '064445512', 'https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_3.jpg', 'LOCAL', 'Pantic', 3);
 
+insert into point(lat,lng) values (19.807387, 45.235866);
+insert into driver(id, current_location_id, daily_active_interval) values(2, 1, 350.0);
+
 insert into message(sender_email, receiver_email, date, content, status) values('sasalukic@gmail.com', 'support', '2022-11-24 14:11:10', 'Hello, I have problem with scheduling drive.', 1);
 insert into message(sender_email, receiver_email, date, content, status) values('support', 'sasalukic@gmail.com', '2022-11-24 14:17:10', 'What is your problem?.', 1);
 insert into message(sender_email, receiver_email, date, content, status) values('sasalukic@gmail.com', 'support', '2022-11-24 14:30:10', 'My back is broken.', 1);
@@ -18,7 +21,9 @@ insert into vehicle_type(coefficient, type) values (1.2, 'Baby Seat');
 insert into vehicle_type(coefficient, type) values (1.3, 'Pet Friendly');
 insert into vehicle_type(coefficient, type) values (1.5, 'Baby Seat and Pet Friendly');
 
-insert into ride(id) values(1);
+
+
+insert into ride(id, route) values(1);
 insert into ride(id) values(2);
 insert into ride(id) values(3);
 insert into ride(id) values(4);
