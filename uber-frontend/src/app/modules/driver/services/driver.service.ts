@@ -11,7 +11,6 @@ import { DriveAssignature } from 'src/app/model/DriveAssignature';
   providedIn: 'root'
 })
 export class DriverService {
-
   constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService) { }
 
   updatePersonalInfo(infoForm: FormGroup) : Observable<string>{
@@ -34,14 +33,15 @@ export class DriverService {
     return this.http.post<string>(environment.apiURL + "/driver/driver-logout", driverEmail, { headers, responseType: 'text' as 'json' });
   }
 
-  assignDriveToDriver(driverEmail: string, id: number, initiatorEmail: string) {
+  assignDriveToDriver(driverEmail: string, id: number, initiatorEmail: string): Observable<String> {
+    let headers = new HttpHeaders();
+
     let driveAssignatureDto : DriveAssignature = {
       requestId: id,
       driverEmail: driverEmail,
       initiatorEmail: initiatorEmail
     }
 
-    return this.http.post<string>(environment.apiURL + "/driver/assign-drive-to-driver", driveAssignatureDto);
+    return this.http.post<String>(environment.apiURL + "/driver/assign-drive-to-driver", driveAssignatureDto, { headers, responseType: 'text' as 'json' });
   }
-  
 }

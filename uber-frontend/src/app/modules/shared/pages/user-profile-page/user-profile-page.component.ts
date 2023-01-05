@@ -8,6 +8,9 @@ import { PaypalPaymentComponent } from '../../components/paypal-payment/paypal-p
 import { TokenUtilsService } from '../../services/token-utils.service';
 import { UserService } from '../../services/user.service';
 import { DriverService } from 'src/app/modules/driver/services/driver.service';
+import * as SockJS from 'sockjs-client';
+import { environment } from 'src/app/environments/environment';
+import { over, Client, Message as StompMessage} from 'stompjs';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -22,6 +25,7 @@ export class UserProfilePageComponent {
   passwordForm: FormGroup;
   profilePicture: string;
   driverIsOnline: boolean;
+  private stompClient : Client;
 
   constructor(private tokenUtilsService: TokenUtilsService, private viewportScroller: ViewportScroller,
               private userService: UserService, private toastr: ToastrService,
@@ -38,8 +42,6 @@ export class UserProfilePageComponent {
           this.profilePicture = "data:image/jpg;base64, " + response;
                     
         }});
-      
-      
       this.infoForm = new FormGroup({
         'email': new FormControl(this.loggedUser?.email, Validators.required),
         'name': new FormControl(this.loggedUser?.name, Validators.required),
@@ -52,7 +54,23 @@ export class UserProfilePageComponent {
       'oldPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
       'newPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
       'confirmNewPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
-    });    
+    });   
+    
+    let Sock = new SockJS(environment.apiURL + "/ws");
+    this.stompClient = over(Sock);
+    this.stompClient.connect({}, this.onConnected, this.onError); 
+  }
+
+  onConnected = () => {
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/change-driving-status-slider", this.onNotificationReceived);  
+  }
+
+  onError = () => {
+    console.log("Socket error.");    
+  }
+
+  onNotificationReceived = (payload: StompMessage) => {
+    this.driverIsOnline = payload.body === "false" ? false : true;
   }
 
   get oldPassword(){

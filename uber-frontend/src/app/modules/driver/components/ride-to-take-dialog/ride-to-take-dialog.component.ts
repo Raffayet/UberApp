@@ -7,18 +7,24 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./ride-to-take-dialog.component.css']
 })
 export class RideToTakeDialogComponent {
-  message: string = "Are you sure?"
+  from: string = "";
+  firstLocation: string = "";
+  destination: string = "";
+  drivingTime: Date;
   confirmButtonText = "Yes"
   cancelButtonText = "Cancel"
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
     private dialogRef: MatDialogRef<RideToTakeDialogComponent>) {
       if(data){
-    this.message = data.message || this.message;
-    if (data.buttonText) {
-      this.confirmButtonText = data.buttonText.ok || this.confirmButtonText;
-      this.cancelButtonText = data.buttonText.cancel || this.cancelButtonText;
-    }
+        this.from = data.from;
+        this.firstLocation = data.firstLocation;
+        this.destination = data.destination;
+        this.drivingTime = data.drivingTime;
+        if (data.buttonText) {
+          this.confirmButtonText = data.buttonText.ok || this.confirmButtonText;
+          this.cancelButtonText = data.buttonText.cancel || this.cancelButtonText;
+        }
       }
   }
 

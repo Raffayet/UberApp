@@ -18,11 +18,13 @@ import { over, Client, Message as StompMessage} from 'stompjs';
 import { ResponseToIniciator } from 'src/app/model/ResponseToIniciator';
 import { TimerDialogComponent } from '../timer-dialog/timer-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-ride-invitation',
   templateUrl: './ride-invitation.component.html',
-  styleUrls: ['./ride-invitation.component.css']
+  styleUrls: ['./ride-invitation.component.css'],
+  providers: [DatePipe]
 })
 export class RideInvitationComponent implements OnInit{
 
@@ -37,6 +39,10 @@ export class RideInvitationComponent implements OnInit{
   currentAmount: number;
 
   allDriversBusy: boolean;
+
+  datePipe: DatePipe;
+
+  currentTime = Date.now();
 
   //add more people
   addOnBlur = true;
@@ -226,10 +232,7 @@ export class RideInvitationComponent implements OnInit{
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-          this.submitReservation();
-      }
+    dialogRef.afterClosed().subscribe(result => {
     });
   }
 

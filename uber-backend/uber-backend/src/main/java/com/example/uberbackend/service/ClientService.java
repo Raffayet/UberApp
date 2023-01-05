@@ -81,10 +81,11 @@ public class ClientService {
         request.setPricePerPassenger(dto.getPricePerPassenger());
         request.setVehicleType(dto.getVehicleType());
         request.setRouteType(dto.getRouteType());
-
+        request.setIsReserved(dto.getIsReserved());
+        request.setTimeOfReservation(dto.getTimeOfReservation());
+        request.setTimeOfRequestForReservation(dto.getTimeOfRequestForReservation());
         request.setLocations(dto.getLocations());
         request.setDriversThatRejected(new ArrayList<Driver>());
-
         driveRequestRepository.save(request);
         DriverFoundDto driverFoundDto = this.driverService.findDriverForRequest(request);
 
