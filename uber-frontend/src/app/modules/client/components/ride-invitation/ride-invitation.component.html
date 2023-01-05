@@ -50,5 +50,7 @@
     <div>
       <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="submitRequest()">SUBMIT</button>
       <button mat-raised-button class="submit-button" [disabled]="stateManagement.rideRequest.peopleLeftToRespond.length > 0 || currentAmount < stateManagement.rideRequest.pricePerPassenger" (click)="openTimer()">SCHEDULE</button>
+      <button mat-raised-button class="submit-button" [ngStyle]="{'pointer-events': 'none'}">{{stateManagement.rideRequest.timeOfReservation | date:'HH:mm' | slice:0:5}}</button>
+      <button mat-raised-button *ngIf="stateManagement.rideRequest.isReserved && stateManagement.rideRequest.timeOfReservation && stateManagement.rideRequest.timeOfReservation.getTime() > currentTime" class="submit-button" [ngStyle]="{'pointer-events': 'none'}">Reserved</button>
     </div>
   </div>

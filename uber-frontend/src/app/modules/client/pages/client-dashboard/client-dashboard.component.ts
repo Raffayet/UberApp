@@ -93,7 +93,10 @@ export class ClientDashboardComponent {
     openDialog(index: number) {
       const dialogRef = this.dialog.open(RideInviteDialogComponent,{
         data:{
-          message: `Invite from ${this.rideInvites[index]?.emailFrom}\nFirst location: ${this.rideInvites[index]?.firstLocation}\nDestination: ${this.rideInvites[index]?.destination}`,
+          from: `Invite from ${this.rideInvites[index]?.emailFrom}`,
+          firstLocation: `${this.rideInvites[index]?.firstLocation}`,
+          destination: `${this.rideInvites[index]?.destination}`,
+          priceToPay: `${this.rideInvites[index]?.priceToPay} Tokens`,
           buttonText: {
             ok: 'Accept',
             cancel: 'Reject'

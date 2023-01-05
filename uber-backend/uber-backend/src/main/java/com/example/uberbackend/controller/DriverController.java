@@ -71,7 +71,7 @@ public class DriverController {
             this.driverService.assignDriveToDriver(driveAssignatureDto);
             return ResponseEntity.ok("Success!");
         }catch (Exception ex){
-            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RideRequestStateService } from '../../services/ride-request-state.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-timer-dialog',
@@ -9,9 +10,11 @@ import { RideRequestStateService } from '../../services/ride-request-state.servi
 })
 export class TimerDialogComponent {
 
-  minReserveTime: Date;
-
   maxReserveTime: Date;
+
+  minReserveTime = moment().toDate();
+
+  selectedTime: Date;
 
   message: string = "Are you sure?"
   confirmButtonText = "Yes"
@@ -31,10 +34,12 @@ export class TimerDialogComponent {
   }
   onConfirmClick(): void {
     this.dialogRef.close(true);
+    this.stateManagement.rideRequest.isReserved = true;
   }
 
   onCancelClick(): void {
     this.dialogRef.close(false);
+    this.stateManagement.rideRequest.isReserved = false;
   }
 
   changeTime(): void{

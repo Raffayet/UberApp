@@ -1,6 +1,14 @@
 <div class="confirm-container">
-    <h1 mat-dialog-title>Are you sure?</h1>
-    <div mat-dialog-content> {{ message }}</div>
+    <h1 mat-dialog-title>New Drive Request</h1>
+    <div mat-dialog-content> 
+      <div><b>Invite from {{ from }}</b></div>
+      <br>
+      <div><b>First Location:</b> {{ firstLocation }}</div>
+      <br>
+      <div><b>Destination:</b> {{ destination }}</div>
+      <br>
+      <div><b>Driving time:</b> {{ drivingTime | date:'HH:mm' | slice:0:5 }}</div>
+    </div>
   
     <div mat-dialog-actions style="float:right;margin:20px;">
       <button mat-button [mat-dialog-close]="{ clicked: 'Accept' }" (click)="onConfirmClick()">Accept</button>

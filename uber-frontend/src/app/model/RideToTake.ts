@@ -3,5 +3,6 @@ export interface RideToTake {
     firstLocation: string,
     destination: string,
     initiatorEmail: string,
-    isReserved: boolean
+    isReserved: boolean,
+    drivingTime?: Date
 }

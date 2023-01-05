@@ -18,8 +18,10 @@ import com.example.uberbackend.security.SecurityConfig;
 import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -63,15 +65,56 @@ public class DriverService {
 
     public DriverFoundDto findDriverForRequest(DriveRequest request) throws IOException {
         List<Driver> availableDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE);
-
         Optional<Driver> driver = findClosestAvailableDriver(availableDrivers, request);
+
+        List<Driver> busyDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY);
+        Optional<Driver> closestToFinishDriver = findDriverClosestToFinish(busyDrivers, request);
+
         if(driver.isPresent()){
             simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + driver.get().getEmail() + " has been found for your ride request."));
             return new DriverFoundDto(driver.get().getEmail(), true);
-        }else{
+        }
+
+        else if(closestToFinishDriver.isPresent())
+        {
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + closestToFinishDriver.get().getEmail() + " has been found for your ride request."));
+            return new DriverFoundDto(closestToFinishDriver.get().getEmail(), true);
+        }
+
+        else{
             simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("noDrivers", "No available drivers. Please try later."));
             throw new NoAvailableDriversException("There is no available drivers!");
         }
+    }
+
+    private Optional<Driver> findDriverClosestToFinish(List<Driver> busyDrivers, DriveRequest request) throws IOException {
+        Optional<Driver> closestToFinish = Optional.empty();
+        double minDistanceToDestination = 9999;
+        for(Driver driver: busyDrivers)
+        {
+            boolean hasReservedRides =  doesDriverHaveReservedRides(driver);
+            if(!request.getDriversThatRejected().contains(driver) && driver.getDailyActiveInterval() <= 480 && !hasReservedRides)
+            {
+                if(calculateDistance(driver.getRides().get(0).getLocations().get(1), driver.getCurrentLocation()) < minDistanceToDestination)
+                {
+                    minDistanceToDestination = calculateDistance(driver.getRides().get(0).getLocations().get(1), driver.getCurrentLocation());
+                    closestToFinish = Optional.of(driver);
+                }
+            }
+        }
+        return closestToFinish;
+    }
+
+    private boolean doesDriverHaveReservedRides(Driver driver) {
+        boolean hasReservedRides = false;
+        for(Ride ride: driver.getRides())
+        {
+            if (ride.getReserved() && ride.getTimeOfReservation().isAfter(LocalDateTime.now())) {
+                hasReservedRides = true;
+                break;
+            }
+        }
+        return hasReservedRides;
     }
 
     private Optional<Driver> findClosestAvailableDriver(List<Driver> drivers, DriveRequest request) throws IOException {
@@ -79,8 +122,10 @@ public class DriverService {
         double minDistance = 9999;
         for(Driver d : drivers){
             if(!request.getDriversThatRejected().contains(d) && d.getDailyActiveInterval() <= 480){
-                minDistance = Math.min(minDistance, calculateDistance(request.getLocations().get(0), d.getCurrentLocation()));
-                closest = Optional.of(d);
+                if(calculateDistance(request.getLocations().get(0), d.getCurrentLocation()) < minDistance) {
+                    minDistance = calculateDistance(request.getLocations().get(0), d.getCurrentLocation());
+                    closest = Optional.of(d);
+                }
             }
         }
 
@@ -97,11 +142,11 @@ public class DriverService {
     }
 
     public void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
-        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved());
+        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved(), request.getTimeOfReservation());
         simpMessagingTemplate.convertAndSendToUser(driverFoundDto.getDriverEmail(), "/driver-notification", rideToTakeDto);
     }
 
-//    @Scheduled(cron = "0 12 * * ?")
+    @Scheduled(cron = "0 0 0 * * *")
     public void resetDailyWorkingInterval()
     {
         List<Driver> allDrivers = this.driverRepository.findAll();
@@ -134,7 +179,7 @@ public class DriverService {
             driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
             this.driverRepository.save(driver.get());
             simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
-
+            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getDriverEmail(), "/change-driving-status-slider", "false");
             sendResponseToClients(driveRequest.get());
         }
     }
@@ -145,6 +190,4 @@ public class DriverService {
             simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
         }
     }
-
-
 }

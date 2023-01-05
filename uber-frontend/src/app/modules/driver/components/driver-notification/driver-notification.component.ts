@@ -54,7 +54,10 @@ export class DriverNotificationComponent implements OnInit{
     let notifications = this.reservedRidesToTake.length === 0 ? this.ridesToTake : this.reservedRidesToTake;
     const dialogRef = this.dialog.open(RideToTakeDialogComponent,{
       data:{
-        message: `Ride request from ${notifications[index]?.initiatorEmail}\nFirst location: ${notifications[index]?.firstLocation}\nDestination: ${notifications[index]?.destination}`,
+        from: `Ride request from ${this.ridesToTake[index]?.initiatorEmail}`,
+        firstLocation: `${this.ridesToTake[index]?.firstLocation}`,
+        destination: `${this.ridesToTake[index]?.destination}`,
+        drivingTime:  `${this.ridesToTake[index]?.drivingTime}`,
         buttonText: {
           ok: 'Accept',
           cancel: 'Reject'
@@ -72,9 +75,17 @@ export class DriverNotificationComponent implements OnInit{
     });
   }
 
-  onAcceptRideToTake(index: number) {
+  onAcceptRideToTake(index: number): void {
     let notifications = this.reservedRidesToTake.length === 0 ? this.ridesToTake : this.reservedRidesToTake;
-    this.driverService.assignDriveToDriver(this.loggedUser?.email as string, notifications.at(index)?.requestId as number, notifications.at(index)?.initiatorEmail as string).subscribe();
+    this.driverService.assignDriveToDriver(this.loggedUser?.email as string, notifications.at(index)?.requestId as number, notifications.at(index)?.initiatorEmail as string).subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+
     notifications.splice(index, 1);
   }
   

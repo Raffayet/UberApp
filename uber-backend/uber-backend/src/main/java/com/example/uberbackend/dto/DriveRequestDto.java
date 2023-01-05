@@ -23,6 +23,6 @@ public class DriveRequestDto {
     private List<String> people;
     private List<MapSearchResultDto> locations;
     private Boolean isReserved;
-    private Date timeOfReservation;
-    private Date timeOfRequestForReservation;
+    private LocalDateTime timeOfReservation;
+    private LocalDateTime timeOfRequestForReservation;
 }
