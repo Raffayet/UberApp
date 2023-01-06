@@ -51,4 +51,3 @@ insert into vehicle_type(coefficient, type) values (1.3, 'Pet Friendly');
 insert into vehicle_type(coefficient, type) values (1.5, 'Baby Seat and Pet Friendly');
 
 insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('milicamatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad')
-

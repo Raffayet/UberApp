@@ -116,4 +116,16 @@ public class ClientController {
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("refund-tokens")
+    public ResponseEntity<?> refundTokens(@RequestBody Long requestId)
+    {
+        try{
+            this.clientService.refundTokens(requestId);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

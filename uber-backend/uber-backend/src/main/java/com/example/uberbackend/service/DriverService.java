@@ -29,9 +29,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +43,7 @@ public class DriverService {
     private final DriveRequestRepository driveRequestRepository;
     private final RideRepository rideRepository;
     private final MapService mapService;
+    private final RejectionRepository rejectionRepository;
 
     public void updatePersonalInfo(PersonalInfoUpdateDto newInfo) {
         Optional<User> u = userRepository.findByEmail(newInfo.getEmail());
@@ -180,14 +179,46 @@ public class DriverService {
             this.driverRepository.save(driver.get());
             simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
             simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getDriverEmail(), "/change-driving-status-slider", "false");
-            sendResponseToClients(driveRequest.get());
+            Map<String, Object> headers = generateNotificationHeaders(driveRequest.get());
+            simpMessagingTemplate.convertAndSend("/topic/response-to-other-clients", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"), headers);
         }
     }
 
-    private void sendResponseToClients(DriveRequest driveRequest) {
-        for(Client client: driveRequest.getPeople())
-        {
-            simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
+    private Map<String, Object> generateNotificationHeaders(DriveRequest driveRequest) {
+        Map<String, Object> headers = new HashMap<>();
+        List<String> clientsEmails = new ArrayList<String>();
+
+        clientsEmails.add(driveRequest.getInitiator().getEmail());
+        for (Client client : driveRequest.getPeople()) {
+            clientsEmails.add(client.getEmail());
         }
+
+        headers.put("emails", clientsEmails);
+        return headers;
+    }
+
+    public void rejectDrive(DriverRejectionDto driverRejectionDto) {
+        Optional<Driver> driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail());
+        Optional<DriveRequest> driveRequest = this.driveRequestRepository.findById(driverRejectionDto.getRequestId());
+        if(driveRequest.isPresent() && driver.isPresent())
+        {
+            driveRequest.get().getDriversThatRejected().add(driver.get());
+            this.driveRequestRepository.save(driveRequest.get());
+            simpMessagingTemplate.convertAndSendToUser(driveRequest.get().getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            for (Client client: driveRequest.get().getPeople())
+            {
+                simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            }
+        }
+        createRejection(driverRejectionDto);
+    }
+
+    private void createRejection(DriverRejectionDto driverRejectionDto) {
+        Rejection rejection = new Rejection();
+        rejection.setDriverEmail(driverRejectionDto.getDriverEmail());
+        rejection.setInitiatorEmail(driverRejectionDto.getInitiatorEmail());
+        rejection.setRequestId(driverRejectionDto.getRequestId());
+        rejection.setReasonOfRecetion(driverRejectionDto.getReasonForRejection());
+        this.rejectionRepository.save(rejection);
     }
 }

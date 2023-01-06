@@ -69,4 +69,9 @@ export class ClientService {
 
     return this.http.post<String>(environment.apiURL + "/client/invited-has-money", checkForEnoughTokens, { headers, responseType: 'text' as 'json' });
   }
+
+  refundTokens(requestId: number): Observable<String>{
+    let headers = new HttpHeaders();
+    return this.http.post<String>(environment.apiURL + "/client/refund-tokens", requestId, { headers, responseType: 'text' as 'json' });
+  }
 }

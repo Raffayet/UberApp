@@ -76,6 +76,11 @@ export class RideInvitationComponent implements OnInit{
       this.toastr.error(responseToClient.messageContent);
     }
 
+    else if(responseToClient.messageType === "driverRejected")
+    {
+      this.toastr.error(responseToClient.messageContent);
+    }
+
     else{
       this.toastr.success(responseToClient.messageContent);
     }

@@ -151,4 +151,25 @@ public class ClientService {
 
         return true;
     }
+
+    public void refundTokens(Long requestId) {
+        Optional<DriveRequest> request = this.driveRequestRepository.findById(requestId);
+        if(request.isPresent())
+        {
+            refundTokensToClient(request.get().getInitiator(), request.get().getPricePerPassenger());
+            if(request.get().getPrice() != request.get().getPricePerPassenger())
+            {
+                for(Client client: request.get().getPeople())
+                {
+                    refundTokensToClient(client, request.get().getPricePerPassenger());
+                }
+            }
+        }
+    }
+
+    private void refundTokensToClient(Client client, double priceToRefund) {
+        double currentBalance = client.getTokens();
+        client.setTokens(currentBalance + priceToRefund);
+        this.clientRepository.save(client);
+    }
 }

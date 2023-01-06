@@ -10,6 +10,7 @@ import { over, Client, Message as StompMessage} from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { environment } from 'src/app/environments/environment';
 import { ClientService } from '../../services/client.service';
+import { ResponseToIniciator } from 'src/app/model/ResponseToIniciator';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -26,6 +27,7 @@ export class ClientDashboardComponent {
     rideInvites: RideInvite[];
     stompClient: Client;
     loggedUser: User | null;
+  toastr: any;
     
     changeOption(eventData: string): void{      
       this.router.navigate(['/client', {outlets: {'ClientRouter': [eventData]}}]);
@@ -42,6 +44,7 @@ export class ClientDashboardComponent {
     onConnected = () => {
       this.loggedUser = this.tokenUtilsService.getUserFromToken();          
       this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/ride-invites", this.onRideInvitesReceived);
+      this.stompClient.subscribe("/topic/response-to-other-clients", (data) => this.onResponseToOtherClients(data));
 
       this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
           .subscribe(val => this.rideInvites = val);  
@@ -54,8 +57,39 @@ export class ClientDashboardComponent {
         this.rideInvites.push(payloadData);
     }
 
+    onResponseToClient = (payload: StompMessage) => {
+      let payloadData = JSON.parse(payload.body);
+      let responseToClient: ResponseToIniciator;
+      responseToClient = payloadData;
+      
+      if(responseToClient.messageType === "driverRejected")
+      {
+        this.toastr.error(responseToClient.messageContent);
+      }
+    }
+
     onError = () => {
       console.log("Error");    
+    }
+
+    onResponseToOtherClients = (payload: StompMessage) => {
+      let payloadData = JSON.parse(payload.body);
+      let responseToClient: ResponseToIniciator;
+      responseToClient = payloadData;
+      console.log(responseToClient);
+      if(responseToClient.messageType === "noDrivers")
+      {
+        this.toastr.error(responseToClient.messageContent);
+      }
+
+      else if(responseToClient.messageType === "driverRejected")
+      {
+        this.toastr.error(responseToClient.messageContent);
+      }
+
+      else{
+        this.toastr.success(responseToClient.messageContent);
+      }
     }
 
     onAcceptRideInvite(index: number){
