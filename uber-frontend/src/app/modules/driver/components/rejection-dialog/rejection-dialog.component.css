@@ -1,0 +1,21 @@
+.rejection-dialog-container{
+    width: 30vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3vh 3vh;
+    text-align: center;
+}
+
+.rejection-textarea{
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.confirm-button{
+    text-align: center;
+    margin-left: 8rem;
+    margin-right: 8rem;
+    margin-bottom: 2rem;
+}

@@ -1,6 +1,7 @@
 package com.example.uberbackend.controller;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.Driver;
+import com.example.uberbackend.model.Ride;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
 import com.example.uberbackend.dto.RegisterDriverDto;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.validation.BindingResult;
@@ -85,5 +87,36 @@ public class DriverController {
         }catch (RuntimeException ex){
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("reject-drive")
+    public ResponseEntity<?> rejectDrive(@RequestBody DriverRejectionDto driverRejectionDto){
+        try{
+            this.driverService.rejectDrive(driverRejectionDto);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("reject-drive-after-accepting")
+    public ResponseEntity<?> rejectDriveAfterAccepting(@RequestBody DriverRejectionDto driverRejectionDto){
+        try{
+            this.driverService.rejectDriveAfterAccepting(driverRejectionDto);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("get-rides")
+    public ResponseEntity<?> getRides(@RequestParam("driverEmail") String driverEmail){
+        List<RideToShowDto> ridesToShowDto;
+        try{
+            ridesToShowDto = this.driverService.findAllRidesToDo(driverEmail);
+        }catch(Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(ridesToShowDto);
     }
 }

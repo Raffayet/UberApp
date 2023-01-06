@@ -6,6 +6,9 @@ import { environment } from 'src/app/environments/environment';
 import { TokenUtilsService } from '../../shared/services/token-utils.service';
 import { RideToTake } from 'src/app/model/RideToTake';
 import { DriveAssignature } from 'src/app/model/DriveAssignature';
+import { DriverRejection } from 'src/app/model/DriverRejection';
+import { Ride } from 'src/app/model/Ride';
+import { RideToShow } from 'src/app/model/RideToShow';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +46,39 @@ export class DriverService {
     }
 
     return this.http.post<String>(environment.apiURL + "/driver/assign-drive-to-driver", driveAssignatureDto, { headers, responseType: 'text' as 'json' });
+  }
+
+  rejectDrive(driverEmail: string, id: number, initiatorEmail: string, reasonForRejection: string): Observable<String>{
+    let headers = new HttpHeaders();
+
+    let driverRejectionDto : DriverRejection = {
+      requestId: id,
+      driverEmail: driverEmail,
+      initiatorEmail: initiatorEmail,
+      reasonForRejection: reasonForRejection
+    }
+
+    return this.http.post<String>(environment.apiURL + "/driver/reject-drive", driverRejectionDto, { headers, responseType: 'text' as 'json' });
+  }
+
+  rejectDriveAfterAccepting(driverEmail: string, id: number, initiatorEmail: string, reasonForRejection: string): Observable<String>{
+    let headers = new HttpHeaders();
+
+    let driverRejectionDto : DriverRejection = {
+      requestId: id,
+      driverEmail: driverEmail,
+      initiatorEmail: initiatorEmail,
+      reasonForRejection: reasonForRejection
+    }
+
+    return this.http.post<String>(environment.apiURL + "/driver/reject-drive-after-accepting", driverRejectionDto, { headers, responseType: 'text' as 'json' });
+  }
+
+  getDriversRides(driverEmail: string): Observable<RideToShow[]>
+  {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("driverEmail", driverEmail);
+    queryParams = queryParams.append("format", "json");
+    return this.http.get<RideToShow[]>(environment.apiURL + "/driver/get-rides", { params: queryParams});
   }
 }

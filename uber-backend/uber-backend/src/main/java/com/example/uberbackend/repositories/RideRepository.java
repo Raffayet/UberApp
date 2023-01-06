@@ -1,6 +1,7 @@
 package com.example.uberbackend.repositories;
 
 import com.example.uberbackend.model.Ride;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
