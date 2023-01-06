@@ -128,4 +128,15 @@ public class ClientController {
         }
     }
 
+    @PostMapping("refund-tokens-after-accepting")
+    public ResponseEntity<?> refundTokensAfterAccepting(@RequestBody Long requestId)
+    {
+        try{
+            this.clientService.refundTokensAfterAccepting(requestId);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

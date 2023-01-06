@@ -5,25 +5,11 @@ import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
-import com.example.uberbackend.dto.RegisterDriverDto;
-import com.example.uberbackend.exception.CustomValidationException;
-import com.example.uberbackend.exception.EmailAlreadyTakenException;
-import com.example.uberbackend.model.*;
-import com.example.uberbackend.model.enums.AccountStatus;
-import com.example.uberbackend.model.enums.DrivingStatus;
-import com.example.uberbackend.model.enums.Provider;
-import com.example.uberbackend.model.enums.RoleType;
-import com.example.uberbackend.repositories.*;
-import com.example.uberbackend.security.SecurityConfig;
-import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -213,6 +199,30 @@ public class DriverService {
         createRejection(driverRejectionDto);
     }
 
+    public void rejectDriveAfterAccepting(DriverRejectionDto driverRejectionDto) {
+        Optional<Driver> driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail());
+        Optional<Ride> ride = this.rideRepository.findById(driverRejectionDto.getRequestId());
+
+        if(ride.isPresent() && driver.isPresent())
+        {
+            removeRide(driver, ride);
+            simpMessagingTemplate.convertAndSendToUser(ride.get().getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            for (Client client: ride.get().getClients())
+            {
+                simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            }
+        }
+        createRejection(driverRejectionDto);
+    }
+
+    private void removeRide(Optional<Driver> driver, Optional<Ride> ride) {
+        if(driver.isPresent() && ride.isPresent())
+        {
+            driver.get().getRides().removeIf(driversRide -> Objects.equals(driversRide.getId(), ride.get().getId()));
+            this.driverRepository.save(driver.get());
+        }
+    }
+
     private void createRejection(DriverRejectionDto driverRejectionDto) {
         Rejection rejection = new Rejection();
         rejection.setDriverEmail(driverRejectionDto.getDriverEmail());
@@ -220,5 +230,20 @@ public class DriverService {
         rejection.setRequestId(driverRejectionDto.getRequestId());
         rejection.setReasonOfRecetion(driverRejectionDto.getReasonForRejection());
         this.rejectionRepository.save(rejection);
+    }
+
+    public List<RideToShowDto> findAllRidesToDo(String driverEmail) {
+        List<RideToShowDto> ridesToShowDto = new ArrayList<RideToShowDto>();
+        Optional<Driver> driver = this.driverRepository.findByEmail(driverEmail);
+        if(driver.isPresent())
+        {
+            for(int i = 0; i < driver.get().getRides().size(); i++)
+            {
+                RideToShowDto rideToShowDto = new RideToShowDto(driver.get().getRides().get(i));
+                ridesToShowDto.add(rideToShowDto);
+            }
+        }
+
+        return ridesToShowDto;
     }
 }

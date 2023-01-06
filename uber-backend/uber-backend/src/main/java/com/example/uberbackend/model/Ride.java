@@ -1,6 +1,7 @@
 package com.example.uberbackend.model;
 
 import com.example.uberbackend.dto.MapSearchResultDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class Ride {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private Driver driver;
 
     @ManyToMany(fetch = FetchType.LAZY)

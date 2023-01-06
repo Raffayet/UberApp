@@ -2,14 +2,12 @@ package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.PaymentFailedException;
-import com.example.uberbackend.model.Client;
-import com.example.uberbackend.model.DriveRequest;
-import com.example.uberbackend.model.Driver;
-import com.example.uberbackend.model.RideInvite;
+import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.repositories.ClientRepository;
 import com.example.uberbackend.repositories.DriveRequestRepository;
 import com.example.uberbackend.repositories.RideInviteRepository;
+import com.example.uberbackend.repositories.RideRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,8 @@ public class ClientService {
     private final DriverService driverService;
 
     private final SimpMessagingTemplate simpMessagingTemplate;
+
+    private final RideRepository rideRepository;
 
     public double getTokensByEmail(String email){
         return clientRepository.getTokensByEmail(email);
@@ -162,6 +162,21 @@ public class ClientService {
                 for(Client client: request.get().getPeople())
                 {
                     refundTokensToClient(client, request.get().getPricePerPassenger());
+                }
+            }
+        }
+    }
+
+    public void refundTokensAfterAccepting(Long requestId) {
+        Optional<Ride> ride = this.rideRepository.findById(requestId);
+        if(ride.isPresent())
+        {
+            refundTokensToClient(ride.get().getInitiator(), ride.get().getPricePerPassenger());
+            if(ride.get().getPrice() != ride.get().getPricePerPassenger())
+            {
+                for(Client client: ride.get().getClients())
+                {
+                    refundTokensToClient(client, ride.get().getPricePerPassenger());
                 }
             }
         }

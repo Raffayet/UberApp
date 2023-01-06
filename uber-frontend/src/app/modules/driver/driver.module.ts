@@ -9,13 +9,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RideToTakeDialogComponent } from './components/ride-to-take-dialog/ride-to-take-dialog.component';
 import { RejectionDialogComponent } from './components/rejection-dialog/rejection-dialog.component';
 import { FormsModule } from '@angular/forms';
+import { RidesToDoComponent } from './pages/rides-to-do/rides-to-do.component';
 
 @NgModule({
   declarations: [
     DriverNotificationComponent,
     DriverDashboardComponent,
     RideToTakeDialogComponent,
-    RejectionDialogComponent
+    RejectionDialogComponent,
+    RidesToDoComponent
   ],
   imports: [
     CommonModule,
