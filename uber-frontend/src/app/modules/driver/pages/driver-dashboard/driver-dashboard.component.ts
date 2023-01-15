@@ -16,15 +16,15 @@ import { DriverService } from '../../services/driver.service';
 export class DriverDashboardComponent {
 
   chatHidden:boolean = false;
-  navbarLabels: string[] = ["Profile"];
-  navbarPaths: string[] = ["profile-page"];
+  navbarLabels: string[] = ["Profile", "Rides To Do"];
+  navbarPaths: string[] = ["profile-page", "rides-to-do"];
   option: string = this.navbarPaths[0];
 
   loggedDriver: User | null;
   stompClient: Client;
 
   changeOption(eventData: string): void{      
-    this.router.navigate(['/driver', {outlets: {'DriverRouter': ['profile-page']}}]);
+    this.router.navigate(['/driver', {outlets: {'DriverRouter': [eventData]}}]);
   }
 
   constructor(private router: Router, private userService: UserService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService){}

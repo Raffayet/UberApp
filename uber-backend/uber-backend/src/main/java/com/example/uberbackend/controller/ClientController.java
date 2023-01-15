@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,8 +99,8 @@ public class ClientController {
     @PostMapping("create-reservation-drive-request")
     public ResponseEntity<?> createReservationDriveRequest(@RequestBody DriveRequestDto driveRequestDto){
         try{
-            Date scheduledFor = driveRequestDto.getTimeOfReservation();
-            taskScheduler.schedule(new ReservationScheduler(this.clientService, driveRequestDto), scheduledFor);
+            LocalDateTime scheduledFor = driveRequestDto.getTimeOfReservation();
+            taskScheduler.schedule(new ReservationScheduler(this.clientService, driveRequestDto), Instant.from(scheduledFor));
             return ResponseEntity.ok("Success!");
         }catch(Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -115,4 +116,27 @@ public class ClientController {
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("refund-tokens")
+    public ResponseEntity<?> refundTokens(@RequestBody Long requestId)
+    {
+        try{
+            this.clientService.refundTokens(requestId);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("refund-tokens-after-accepting")
+    public ResponseEntity<?> refundTokensAfterAccepting(@RequestBody Long requestId)
+    {
+        try{
+            this.clientService.refundTokensAfterAccepting(requestId);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

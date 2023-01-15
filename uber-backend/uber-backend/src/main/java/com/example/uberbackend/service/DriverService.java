@@ -5,32 +5,18 @@ import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
-import com.example.uberbackend.dto.RegisterDriverDto;
-import com.example.uberbackend.exception.CustomValidationException;
-import com.example.uberbackend.exception.EmailAlreadyTakenException;
-import com.example.uberbackend.model.*;
-import com.example.uberbackend.model.enums.AccountStatus;
-import com.example.uberbackend.model.enums.DrivingStatus;
-import com.example.uberbackend.model.enums.Provider;
-import com.example.uberbackend.model.enums.RoleType;
-import com.example.uberbackend.repositories.*;
-import com.example.uberbackend.security.SecurityConfig;
-import com.example.uberbackend.validator.PasswordMatchValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.parameters.P;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
 import java.util.EmptyStackException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +31,7 @@ public class DriverService {
     private final DriveRequestRepository driveRequestRepository;
     private final RideRepository rideRepository;
     private final MapService mapService;
+    private final RejectionRepository rejectionRepository;
 
     public void updatePersonalInfo(PersonalInfoUpdateDto newInfo) {
         Optional<User> u = userRepository.findByEmail(newInfo.getEmail());
@@ -65,15 +52,56 @@ public class DriverService {
 
     public DriverFoundDto findDriverForRequest(DriveRequest request) throws IOException {
         List<Driver> availableDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE);
-
         Optional<Driver> driver = findClosestAvailableDriver(availableDrivers, request);
+
+        List<Driver> busyDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY);
+        Optional<Driver> closestToFinishDriver = findDriverClosestToFinish(busyDrivers, request);
+
         if(driver.isPresent()){
             simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + driver.get().getEmail() + " has been found for your ride request."));
             return new DriverFoundDto(driver.get().getEmail(), true);
-        }else{
+        }
+
+        else if(closestToFinishDriver.isPresent())
+        {
+            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + closestToFinishDriver.get().getEmail() + " has been found for your ride request."));
+            return new DriverFoundDto(closestToFinishDriver.get().getEmail(), true);
+        }
+
+        else{
             simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("noDrivers", "No available drivers. Please try later."));
             throw new NoAvailableDriversException("There is no available drivers!");
         }
+    }
+
+    private Optional<Driver> findDriverClosestToFinish(List<Driver> busyDrivers, DriveRequest request) throws IOException {
+        Optional<Driver> closestToFinish = Optional.empty();
+        double minDistanceToDestination = 9999;
+        for(Driver driver: busyDrivers)
+        {
+            boolean hasReservedRides =  doesDriverHaveReservedRides(driver);
+            if(!request.getDriversThatRejected().contains(driver) && driver.getDailyActiveInterval() <= 480 && !hasReservedRides)
+            {
+                if(calculateDistance(driver.getRides().get(0).getLocations().get(1), driver.getCurrentLocation()) < minDistanceToDestination)
+                {
+                    minDistanceToDestination = calculateDistance(driver.getRides().get(0).getLocations().get(1), driver.getCurrentLocation());
+                    closestToFinish = Optional.of(driver);
+                }
+            }
+        }
+        return closestToFinish;
+    }
+
+    private boolean doesDriverHaveReservedRides(Driver driver) {
+        boolean hasReservedRides = false;
+        for(Ride ride: driver.getRides())
+        {
+            if (ride.getReserved() && ride.getTimeOfReservation().isAfter(LocalDateTime.now())) {
+                hasReservedRides = true;
+                break;
+            }
+        }
+        return hasReservedRides;
     }
 
     private Optional<Driver> findClosestAvailableDriver(List<Driver> drivers, DriveRequest request) throws IOException {
@@ -81,8 +109,10 @@ public class DriverService {
         double minDistance = 9999;
         for(Driver d : drivers){
             if(!request.getDriversThatRejected().contains(d) && d.getDailyActiveInterval() <= 480){
-                minDistance = Math.min(minDistance, calculateDistance(request.getLocations().get(0), d.getCurrentLocation()));
-                closest = Optional.of(d);
+                if(calculateDistance(request.getLocations().get(0), d.getCurrentLocation()) < minDistance) {
+                    minDistance = calculateDistance(request.getLocations().get(0), d.getCurrentLocation());
+                    closest = Optional.of(d);
+                }
             }
         }
 
@@ -99,11 +129,11 @@ public class DriverService {
     }
 
     public void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
-        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved());
+        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved(), request.getTimeOfReservation());
         simpMessagingTemplate.convertAndSendToUser(driverFoundDto.getDriverEmail(), "/driver-notification", rideToTakeDto);
     }
 
-//    @Scheduled(cron = "0 12 * * ?")
+    @Scheduled(cron = "0 0 0 * * *")
     public void resetDailyWorkingInterval()
     {
         List<Driver> allDrivers = this.driverRepository.findAll();
@@ -136,18 +166,73 @@ public class DriverService {
             driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
             this.driverRepository.save(driver.get());
             simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
-
-            sendResponseToClients(driveRequest.get());
+            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getDriverEmail(), "/change-driving-status-slider", "false");
+            Map<String, Object> headers = generateNotificationHeaders(driveRequest.get());
+            simpMessagingTemplate.convertAndSend("/topic/response-to-other-clients", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"), headers);
         }
     }
 
-    private void sendResponseToClients(DriveRequest driveRequest) {
-        for(Client client: driveRequest.getPeople())
+    private Map<String, Object> generateNotificationHeaders(DriveRequest driveRequest) {
+        Map<String, Object> headers = new HashMap<>();
+        List<String> clientsEmails = new ArrayList<String>();
+
+        clientsEmails.add(driveRequest.getInitiator().getEmail());
+        for (Client client : driveRequest.getPeople()) {
+            clientsEmails.add(client.getEmail());
+        }
+
+        headers.put("emails", clientsEmails);
+        return headers;
+    }
+
+    public void rejectDrive(DriverRejectionDto driverRejectionDto) {
+        Optional<Driver> driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail());
+        Optional<DriveRequest> driveRequest = this.driveRequestRepository.findById(driverRejectionDto.getRequestId());
+        if(driveRequest.isPresent() && driver.isPresent())
         {
-            simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
+            driveRequest.get().getDriversThatRejected().add(driver.get());
+            this.driveRequestRepository.save(driveRequest.get());
+            simpMessagingTemplate.convertAndSendToUser(driveRequest.get().getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            for (Client client: driveRequest.get().getPeople())
+            {
+                simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            }
+        }
+        createRejection(driverRejectionDto);
+    }
+
+    public void rejectDriveAfterAccepting(DriverRejectionDto driverRejectionDto) {
+        Optional<Driver> driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail());
+        Optional<Ride> ride = this.rideRepository.findById(driverRejectionDto.getRequestId());
+
+        if(ride.isPresent() && driver.isPresent())
+        {
+            removeRide(driver, ride);
+            simpMessagingTemplate.convertAndSendToUser(ride.get().getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            for (Client client: ride.get().getClients())
+            {
+                simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+            }
+        }
+        createRejection(driverRejectionDto);
+    }
+
+    private void removeRide(Optional<Driver> driver, Optional<Ride> ride) {
+        if(driver.isPresent() && ride.isPresent())
+        {
+            driver.get().getRides().removeIf(driversRide -> Objects.equals(driversRide.getId(), ride.get().getId()));
+            this.driverRepository.save(driver.get());
         }
     }
 
+    private void createRejection(DriverRejectionDto driverRejectionDto) {
+        Rejection rejection = new Rejection();
+        rejection.setDriverEmail(driverRejectionDto.getDriverEmail());
+        rejection.setInitiatorEmail(driverRejectionDto.getInitiatorEmail());
+        rejection.setRequestId(driverRejectionDto.getRequestId());
+        rejection.setReasonOfRecetion(driverRejectionDto.getReasonForRejection());
+        this.rejectionRepository.save(rejection);
+    }
 
     public Driver updateDriverLocation(long id, double latitude, double longitude) {
         Optional<Driver> optDriver = this.driverRepository.findById(id);
@@ -169,5 +254,19 @@ public class DriverService {
         Driver driver = driverRepository.findById(driverId).orElse(null);
 
         return driver;
+    }
+    public List<RideToShowDto> findAllRidesToDo(String driverEmail) {
+        List<RideToShowDto> ridesToShowDto = new ArrayList<RideToShowDto>();
+        Optional<Driver> driver = this.driverRepository.findByEmail(driverEmail);
+        if(driver.isPresent())
+        {
+            for(int i = 0; i < driver.get().getRides().size(); i++)
+            {
+                RideToShowDto rideToShowDto = new RideToShowDto(driver.get().getRides().get(i));
+                ridesToShowDto.add(rideToShowDto);
+            }
+        }
+
+        return ridesToShowDto;
     }
 }

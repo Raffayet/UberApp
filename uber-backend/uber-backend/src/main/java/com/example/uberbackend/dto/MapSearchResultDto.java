@@ -20,5 +20,4 @@ public class MapSearchResultDto {
     private String displayName;
     private String lat;
     private String lon;
-
 }

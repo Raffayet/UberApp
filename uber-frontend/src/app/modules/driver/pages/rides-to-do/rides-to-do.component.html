@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="ranije-prijave" *ngIf="ridesToDo.length > 0">
+        <div class="podnosilac-name" *ngFor="let rideToDo of ridesToDo; let i = index">
+            <mat-form-field class="ride-invite-field" [style.width.%]="50">
+                <mat-label>Ride ID</mat-label>
+                <input matInput disabled="true" [value]="rideToDo.id">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field"  [style.width.%]="50">
+                <mat-label>Initiator</mat-label>
+                <input matInput disabled="true" [value]="rideToDo.initiator">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field"  [style.width.%]="50">
+                <mat-label>Price</mat-label>
+                <input matInput disabled="true" [value]="rideToDo.price">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field"  [style.width.%]="50">
+                <mat-label>First Location</mat-label>
+                <input matInput disabled="true" [value]="rideToDo.firstLocation">
+            </mat-form-field>
+            <mat-form-field class="ride-invite-field" [style.width.%]="50">
+                <mat-label>Destination</mat-label>
+                <input matInput disabled="true" [value]="rideToDo.destination">
+            </mat-form-field>
+            <button class="ride-invite-button" mat-fab (click)="cancelRide(i)">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div *ngIf="ridesToDo.length === 0">No rides to do</div>
+</div>
