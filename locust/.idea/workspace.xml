@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3b53c6ec-2a58-4a3a-821b-7aecc1d5706e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/configuration/WebSocketConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/configuration/WebSocketConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/controller/MapController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/controller/MapController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/controller/RideController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/controller/RideController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/service/RideService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/java/com/example/uberbackend/service/RideService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/resources/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-backend/uber-backend/src/main/resources/data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-frontend/src/app/model/MapDriver.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/components/location-picker/location-picker.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/components/location-picker/location-picker.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/components/ride-type/ride-type.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/components/ride-type/ride-type.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/services/map.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/services/map.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/services/ride-request-state.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-frontend/src/app/modules/client/services/ride-request-state.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uber-frontend/src/app/modules/shared/components/map/map.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../uber-frontend/src/app/modules/shared/components/map/map.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

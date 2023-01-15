@@ -12,8 +12,6 @@ insert into my_user(account_status, active_account, blocked, city, driving_statu
 insert into point(lat,lng) values ( 45.235866, 19.807387);
 insert into point(lat, lng) values( 45.34, 19.78);
 
-insert into driver(id, current_location_id, daily_active_interval) values(2, 1, 350.0);
-
 insert into message(sender_email, receiver_email, date, content, status) values('sasalukic@gmail.com', 'support', '2022-11-24 14:11:10', 'Hello, I have problem with scheduling drive.', 1);
 insert into message(sender_email, receiver_email, date, content, status) values('support', 'sasalukic@gmail.com', '2022-11-24 14:17:10', 'What is your problem?.', 1);
 insert into message(sender_email, receiver_email, date, content, status) values('sasalukic@gmail.com', 'support', '2022-11-24 14:30:10', 'My back is broken.', 1);

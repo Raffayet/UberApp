@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -41,6 +42,8 @@ public class RideService {
         List<MapRideDto> mapRideDtos = new ArrayList<>();
 
         for (Ride ride :rides) {
+            if(ride.getTimeOfReservation().isAfter(LocalDateTime.now()))
+                continue;
             PathInfoDto pathInfoDto = null;
             List<Point> points = ride.getLocations()
                     .stream()
