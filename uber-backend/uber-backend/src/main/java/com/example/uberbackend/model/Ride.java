@@ -1,5 +1,5 @@
 package com.example.uberbackend.model;
-
+import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.dto.MapSearchResultDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -28,6 +28,8 @@ public class Ride {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Client> clients;
 
+    @Enumerated(EnumType.STRING)
+    private RideStatus rideStatus;
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private Client initiator;

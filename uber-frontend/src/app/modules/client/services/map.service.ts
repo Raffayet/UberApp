@@ -13,7 +13,7 @@ export type MapSearchResult = {
 
 export type PathInfoDto = {
   distance: number,
-  points: Point[]
+  atomicPoints: Point[]
 }
 
 @Injectable({
@@ -76,4 +76,13 @@ export class MapService {
         return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-custom-route", points);
     }
   }
+  
+  getActiveDriver():Observable<any>{
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("format", "json");
+
+    return this.http.get<any>(environment.apiURL + "/rides/active-driver", { params: queryParams});
+
+  }
+  
 }

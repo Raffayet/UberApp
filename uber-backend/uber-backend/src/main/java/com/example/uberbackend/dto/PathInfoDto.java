@@ -14,6 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PathInfoDto {
 
-    private List<Point> points;
+    private List<Point> atomicPoints;
     private double distance;
 }

@@ -1,10 +1,16 @@
+import { MapRide } from './../../../../model/MapRide';
 import * as L from 'leaflet';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MapSearchResult } from 'src/app/modules/client/services/map.service';
 import { MapService } from 'src/app/modules/client/services/map.service';
 import 'leaflet-routing-machine';
 import { connect } from 'net';
 import { TitleStrategy } from '@angular/router';
+import * as SockJS from 'sockjs-client';
+import * as Stomp from 'stompjs';
+import { environment } from 'src/app/environments/environment';
+import { MapDriver } from 'src/app/model/MapRide';
+import { geoJSON, icon, LayerGroup, marker } from 'leaflet';
 import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
 
 @Component({
@@ -12,7 +18,7 @@ import { RideRequestStateService } from 'src/app/modules/client/services/ride-re
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnInit {
 
   private map: L.Map;
   private customIcon : L.Icon;
@@ -22,6 +28,10 @@ export class MapComponent implements AfterViewInit {
 
   routingControl: L.Routing.Control
   routingPlan: L.Routing.Plan
+
+  private stompClient: any;
+  driver: any = {};
+  rides: any = {};
 
   private initMap(): void {
 
@@ -51,6 +61,50 @@ export class MapComponent implements AfterViewInit {
   public reset(){
     this.map.remove();
     this.initMap();
+  }
+
+
+  ngOnInit(): void {
+    let ws = new SockJS(environment.apiURL + "/ws");
+    this.stompClient = Stomp.over(ws);
+    this.stompClient.debug = null;
+    let that = this;
+    this.stompClient.connect({}, function () {
+      that.openGlobalSocket();
+    });
+    this.getActiveRide();
+  }
+
+  getActiveRide():void{
+    
+  }
+
+  openGlobalSocket() {
+    this.stompClient.subscribe('/map-updates/update-ride-state', (message: { body: string }) => {
+      let msg = JSON.parse(message.body);
+      // console.log(msg);
+      let mapRide: MapRide= JSON.parse(message.body);
+      if(!this.driver || Object.keys(this.driver).length===0){
+        let geoLayerRouteGroup: LayerGroup = new LayerGroup();
+        let markerLayer = marker([mapRide.driver.latitude, mapRide.driver.longitude], {
+          icon: icon({
+            iconUrl: 'assets/car.png',
+            iconSize: [35, 45],
+            iconAnchor: [18, 45],
+          }),
+        });
+        let coordinates:L.LatLng[] = mapRide.atomicPoints.map(point=>new L.LatLng(point.latitude, point.longitude));
+        var polyline = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
+        markerLayer.addTo(geoLayerRouteGroup);
+        this.driver = markerLayer;
+        this.driver.addTo(this.map);
+      }
+      else{
+        let existingVehicle = this.driver;
+        existingVehicle.setLatLng([mapRide.driver.latitude, mapRide.driver.longitude]);
+        existingVehicle.update();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

@@ -57,4 +57,7 @@ export class RideRequestStateService {
     this.inputValues = [];
     this.mapa.reset();
   }
+
+  
+
 }

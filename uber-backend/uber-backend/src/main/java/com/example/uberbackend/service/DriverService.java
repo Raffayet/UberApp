@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.EmptyStackException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,6 +26,7 @@ public class DriverService {
     private final UserRepository userRepository;
     private final DriverInfoChangeRequestRepository driverInfoChangeRequestRepository;
     private final DriverRepository driverRepository;
+    private final PointRepository pointRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final DriveRequestRepository driveRequestRepository;
     private final RideRepository rideRepository;
@@ -232,6 +234,27 @@ public class DriverService {
         this.rejectionRepository.save(rejection);
     }
 
+    public Driver updateDriverLocation(long id, double latitude, double longitude) {
+        Optional<Driver> optDriver = this.driverRepository.findById(id);
+        if(optDriver.isEmpty())
+            throw new EmptyStackException();
+        Driver driver = optDriver.get();
+        Point newPoint = new Point();
+        newPoint.setLat(latitude);
+        newPoint.setLng(longitude);
+        pointRepository.save(newPoint);
+
+        driver.setCurrentLocation(newPoint);
+        driverRepository.save(driver);
+
+        return driver;
+    }
+
+    public Driver getDriver(long driverId) {
+        Driver driver = driverRepository.findById(driverId).orElse(null);
+
+        return driver;
+    }
     public List<RideToShowDto> findAllRidesToDo(String driverEmail) {
         List<RideToShowDto> ridesToShowDto = new ArrayList<RideToShowDto>();
         Optional<Driver> driver = this.driverRepository.findByEmail(driverEmail);
