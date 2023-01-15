@@ -1,26 +1,47 @@
+import { DriverService } from './../../../admin/services/driver.service';
 import { RideRequestStateService } from '../../services/ride-request-state.service';
 import { Component, OnInit, ViewChild, Output, EventEmitter } from "@angular/core";
 import { MapService } from '../../services/map.service';
 import { Point } from 'src/app/model/Point';
 import { ToastrService } from 'ngx-toastr';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-ride-type',
   templateUrl: './ride-type.component.html',
   styleUrls: ['./ride-type.component.css']
 })
-export class RideTypeComponent {
+export class RideTypeComponent implements OnInit{
 
   @Output()
   pageNum = new EventEmitter<number>();
   
-  vehicleTypes: string[] = ['Regular', 'Baby Seats', 'Pet Seats'];
+  vehicleTypes: string[] = [];
 
   routeTypes: string[] = ['Custom', 'Optimal', 'Alternative'];
 
   currentAmount: number;
 
-  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toastr: ToastrService){}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toastr: ToastrService, private driverService:DriverService){}
+  
+  
+  ngOnInit(): void {
+    this.loadVehicleTypeOptions();
+  }
+
+  loadVehicleTypeOptions(){
+    this.driverService.getVehicleTypes()
+        .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
+        .subscribe({
+          next: (res:string[]) => {
+            this.vehicleTypes = res;
+          },
+          error: (err) => {
+            this.vehicleTypes = []
+            console.log("Greska")
+          },
+        });
+  }
 
   next(){
     if(this.currentAmount < this.stateManagement.rideRequest.pricePerPassenger)
@@ -50,8 +71,8 @@ export class RideTypeComponent {
       next: data => {
           this.stateManagement.rideRequest.totalDistance = data.distance;
           this.calculatePrice(this.stateManagement.rideRequest.vehicleType);
-          let coords: Array<Point> = data.points;
-          coords = coords.map(coord => new Point(coord.lng, coord.lat));
+          let coords: Array<Point> = data.atomicPoints;
+          coords = coords.map(coord => new Point(coord.lat, coord.lng));
           this.stateManagement.mapa.drawRoute(coords)
       },
       error: error => {

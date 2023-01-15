@@ -3,8 +3,10 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.NotFoundException;
 import com.example.uberbackend.model.Point;
 import com.example.uberbackend.model.Ride;
+import com.example.uberbackend.model.VehicleType;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.repositories.VehicleTypeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class RideService {
     private final RideRepository rideRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final MapService mapService;
+    private final VehicleTypeRepository vehicleTypeRepository;
 
     public Page<Ride> findAll(Pageable pageable) {
         return rideRepository.findAll(pageable);
@@ -84,13 +87,11 @@ public class RideService {
     }
 
     public Double calculatePrice(String vehicleType, double totalDistance) {
-         HashMap<String, Double> vehicleTypeMap = new HashMap<String, Double>();
-         vehicleTypeMap.put("Regular", 200.0);   //pocetna cena u zavisnosti od tipa vozila
-         vehicleTypeMap.put("Baby Seats", 300.0);
-         vehicleTypeMap.put("Pet Seats", 250.0);
+        VehicleType vehicleType1 = vehicleTypeRepository.findByType(vehicleType).orElse(null);
+        double coefficient = vehicleType1.getCoefficient();
 
-         double price = (vehicleTypeMap.get(vehicleType) + (totalDistance / 1000) * 120) / 109.94;
-         return Math.round(price * 100.0) / 100.0;
+        double price = (coefficient*150 + (totalDistance / 1000) * 120) / 109.94;
+        return Math.round(price * 100.0) / 100.0;
     }
 
     public Page<Ride> findAllByUserEmail(Pageable paging, String email) {

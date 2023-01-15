@@ -1,9 +1,5 @@
 package com.example.uberbackend.controller;
-import com.example.uberbackend.dto.LocationDto;
-import com.example.uberbackend.dto.MapDriverDto;
-import com.example.uberbackend.dto.MessageDto;
-import com.example.uberbackend.dto.PathInfoDto;
-import com.example.uberbackend.dto.PersonalInfoUpdateDto;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.Point;
 import com.example.uberbackend.security.JwtTokenGenerator;
@@ -68,15 +64,16 @@ public class MapController {
     }
 
     @PutMapping(
-            path = "/{id}",
+            path = "/",
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<?> createVehicleOnMap(@PathVariable("id") long id, @RequestBody LocationDto locationDTO){
-        Driver driver = driverService.updateDriverLocation(id, locationDTO.getLatitude(), locationDTO.getLongitude());
-        MapDriverDto mapDriverDto = new MapDriverDto(driver);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", mapDriverDto);
-        return new ResponseEntity<>(mapDriverDto, HttpStatus.OK);
+    public ResponseEntity<?> updateDriverOnMap(@RequestBody MapRideDto mapRideDto){
+        Driver driver = driverService.updateDriverLocation(mapRideDto.getDriver().getId(), mapRideDto.getDriver().getLatitude(), mapRideDto.getDriver().getLongitude());
+
+//        MapDriverDto mapDriverDto = new MapDriverDto(driver);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/update-ride-state", mapRideDto);
+        return new ResponseEntity<>(mapRideDto, HttpStatus.OK);
     }
 
 

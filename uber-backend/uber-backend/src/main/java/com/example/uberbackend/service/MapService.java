@@ -43,7 +43,8 @@ public class MapService {
 
         for (int i = 0; i < coordinates.length(); i++) {
             JSONArray v = (JSONArray) (coordinates.get(i));
-            retList.add(new Point(v.get(0).toString(), v.get(1).toString()));
+//            ovde je promena
+            retList.add(new Point(v.get(1).toString(), v.get(0).toString()));
         }
         return new PathInfoDto(retList, distance);
     }

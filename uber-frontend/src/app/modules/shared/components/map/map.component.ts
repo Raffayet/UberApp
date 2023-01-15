@@ -1,3 +1,4 @@
+import { MapRide } from './../../../../model/MapRide';
 import * as L from 'leaflet';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MapSearchResult } from 'src/app/modules/client/services/map.service';
@@ -8,7 +9,7 @@ import { TitleStrategy } from '@angular/router';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { environment } from 'src/app/environments/environment';
-import { MapDriver } from 'src/app/model/MapDriver';
+import { MapDriver } from 'src/app/model/MapRide';
 import { geoJSON, icon, LayerGroup, marker } from 'leaflet';
 import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
 
@@ -78,15 +79,31 @@ export class MapComponent implements AfterViewInit, OnInit {
     
   }
 
-
   openGlobalSocket() {
-    this.stompClient.subscribe('/ride-created', (message: { body: string }) => {
+    this.stompClient.subscribe('/map-updates/update-ride-state', (message: { body: string }) => {
       let msg = JSON.parse(message.body);
-      console.log(msg);
-      // let mapDriver: MapDriver= JSON.parse(message.body);
-      // let existingVehicle = this.driver;
-      // existingVehicle.setLatLng([mapDriver.longitude, mapDriver.latitude]);
-      // existingVehicle.update();
+      // console.log(msg);
+      let mapRide: MapRide= JSON.parse(message.body);
+      if(!this.driver || Object.keys(this.driver).length===0){
+        let geoLayerRouteGroup: LayerGroup = new LayerGroup();
+        let markerLayer = marker([mapRide.driver.latitude, mapRide.driver.longitude], {
+          icon: icon({
+            iconUrl: 'assets/car.png',
+            iconSize: [35, 45],
+            iconAnchor: [18, 45],
+          }),
+        });
+        let coordinates:L.LatLng[] = mapRide.atomicPoints.map(point=>new L.LatLng(point.latitude, point.longitude));
+        var polyline = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
+        markerLayer.addTo(geoLayerRouteGroup);
+        this.driver = markerLayer;
+        this.driver.addTo(this.map);
+      }
+      else{
+        let existingVehicle = this.driver;
+        existingVehicle.setLatLng([mapRide.driver.latitude, mapRide.driver.longitude]);
+        existingVehicle.update();
+      }
     });
   }
 

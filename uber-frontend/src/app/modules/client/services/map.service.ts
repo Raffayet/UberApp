@@ -13,7 +13,7 @@ export type MapSearchResult = {
 
 export type PathInfoDto = {
   distance: number,
-  points: Point[]
+  atomicPoints: Point[]
 }
 
 @Injectable({

@@ -72,7 +72,6 @@ public class RideController {
         return new ResponseEntity<>(returnRideDTO, HttpStatus.OK);
     }
 
-
     @GetMapping("calculate-price")
     public ResponseEntity<?> calculatePrice(@RequestParam("vehicleType") String vehicleType, @RequestParam("totalDistance") double totalDistance) {
         try {
