@@ -11,6 +11,8 @@ import * as SockJS from 'sockjs-client';
 import { environment } from 'src/app/environments/environment';
 import { ClientService } from '../../services/client.service';
 import { ResponseToIniciator } from 'src/app/model/ResponseToIniciator';
+import { RideReminder } from 'src/app/model/RideReminder';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -27,13 +29,12 @@ export class ClientDashboardComponent {
     rideInvites: RideInvite[];
     stompClient: Client;
     loggedUser: User | null;
-  toastr: any;
     
     changeOption(eventData: string): void{      
       this.router.navigate(['/client', {outlets: {'ClientRouter': [eventData]}}]);
     }
 
-    constructor(private router: Router, private userService: UserService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private clientService: ClientService){}
+    constructor(private router: Router, private userService: UserService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private clientService: ClientService, private toastr: ToastrService){}
 
     ngOnInit() {
       let Sock = new SockJS(environment.apiURL + "/ws");
@@ -44,6 +45,7 @@ export class ClientDashboardComponent {
     onConnected = () => {
       this.loggedUser = this.tokenUtilsService.getUserFromToken();          
       this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/ride-invites", this.onRideInvitesReceived);
+      this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/remind-for-ride", this.onRideReminder);
       this.stompClient.subscribe("/topic/response-to-other-clients", (data) => this.onResponseToOtherClients(data));
 
       this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
@@ -51,10 +53,16 @@ export class ClientDashboardComponent {
     }
 
     onRideInvitesReceived = (payload: StompMessage) => {
-        let payloadData = JSON.parse(payload.body); 
-        console.log('evo ovde')
-        console.log(payloadData)     
+        let payloadData = JSON.parse(payload.body);     
         this.rideInvites.push(payloadData);
+    }
+
+    onRideReminder = (payload: StompMessage) => {
+      console.log(payload.body);
+      let payloadData = JSON.parse(payload.body);
+      let rideReminder: RideReminder;
+      rideReminder = payloadData;
+      this.toastr.info(`Reserved ride is going to take place in ${rideReminder.numberOfMinutes} minutes`); 
     }
 
     onResponseToClient = (payload: StompMessage) => {
