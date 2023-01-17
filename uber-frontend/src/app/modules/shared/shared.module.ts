@@ -8,6 +8,8 @@ import { SharedRoutingModule } from './shared-routing.module';
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FormsModule } from '@angular/forms';
+import {MatSortModule} from '@angular/material/sort';
+import { RouteDetailDialogComponent } from './components/route-detail-dialog/route-detail-dialog.component';
 
 
 @NgModule({
@@ -17,12 +19,14 @@ import { FormsModule } from '@angular/forms';
     NavbarComponent,
     MapComponent,
     PaypalPaymentComponent,
+    RouteDetailDialogComponent,
   ],
   imports: [
     CommonModule,
     SharedRoutingModule,
     MaterialComponentsModule,
     FormsModule,
+    MatSortModule
   ],
   exports: [
     MapComponent,

@@ -1,0 +1,20 @@
+<div class="confirm-container">
+    <h1 mat-dialog-title>New Drive Invite</h1>
+    <div mat-dialog-content> 
+      <div><b>Driver email: {{ email }}</b></div>
+      <br>
+      <div><b>Driver name: {{ name }}</b></div>
+      <br>
+      <div><b>Driver last name: {{ lastName }}</b></div>
+      <br>
+      <div><b>Average rating: {{ averageRating }}</b></div>
+      <br>
+    </div>
+  
+    <div mat-dialog-actions style="float:right;margin:20px;">
+      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }" (click)="onCloseClick()">
+        Close
+      </button>
+    </div>
+</div>
+  

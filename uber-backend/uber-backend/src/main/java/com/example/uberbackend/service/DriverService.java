@@ -272,4 +272,37 @@ public class DriverService {
 
         return ridesToShowDto;
     }
+
+    public DriverInfoDto getDriverInfoByRideId(Long rideId) {
+        Optional<Ride> ride = this.rideRepository.findById(rideId);
+        DriverInfoDto driverInfoDto = new DriverInfoDto();
+        if(ride.isPresent())
+        {
+            Driver driver = ride.get().getDriver();
+            driverInfoDto.setEmail(driver.getEmail());
+            driverInfoDto.setName(driver.getName());
+            driverInfoDto.setLastName(driver.getSurname());
+            calculateAverageDriverRating(driverInfoDto, driver);
+        }
+        return driverInfoDto;
+    }
+
+    private void calculateAverageDriverRating(DriverInfoDto driverInfoDto, Driver driver) {
+        double averageRating = 0;
+        for(Rating rating: driver.getRatingsFromClients())
+        {
+            averageRating += rating.getStarNumber();
+        }
+
+        if(driver.getRatingsFromClients().size() == 0)
+        {
+            averageRating = 0;
+        }
+
+        else
+        {
+            averageRating = averageRating / driver.getRatingsFromClients().size();
+        }
+        driverInfoDto.setAverageRating(averageRating);
+    }
 }

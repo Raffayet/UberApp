@@ -34,12 +34,20 @@ insert into map_search_result_dto(display_name, lat, lon) values ('Bulevar Cara 
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(2, 1, 6.78, 2, 'Regular', 'Custom', false, null, 'WAITING');
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(6, 1, 6.18, 2, 'Regular', 'Custom', false, null, 'WAITING');
 
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(2, 1, 1, 1, 'Regular', 'Custom', false, null, '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(6, 1, 4, 4, 'Regular', 'Custom', false, null, '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');
 
 insert into ride_clients(ride_id, clients_id) values (1, 1);
 insert into ride_clients(ride_id, clients_id) values (1, 3);
 
 insert into ride_locations(ride_id, locations_id) values (1, 1);
 insert into ride_locations(ride_id, locations_id) values (1, 2);
+
+insert into ride_locations(ride_id, locations_id) values (3, 1);
+insert into ride_locations(ride_id, locations_id) values (3, 2);
+
+insert into ride_locations(ride_id, locations_id) values (4, 1);
+insert into ride_locations(ride_id, locations_id) values (4, 2);
 
 -- insert into driver_rides(driver_id, rides_id) values (2, 1);
 -- insert into driver_rides(driver_id, rides_id) values (2, 2);
@@ -54,5 +62,15 @@ insert into vehicle_type(coefficient, type) values (1.2, 'Baby Seat');
 insert into vehicle_type(coefficient, type) values (1.3, 'Pet Friendly');
 insert into vehicle_type(coefficient, type) values (1.5, 'Baby Seat and Pet Friendly');
 
-insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('milicamatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad')
+insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('milicamatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad');
+
+insert into rating(id, star_number, comment, driver_id, client_id) values (1, 4, 'nista spec', 2, 1);
+insert into rating(id, star_number, comment, driver_id, client_id) values (2, 5, 'nista spec', 2, 1);
+insert into rating(id, star_number, comment, driver_id, client_id) values (3, 3, 'nista spec', 2, 1);
+insert into rating(id, star_number, comment, driver_id, client_id) values (4, 2, 'nista spec', 2, 1);
+
+insert into driver_ratings_from_clients(driver_id, ratings_from_clients_id) values (2, 1);
+insert into driver_ratings_from_clients(driver_id, ratings_from_clients_id) values (2, 2);
+insert into driver_ratings_from_clients(driver_id, ratings_from_clients_id) values (2, 3);
+insert into driver_ratings_from_clients(driver_id, ratings_from_clients_id) values (2, 4);
 

@@ -51,6 +51,8 @@ public class Ride {
 
     private LocalDateTime timeOfReservation;
     private LocalDateTime timeOfRequestForReservation;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private List<MapSearchResultDto> locations;
@@ -67,6 +69,8 @@ public class Ride {
         this.timeOfReservation = driveRequest.getTimeOfReservation();
         this.timeOfRequestForReservation = driveRequest.getTimeOfRequestForReservation();
         this.locations = setLocationsForRide(driveRequest.getLocations());
+        this.startTime = driveRequest.getTimeOfReservation();
+        this.endTime = driveRequest.getTimeOfReservation();
     }
 
     private List<MapSearchResultDto> setLocationsForRide(List<MapSearchResultDto> locations) {

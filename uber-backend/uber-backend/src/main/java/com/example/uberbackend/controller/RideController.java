@@ -30,9 +30,9 @@ public class RideController {
     private final DriverService driverService;
 
     @GetMapping("get-all")
-    public Page<Ride> getRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
+    public Page<Ride> getEndedRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
         Pageable paging = PageRequest.of(page, size);
-        return rideService.findAllByUserEmail(paging, email);
+        return rideService.findEndedRidesByEmail(paging, email);
     }
 
     @MessageMapping("/ride-invite")

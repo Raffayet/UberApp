@@ -78,6 +78,8 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
+    MatTableModule,
+    MatSortModule
   ]
 })
 export class MaterialComponentsModule { }
