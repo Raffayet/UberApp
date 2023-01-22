@@ -16,14 +16,18 @@ import java.util.stream.Collectors;
 public class MapRideDto {
     private long id;
     private List<LocationDto> atomicPoints;
+    private List<LocationDto> atomicPointsBeforeRide;
     private MapDriverDto driver;
     private RideStatus status;
     private List<String> clientEmails;
+    private int duration;
 
     public MapRideDto(Ride ride){
         this.id = ride.getId();
         this.driver = new MapDriverDto(ride.getDriver());
         this.status = ride.getRideStatus();
         this.clientEmails = ride.getClients().stream().map(client -> client.getEmail()).collect(Collectors.toList());
+        if(!this.clientEmails.contains(ride.getInitiator().getEmail()))
+            this.clientEmails.add(ride.getInitiator().getEmail());
     }
 }
