@@ -3,6 +3,7 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.NoAvailableDriversException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
+import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
 import lombok.AllArgsConstructor;
@@ -161,6 +162,7 @@ public class DriverService {
         if(driveRequest.isPresent() && driver.isPresent())
         {
             Ride ride = new Ride(driveRequest.get(), driver.get());
+            ride.setRideStatus(RideStatus.WAITING);
             this.rideRepository.save(ride);
             driver.get().getRides().add(ride);
             driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
@@ -222,6 +224,9 @@ public class DriverService {
         {
             driver.get().getRides().removeIf(driversRide -> Objects.equals(driversRide.getId(), ride.get().getId()));
             this.driverRepository.save(driver.get());
+            Ride existRide = ride.get();
+            existRide.setRideStatus(RideStatus.CANCELED);
+            this.rideRepository.save(existRide);
         }
     }
 

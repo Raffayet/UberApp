@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import { MapRide } from './../../../../model/MapRide';
 import * as L from 'leaflet';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
@@ -12,6 +13,7 @@ import { environment } from 'src/app/environments/environment';
 import { MapDriver } from 'src/app/model/MapRide';
 import { geoJSON, icon, LayerGroup, marker } from 'leaflet';
 import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
+import { TokenUtilsService } from '../../services/token-utils.service';
 
 @Component({
   selector: 'app-map',
@@ -32,6 +34,9 @@ export class MapComponent implements AfterViewInit, OnInit {
   private stompClient: any;
   driver: any = {};
   rides: any = {};
+  polylinesBeforeRide: L.Polyline<any>[] = [];
+  polylinesRide: L.Polyline<any>[] = [];
+  private toastNotification: any;
 
   private initMap(): void {
 
@@ -56,7 +61,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService) {}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService) {}
 
   public reset(){
     this.map.remove();
@@ -68,6 +73,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     let ws = new SockJS(environment.apiURL + "/ws");
     this.stompClient = Stomp.over(ws);
     this.stompClient.debug = null;
+    
     let that = this;
     this.stompClient.connect({}, function () {
       that.openGlobalSocket();
@@ -78,10 +84,13 @@ export class MapComponent implements AfterViewInit, OnInit {
   getActiveRide():void{
     
   }
-
+  
   openGlobalSocket() {
-    this.stompClient.subscribe('/map-updates/update-ride-state', (message: { body: string }) => {
+    let loggedUser = this.tokenUtilsService.getUserFromToken();
+
+    this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/update-ride-state', (message: { body: string }) => {
       let msg = JSON.parse(message.body);
+      let geoLayerRouteGroup: LayerGroup = new LayerGroup();
       // console.log(msg);
       let mapRide: MapRide= JSON.parse(message.body);
       if(!this.driver || Object.keys(this.driver).length===0){
@@ -94,7 +103,12 @@ export class MapComponent implements AfterViewInit, OnInit {
           }),
         });
         let coordinates:L.LatLng[] = mapRide.atomicPoints.map(point=>new L.LatLng(point.latitude, point.longitude));
-        var polyline = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
+        let coordinatesBeforeRide:L.LatLng[] = mapRide.atomicPointsBeforeRide.map(point=>new L.LatLng(point.latitude, point.longitude));
+        let p = L.polyline(coordinatesBeforeRide, {color: 'green'}).addTo(this.map);
+        let p1 = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
+        this.toastNotification = this.toaster.info(`Remaining time: ${mapRide.duration}s`,"Waiting for driver", {timeOut: 0});
+        this.polylinesBeforeRide.push(p);
+        this.polylinesRide.push(p1);
         markerLayer.addTo(geoLayerRouteGroup);
         this.driver = markerLayer;
         this.driver.addTo(this.map);
@@ -102,10 +116,52 @@ export class MapComponent implements AfterViewInit, OnInit {
       else{
         let existingVehicle = this.driver;
         existingVehicle.setLatLng([mapRide.driver.latitude, mapRide.driver.longitude]);
+        let coordinates:L.LatLng[] = mapRide.atomicPoints.map(point=>new L.LatLng(point.latitude, point.longitude));
+        let coordinatesBeforeRide:L.LatLng[] = mapRide.atomicPointsBeforeRide.map(point=>new L.LatLng(point.latitude, point.longitude));
+        let that = this;
+        this.polylinesBeforeRide.forEach(function (item) {
+          that.map.removeLayer(item);
+        });
+
+        if (this.toaster.currentlyActive > 0) {
+          let componentInstance = this.toastNotification.toastRef.componentInstance;
+          componentInstance.message = `Remaining time: ${mapRide.duration}s`;
+          componentInstance.title = mapRide.status === "WAITING"?"Waiting for driver":"Ride ends";
+        }else{
+          this.toastNotification = this.toaster.info(`Remaining time: ${mapRide.duration}s`,mapRide.status === "WAITING"?"Waiting for driver":"Ride ends",{timeOut: 0,});
+        }
+
+        if(mapRide.status === "WAITING"){
+          let index = coordinatesBeforeRide.findIndex(cord=>cord.lat===mapRide.driver.latitude && cord.lng ===mapRide.driver.longitude);
+          coordinatesBeforeRide = coordinatesBeforeRide.slice(index);
+          let p = L.polyline(coordinatesBeforeRide, {color: 'green'}).addTo(this.map);
+          this.polylinesBeforeRide.push(p);
+        }
+        else{
+          this.polylinesRide.forEach(function (item) {
+            that.map.removeLayer(item);
+          });
+          coordinates = coordinates.slice(coordinates.findIndex(cord=>cord.lat===mapRide.driver.latitude && cord.lng ===mapRide.driver.longitude))
+          let p = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
+          this.polylinesRide.push(p);
+        }
         existingVehicle.update();
       }
     });
+
+    this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/ended-ride', (message: { body: string }) => {
+      let that = this;
+      this.polylinesBeforeRide.forEach(function (item) {
+        that.map.removeLayer(item);
+      });
+      this.map.removeLayer(this.driver);
+      this.driver = {}
+      this.toaster.clear();
+      this.toaster.info(`Ride successfully ended`,"Ride ended", {timeOut: 5000});
+
+    });
   }
+
 
   ngAfterViewInit(): void {
     this.initMap();
