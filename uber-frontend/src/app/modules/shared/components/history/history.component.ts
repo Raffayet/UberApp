@@ -15,6 +15,7 @@ import { RouteDetailDialogComponent } from '../route-detail-dialog/route-detail-
 import { MapSearchResult } from 'src/app/model/MapSearchResult';
 import { DriverService } from 'src/app/modules/driver/services/driver.service';
 import { DriverInfo } from 'src/app/model/DriverInfo';
+import { MapComponent } from '../map/map.component';
 
 
 export interface Request {
@@ -52,11 +53,39 @@ export class HistoryComponent implements OnInit{
       this.email = this.tokenUtilsService.getUsernameFromToken() as string;
     }
     this.getHistoryOfRides({ page: 0, size: 5 });
-  }
+  } 
 
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+  }
+
+  convertStartDateFormat(){
+    for(let i = 0; i < this.rides.length; i++)
+    {
+      let year = this.rides[i].startTime[0];
+      let month = this.rides[i].startTime[1];
+      let day = this.rides[i].startTime[2];
+      let hours = this.rides[i].startTime[3];
+      let minutes = this.rides[i].startTime[4];
+      let seconds = this.rides[i].startTime[5];
+      let formattedStartTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+      this.rides[i].formattedStartTime = formattedStartTime;
+    }
+  }
+
+  convertEndDateFormat(){
+    for(let i = 0; i < this.rides.length; i++)
+    {
+      let year = this.rides[i].startTime[0];
+      let month = this.rides[i].startTime[1];
+      let day = this.rides[i].startTime[2];
+      let hours = this.rides[i].startTime[3];
+      let minutes = this.rides[i].startTime[4];
+      let seconds = this.rides[i].startTime[5];
+      let formattedEndTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+      this.rides[i].formattedEndTime = formattedEndTime;
+    }
   }
 
   private getHistoryOfRides(request: Request){
@@ -65,7 +94,9 @@ export class HistoryComponent implements OnInit{
           next: (data) => {
             this.rides = data.content;
             this.totalElements = data.size;
-            console.log(data);
+            this.convertStartDateFormat();
+            console.log(this.rides);
+            this.convertEndDateFormat();
           },
           error: (err) => {
             console.log(err.error.message);
@@ -84,8 +115,7 @@ export class HistoryComponent implements OnInit{
       .subscribe({
         next: (data) => {
           this.currentDriverInfo = data;
-          console.log(this.currentDriverInfo);
-          this.openDialog(data);
+          this.openDialog(data, locations);
         },
         error: (error) => {
           console.error(error);
@@ -93,7 +123,7 @@ export class HistoryComponent implements OnInit{
       });
   }
 
-  openDialog(driverInfo: DriverInfo)
+  openDialog(driverInfo: DriverInfo, locations: MapSearchResult[])
   {
     const dialogRef = this.dialog.open(RouteDetailDialogComponent,{
       
@@ -101,7 +131,8 @@ export class HistoryComponent implements OnInit{
         email: driverInfo.email,
         name: driverInfo.name,
         lastName: driverInfo.lastName,
-        averageRating: driverInfo.averageRating
+        averageRating: driverInfo.averageRating,
+        locations: locations
       }
     });
 

@@ -19,7 +19,7 @@ import { RouteDetailDialogComponent } from './components/route-detail-dialog/rou
     NavbarComponent,
     MapComponent,
     PaypalPaymentComponent,
-    RouteDetailDialogComponent,
+    RouteDetailDialogComponent
   ],
   imports: [
     CommonModule,

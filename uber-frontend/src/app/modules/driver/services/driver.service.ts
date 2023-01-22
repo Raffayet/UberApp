@@ -7,7 +7,6 @@ import { TokenUtilsService } from '../../shared/services/token-utils.service';
 import { RideToTake } from 'src/app/model/RideToTake';
 import { DriveAssignature } from 'src/app/model/DriveAssignature';
 import { DriverRejection } from 'src/app/model/DriverRejection';
-import { Ride } from 'src/app/model/Ride';
 import { RideToShow } from 'src/app/model/RideToShow';
 import { DriverInfo } from 'src/app/model/DriverInfo';
 

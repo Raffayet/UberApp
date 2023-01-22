@@ -9,5 +9,9 @@ export interface Ride{
     price: number,
     pricePerPassenger: number,
     locations: MapSearchResult[],
-    routeType: string
+    routeType: string,
+    startTime: string,
+    endTime: string,
+    formattedStartTime: string,
+    formattedEndTime: string
 }

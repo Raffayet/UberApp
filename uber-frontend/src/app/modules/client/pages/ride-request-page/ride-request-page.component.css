@@ -18,11 +18,12 @@
     overflow-x: hidden;
 }
 
-.mapContainer{
+#map1{
     width: 35%;
     height: 70%;
     margin-top: 10%;
     background-color: #F9F9F9;
+    border: 3px solid white;
 }
 
 .back-button{
