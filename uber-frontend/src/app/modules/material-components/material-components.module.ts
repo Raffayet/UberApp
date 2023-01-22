@@ -24,6 +24,9 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatStepperModule} from '@angular/material/stepper';
 import {RatingModule} from 'primeng/rating';
+import {ChartModule} from 'primeng/chart';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [],
@@ -53,7 +56,10 @@ import {RatingModule} from 'primeng/rating';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
-    RatingModule
+    RatingModule,
+    ChartModule,
+    MatDatepickerModule,
+    MatNativeDateModule 
   ],
   exports: [
     MatSlideToggleModule,
@@ -80,7 +86,10 @@ import {RatingModule} from 'primeng/rating';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
-    RatingModule
+    RatingModule,
+    ChartModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ]
 })
 export class MaterialComponentsModule { }

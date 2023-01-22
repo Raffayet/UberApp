@@ -1,3 +1,4 @@
+import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { RegisteredDriverComponent } from './../auth/pages/registered-driver/registered-driver.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -13,6 +14,12 @@ const routes: Routes = [
   {
     path: 'register-confirmation',
     component: RegisteredDriverComponent,
+    outlet: 'AdminRouter',
+    canActivate: [],
+  },
+  {
+    path: 'report',
+    component: ReportPageComponent,
     outlet: 'AdminRouter',
     canActivate: [],
   },

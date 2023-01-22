@@ -13,10 +13,14 @@
 
 .navbar a {
     padding: 100px;
+    padding-bottom: 10px;
     text-decoration: none;
     font-size: 18px;
     vertical-align: center;
     color: white;
+    padding-left: 5%;
+    padding-right: 5%;
+    cursor: pointer;
 }
 
 .navbar a:hover{

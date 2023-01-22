@@ -22,15 +22,15 @@ import { ToastrService } from 'ngx-toastr';
 export class ClientDashboardComponent {
 
     chatHidden:boolean = false;
-    navbarLabels: string[] = ["Home", "Profile", "Ride Invites", "History"];
-    navbarPaths: string[] = ["request-ride-page", "profile-page", "ride-invites", "history"];
+    navbarLabels: string[] = ["Home", "Profile", "Ride Invites", "History", "Report"];
+    navbarPaths: string[] = ["request-ride-page", "profile-page", "ride-invites", "history", "report"];
     option: string = this.navbarPaths[0];
 
     rideInvites: RideInvite[];
     stompClient: Client;
     loggedUser: User | null;
     
-    changeOption(eventData: string): void{      
+    changeOption(eventData: string): void{  
       this.router.navigate(['/client', {outlets: {'ClientRouter': [eventData]}}]);
     }
 

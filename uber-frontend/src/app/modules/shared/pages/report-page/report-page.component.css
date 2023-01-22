@@ -1,0 +1,20 @@
+.container{
+    padding-top: 100px;
+    width: 100%;
+    text-align: center;
+}
+
+.container h1{
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.button{
+    font-size: 25px;
+    margin-left: 20px;
+    margin-top: 0;
+}
+
+.mat-date-range-input-inner{
+    color:white;
+}

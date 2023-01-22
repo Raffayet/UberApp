@@ -61,5 +61,26 @@ insert into vehicle_type(coefficient, type) values (1.2, 'Baby Seat');
 insert into vehicle_type(coefficient, type) values (1.3, 'Pet Friendly');
 insert into vehicle_type(coefficient, type) values (1.5, 'Baby Seat and Pet Friendly');
 
-insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('milicamatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad')
+insert into ride_invite(email_from, email_to, price_to_pay, ride_invite_status, first_location, destination) values('milicamatic@gmail.com', 'sasalukic@gmail.com', 5.3, 2, 'Bulevar Vojvode Stepe 125', 'Bulevar Evrope Novi Sad');
 
+
+-- finished rides (for reports)
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status)
+            values(2, 1, 6.78, 2, 'Standard', 'Custom', false, '20230119 04:30:00 PM', 'ENDED');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status)
+            values(6, 1, 6.18, 2, 'Standard', 'Alternative', false, '20230119 6:20:00 PM', 'ENDED');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status)
+            values(6, 1, 8, 2, 'Baby Seat', 'Optimal', false, '20230121 3:20:00 PM', 'ENDED');
+
+
+insert into ride_clients(ride_id, clients_id) values (3, 3);
+insert into ride_clients(ride_id, clients_id) values (4, 3);
+
+insert into ride_locations(ride_id, locations_id) values (3, 1);
+insert into ride_locations(ride_id, locations_id) values (3, 2);
+
+insert into ride_locations(ride_id, locations_id) values (4, 3);
+insert into ride_locations(ride_id, locations_id) values (4, 4);
+
+insert into ride_locations(ride_id, locations_id) values (5, 3);
+insert into ride_locations(ride_id, locations_id) values (5, 4);

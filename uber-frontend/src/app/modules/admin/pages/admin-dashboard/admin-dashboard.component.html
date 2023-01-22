@@ -50,6 +50,16 @@
                     </p>
                 </div>
             </mat-list-item>
+            <mat-list-item [routerLink]="['/admin', {outlets: {'AdminRouter': ['report']}}]">
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>bar_chart</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Report
+                    </p>
+                </div>
+            </mat-list-item>
             <mat-list-item [routerLink]="['/admin', {outlets: {'AdminRouter': ['adminChat']}}]" >
                 <div class="menuItem">
                     <p>

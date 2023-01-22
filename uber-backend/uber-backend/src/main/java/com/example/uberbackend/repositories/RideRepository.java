@@ -18,4 +18,7 @@ public interface RideRepository extends PagingAndSortingRepository<Ride, Long> {
 
     @Query(value="SELECT r FROM Ride r  WHERE r.initiator.email = ?1", nativeQuery=true)
     Page<Ride> findAllByInitiatorEmail(String email, Pageable pageable);
+
+    @Query("select r from Ride r where r.rideStatus = 'ENDED'")
+    List<Ride> findAllEnded();
 }

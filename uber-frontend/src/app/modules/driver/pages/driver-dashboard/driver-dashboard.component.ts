@@ -16,8 +16,8 @@ import { DriverService } from '../../services/driver.service';
 export class DriverDashboardComponent {
 
   chatHidden:boolean = false;
-  navbarLabels: string[] = ["Profile", "Rides To Do"];
-  navbarPaths: string[] = ["profile-page", "rides-to-do"];
+  navbarLabels: string[] = ["Profile", "Rides To Do", "Report"];
+  navbarPaths: string[] = ["profile-page", "rides-to-do", 'report'];
   option: string = this.navbarPaths[0];
 
   loggedDriver: User | null;

@@ -7,7 +7,8 @@ import { HistoryComponent } from './components/history/history.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReportPageComponent } from './pages/report-page/report-page.component';
 
 
 @NgModule({
@@ -17,12 +18,14 @@ import { FormsModule } from '@angular/forms';
     NavbarComponent,
     MapComponent,
     PaypalPaymentComponent,
+    ReportPageComponent,
   ],
   imports: [
     CommonModule,
     SharedRoutingModule,
     MaterialComponentsModule,
     FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     MapComponent,
