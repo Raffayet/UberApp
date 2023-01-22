@@ -6,7 +6,7 @@ import { RideInvitesPageComponent } from './pages/ride-invites-page/ride-invites
 import { LocationPickerComponent } from './components/location-picker/location-picker.component';
 import { RideRequestPageComponent } from './pages/ride-request-page/ride-request-page.component';
 import { SharedModule } from '../shared/shared.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { RideInvitationComponent } from './components/ride-invitation/ride-invitation.component';
 import { RideTypeComponent } from './components/ride-type/ride-type.component';
@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RideInviteDialogComponent } from './components/ride-invite-dialog/ride-invite-dialog.component';
 import { CalendarModule } from 'primeng/calendar';
 import { TimerDialogComponent } from './components/timer-dialog/timer-dialog.component';
+import { RideReviewComponent } from './components/ride-review/ride-review.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { TimerDialogComponent } from './components/timer-dialog/timer-dialog.com
     RideTypeComponent,
     RideInviteDialogComponent,
     TimerDialogComponent,
+    RideReviewComponent,
   ],
   imports: [
     CommonModule,
@@ -33,7 +35,8 @@ import { TimerDialogComponent } from './components/timer-dialog/timer-dialog.com
     FormsModule,
     DragDropModule,
     MatDialogModule,
-    CalendarModule
+    CalendarModule,
+    ReactiveFormsModule
   ]
 })
 export class ClientModule { }
