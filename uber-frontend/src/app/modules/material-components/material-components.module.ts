@@ -23,6 +23,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatStepperModule} from '@angular/material/stepper';
+import {RatingModule} from 'primeng/rating';
 
 @NgModule({
   declarations: [],
@@ -52,6 +53,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
+    RatingModule
   ],
   exports: [
     MatSlideToggleModule,
@@ -78,6 +80,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
+    RatingModule
   ]
 })
 export class MaterialComponentsModule { }

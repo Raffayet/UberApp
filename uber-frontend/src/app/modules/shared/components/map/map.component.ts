@@ -1,3 +1,4 @@
+import { RideReviewComponent } from './../../../client/components/ride-review/ride-review.component';
 import { ToastrService } from 'ngx-toastr';
 import { MapRide } from './../../../../model/MapRide';
 import * as L from 'leaflet';
@@ -5,15 +6,13 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MapSearchResult } from 'src/app/modules/client/services/map.service';
 import { MapService } from 'src/app/modules/client/services/map.service';
 import 'leaflet-routing-machine';
-import { connect } from 'net';
-import { TitleStrategy } from '@angular/router';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { environment } from 'src/app/environments/environment';
-import { MapDriver } from 'src/app/model/MapRide';
-import { geoJSON, icon, LayerGroup, marker } from 'leaflet';
+import {  icon, LayerGroup, marker } from 'leaflet';
 import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
 import { TokenUtilsService } from '../../services/token-utils.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-map',
@@ -61,7 +60,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService) {}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService, public dialog: MatDialog) {}
 
   public reset(){
     this.map.remove();
@@ -78,11 +77,18 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.stompClient.connect({}, function () {
       that.openGlobalSocket();
     });
-    this.getActiveRide();
+    
   }
 
-  getActiveRide():void{
-    
+  openDialog():void{
+    const dialogRef = this.dialog.open(RideReviewComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        console.log(`Dialog result:`);
+        console.log(result);
+      }
+    });
   }
   
   openGlobalSocket() {
@@ -159,6 +165,8 @@ export class MapComponent implements AfterViewInit, OnInit {
       this.toaster.clear();
       this.toaster.info(`Ride successfully ended`,"Ride ended", {timeOut: 5000});
 
+      this.openDialog();
+      
     });
   }
 
@@ -173,7 +181,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.stateManagement.mapa = this;
   }
   
-  pinNewResult(pin: MapSearchResult, i: number): void {  
+  pinNewResult(pin: MapSearchResult, i: number): void {
     let newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
 
     this.locations[i].setLatLng(newLatLng);
