@@ -6,13 +6,16 @@ import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
+import com.example.uberbackend.task.NotificationScheduler;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.ZoneOffset;
 import java.util.EmptyStackException;
 import java.io.IOException;
 import java.time.LocalDateTime;
