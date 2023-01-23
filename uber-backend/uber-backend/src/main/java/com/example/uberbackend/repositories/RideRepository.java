@@ -21,4 +21,6 @@ public interface RideRepository extends PagingAndSortingRepository<Ride, Long> {
     List<Ride> findAllActive();
 
     Page<Ride> findAllByInitiatorEmailAndRideStatus(String email, RideStatus rideStatus, Pageable pageable);
+
+    Page<Ride> findAllByDriverEmailAndRideStatus(String email, RideStatus rideStatus, Pageable pageable);
 }

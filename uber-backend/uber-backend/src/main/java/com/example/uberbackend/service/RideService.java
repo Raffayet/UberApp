@@ -167,4 +167,9 @@ public class RideService {
         }
         return allPoint.size() - index;
     }
+
+    public Page<Ride> findEndedDriversRidesByEmail(Pageable paging, String email) {
+        Page<Ride> endedRides = rideRepository.findAllByDriverEmailAndRideStatus(email, RideStatus.ENDED, paging);
+        return endedRides;
+    }
 }

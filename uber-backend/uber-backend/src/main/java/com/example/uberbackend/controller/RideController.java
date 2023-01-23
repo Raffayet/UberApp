@@ -84,4 +84,10 @@ public class RideController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("get-all-drivers-rides")
+    public Page<Ride> getEndedDriversRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
+        Pageable paging = PageRequest.of(page, size);
+        return rideService.findEndedDriversRidesByEmail(paging, email);
+    }
 }

@@ -131,20 +131,19 @@ export class HistoryComponent implements OnInit{
 
   private getHistoryOfDriversRides(request: Request)
   {
-    // this.rideService.getHistoryOfDriversRides(request, this.email)
-    //   .subscribe({
-    //       next: (data) => {
-    //         console.log(data);
-    //         this.rides = data.content;
-    //         this.totalElements = data.size;
-    //         this.convertStartDateFormat();
-    //         console.log(this.rides);
-    //         this.convertEndDateFormat();
-    //       },
-    //       error: (err) => {
-    //         console.log(err.error.message);
-    //       },
-    //     });
+    this.rideService.getHistoryOfDriversRides(request, this.email)
+      .subscribe({
+          next: (data) => {
+            this.rides = data.content;
+            this.totalElements = data.size;
+            this.convertStartDateFormat();
+            console.log(this.rides);
+            this.convertEndDateFormat();
+          },
+          error: (err) => {
+            console.log(err.error.message);
+          },
+        });
   }
 
   nextPage(event: PageEvent) {

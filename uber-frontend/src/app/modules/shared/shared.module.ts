@@ -12,6 +12,7 @@ import {MatSortModule} from '@angular/material/sort';
 import { RouteDetailDialogComponent } from './components/route-detail-dialog/route-detail-dialog.component';
 import { OrderExistingRideDialogComponent } from './components/order-existing-ride-dialog/order-existing-ride-dialog.component';
 import { CalendarModule } from 'primeng/calendar';
+import { ClientsInfoDialogComponent } from './components/clients-info-dialog/clients-info-dialog.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { CalendarModule } from 'primeng/calendar';
     MapComponent,
     PaypalPaymentComponent,
     RouteDetailDialogComponent,
-    OrderExistingRideDialogComponent
+    OrderExistingRideDialogComponent,
+    ClientsInfoDialogComponent
   ],
   imports: [
     CommonModule,

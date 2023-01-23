@@ -23,13 +23,13 @@ export class RideService {
     return this.http.get<any>(environment.apiURL + "/rides/get-all", { params: queryParams});
   }
 
-  getHistoryOfDriversRides(request: Request, email: string): Observable<Ride[]>{
+  getHistoryOfDriversRides(request: Request, email: string): Observable<any>{
     let queryParams = new HttpParams();
     queryParams = queryParams.append("format", "json");
     queryParams = queryParams.append("page", request.page);
     queryParams = queryParams.append("size", request.size);
     queryParams = queryParams.append("email", email);
 
-    return this.http.get<Ride[]>(environment.apiURL + "/rides/get-all", { params: queryParams});
+    return this.http.get<any>(environment.apiURL + "/rides/get-all-drivers-rides", { params: queryParams});
   }
 }
