@@ -1,0 +1,11 @@
+.confirm-container{
+    width: 600px;
+    height: 700px;
+    margin-bottom: 5rem;
+}
+
+.client-info-window
+{
+    border: 2px solid white;
+    padding: 1rem;
+}

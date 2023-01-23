@@ -11,3 +11,9 @@
     width: 30%;
     border: 1px solid black;
 }
+
+.button{
+    font-size: 25px;
+    margin-left: 20px;
+    margin-top: 0;
+}
