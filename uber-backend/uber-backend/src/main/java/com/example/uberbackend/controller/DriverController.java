@@ -121,4 +121,15 @@ public class DriverController {
         }
         return ResponseEntity.ok(ridesToShowDto);
     }
+
+    @GetMapping("get-driver-info")
+    public ResponseEntity<?> getDriverInfo(@RequestParam("rideId") Long rideId) {
+        DriverInfoDto driverInfoDto;
+        try {
+            driverInfoDto = this.driverService.getDriverInfoByRideId(rideId);
+        } catch (Exception ex) {
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(driverInfoDto);
+    }
 }

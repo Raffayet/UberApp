@@ -80,6 +80,8 @@ import {RatingModule} from 'primeng/rating';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
+    MatTableModule,
+    MatSortModule,
     RatingModule
   ]
 })

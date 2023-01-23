@@ -9,7 +9,6 @@ import { TokenUtilsService } from 'src/app/modules/shared/services/token-utils.s
 import { UserService } from 'src/app/modules/shared/services/user.service';
 import { ClientService } from '../../services/client.service';
 import { over, Client, Message as StompMessage} from 'stompjs';
-import { Ride } from 'src/app/model/Ride';
 import { Output, EventEmitter } from '@angular/core';
 import { ClientDashboardComponent } from '../client-dashboard/client-dashboard.component';
 

@@ -1,9 +1,49 @@
 <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="rides">
+    <table class="history-table" mat-table [dataSource]="rides" matSort>
      
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> Id </th>
         <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="firstLocation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> First Location </th>
+        <td mat-cell *matCellDef="let element"> {{element.locations[0].displayName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="destination">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Destination </th>
+        <td mat-cell *matCellDef="let element"> {{element.locations[element.locations.length - 1].displayName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Price </th>
+        <td mat-cell *matCellDef="let element"> {{element.price}} Tokens </td>
+      </ng-container>
+
+      <ng-container matColumnDef="startTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Start Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.formattedStartTime}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="endTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> End Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.formattedEndTime}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="buttonsColumn">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Route Details</th>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="getDriverInfo(element.locations, element.id)">Driver Details</button></td>
+      </ng-container>
+
+      <ng-container matColumnDef="buttonsColumn2">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="openOrderDialog(element.locations, element)" [disabled]="currentAmount < element.pricePerPassenger">Order now</button></td>
+      </ng-container>
+
+      <ng-container matColumnDef="clientsInfo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer">Clients Details</button></td>
       </ng-container>
   
       <!-- <ng-container matColumnDef="name">
@@ -30,5 +70,8 @@
                    showFirstLastButtons
                    aria-label="Select page of periodic elements">
     </mat-paginator>
+    <div id="map2">
+      <app-map [containerId]="'map2'"></app-map>
+    </div>
   </div>
   
