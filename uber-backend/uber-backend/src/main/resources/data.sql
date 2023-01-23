@@ -46,6 +46,9 @@ insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_ty
 insert into ride_clients(ride_id, clients_id) values (1, 1);
 insert into ride_clients(ride_id, clients_id) values (1, 3);
 
+insert into ride_clients(ride_id, clients_id) values (3, 3);
+insert into ride_clients(ride_id, clients_id) values (3, 5);
+
 insert into ride_locations(ride_id, locations_id) values (1, 1);
 insert into ride_locations(ride_id, locations_id) values (1, 2);
 

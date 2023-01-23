@@ -5,7 +5,7 @@ export interface Ride{
     id: number,
     driver: User,
     clients: User[],
-    intiator: User,
+    initiator: User,
     price: number,
     pricePerPassenger: number,
     locations: MapSearchResult[],

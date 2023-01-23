@@ -20,6 +20,7 @@ import { ClientService } from 'src/app/modules/client/services/client.service';
 import { OrderExistingRideDialogComponent } from '../order-existing-ride-dialog/order-existing-ride-dialog.component';
 import { User } from 'src/app/model/User';
 import { PaypalService } from '../../services/paypal.service';
+import { ClientsInfoDialogComponent } from '../clients-info-dialog/clients-info-dialog.component';
 
 
 export interface Request {
@@ -53,13 +54,15 @@ export class HistoryComponent implements OnInit{
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService){}
+  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog){}
 
   ngOnInit() {
     if(this.tokenUtilsService.getRoleFromToken() == "CLIENT"){      
       this.email = this.tokenUtilsService.getUsernameFromToken() as string;
       this.displayedColumns = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2'];
       this.getHistoryOfRides({ page: 0, size: 5 });
+      this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
+      this.getAmountOfTokens();
     }
 
     else if(this.tokenUtilsService.getRoleFromToken() == "DRIVER")
@@ -68,9 +71,6 @@ export class HistoryComponent implements OnInit{
       this.displayedColumns = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'clientsInfo'];
       this.getHistoryOfDriversRides({ page: 0, size: 5 });
     }
-
-    this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
-    this.getAmountOfTokens();
   } 
 
   ngAfterViewInit() {
@@ -194,6 +194,21 @@ export class HistoryComponent implements OnInit{
     });
 
     orderDialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      
+    });
+  }
+
+  openClientsDialog(ride: Ride)
+  {
+    console.log(ride);
+    const clientsDialogRef = this.clientsDialog.open(ClientsInfoDialogComponent,{
+      
+      data:{
+        ride: ride
+      }
+    });
+
+    clientsDialogRef.afterClosed().subscribe((confirmed: boolean) => {
       
     });
   }
