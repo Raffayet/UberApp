@@ -20,9 +20,7 @@ export class LoginService {
       password: credentials.value.password
     }
 
-    let result = undefined;
-
-    return this.http.post("http://localhost:8081/api/auth/login", data)
+    return this.http.post("http://localhost:8081/api/auth/login", data);
   }
 
   socialLogIn(email: string) : Observable<any> {
