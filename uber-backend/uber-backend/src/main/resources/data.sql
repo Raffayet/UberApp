@@ -9,7 +9,8 @@ insert into my_user(account_status, active_account, blocked, city, driving_statu
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, false, 'Beograd', 1, 'strahinjapavlovic@gmail.com', 'Strahinja', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '063154890', 'https://buffer.com/library/content/images/2022/03/amina.png', 'LOCAL', 'Pavlovic', 1);
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, false, 'Nis', 1, 'aleksandarmitrovic@gmail.com', 'Aleksandar', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '063389012', '/dejanProfile.jpg', 'LOCAL', 'Mitrovic', 2);
 
-insert into point(lat,lng) values ( 45.235866, 19.807387);
+-- insert into point(lat,lng) values ( 45.235866, 19.807387);
+insert into point(lat,lng) values ( 45.258057892843766, 19.823989494446415);
 insert into point(lat, lng) values( 45.34, 19.78);
 
 insert into message(sender_email, receiver_email, date, content, status) values('sasalukic@gmail.com', 'support', '2022-11-24 14:11:10', 'Hello, I have problem with scheduling drive.', 1);
@@ -32,8 +33,11 @@ insert into map_search_result_dto(display_name, lat, lon) values ('Cara Lazara N
 insert into map_search_result_dto(display_name, lat, lon) values ('Cara Dusana Novi Sad', '45.245037', '19.825175');
 insert into map_search_result_dto(display_name, lat, lon) values ('Rumenacki put', '45.275126', '19.801360');
 
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(2, 1, 6.78, 2, 'Regular', 'Custom', false, null, 'WAITING');
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(6, 1, 6.18, 2, 'Regular', 'Custom', false, null, 'WAITING');
+insert into map_search_result_dto(display_name, lat, lon) values ('Bulevar Cara Lazara', '45.23963407377123', '19.823456917184668');
+insert into map_search_result_dto(display_name, lat, lon) values ('Vladimira Perica Valtera', '45.24599993155166', '19.85093227027388');
+
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(2, 1, 6.78, 2, 'Standard', 'Custom', false, null, 'WAITING');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(6, 5, 6.18, 2, 'Standard', 'Custom', false, null, 'WAITING');
 
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(2, 1, 11, 11, 'Regular', 'Custom', false, null, '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(6, 1, 4, 4, 'Regular', 'Custom', false, null, '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');
@@ -45,6 +49,9 @@ insert into ride_clients(ride_id, clients_id) values (1, 3);
 insert into ride_locations(ride_id, locations_id) values (1, 1);
 insert into ride_locations(ride_id, locations_id) values (1, 2);
 
+insert into ride_locations(ride_id, locations_id) values (2, 4);
+insert into ride_locations(ride_id, locations_id) values (2, 5);
+
 insert into ride_locations(ride_id, locations_id) values (3, 1);
 insert into ride_locations(ride_id, locations_id) values (3, 2);
 insert into ride_locations(ride_id, locations_id) values (3, 3);
@@ -54,6 +61,7 @@ insert into ride_locations(ride_id, locations_id) values (4, 2);
 
 insert into ride_locations(ride_id, locations_id) values (5, 1);
 insert into ride_locations(ride_id, locations_id) values (5, 2);
+
 
 -- insert into driver_rides(driver_id, rides_id) values (2, 1);
 -- insert into driver_rides(driver_id, rides_id) values (2, 2);

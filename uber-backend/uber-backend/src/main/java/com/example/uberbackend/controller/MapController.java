@@ -5,6 +5,7 @@ import com.example.uberbackend.model.Point;
 import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.MapService;
+import com.example.uberbackend.service.RideService;
 import com.example.uberbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -32,6 +33,7 @@ public class MapController {
     private final MapService mapService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final DriverService driverService;
+    private final RideService rideService;
 
     @PostMapping(value = "/determine-optimal-route")
     public ResponseEntity<?> determineOptimalRoute(@RequestBody List<Point> points){
@@ -70,12 +72,16 @@ public class MapController {
     )
     public ResponseEntity<?> updateDriverOnMap(@RequestBody MapRideDto mapRideDto){
         Driver driver = driverService.updateDriverLocation(mapRideDto.getDriver().getId(), mapRideDto.getDriver().getLatitude(), mapRideDto.getDriver().getLongitude());
-
+        rideService.updateRideStatus(mapRideDto);
+        rideService.checkIfRideIsCanceled(mapRideDto);
+        rideService.aproxDuration(mapRideDto);
 //        MapDriverDto mapDriverDto = new MapDriverDto(driver);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/update-ride-state", mapRideDto);
+//        this.simpMessagingTemplate.convertAndSend("/map-updates/update-ride-state", mapRideDto);
+
+        for (String email : mapRideDto.getClientEmails()) {
+            simpMessagingTemplate.convertAndSendToUser(email, "/map-updates/update-ride-state", mapRideDto);
+        }
         return new ResponseEntity<>(mapRideDto, HttpStatus.OK);
     }
-
-
 
 }

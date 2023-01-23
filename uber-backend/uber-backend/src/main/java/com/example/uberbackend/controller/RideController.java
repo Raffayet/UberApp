@@ -66,9 +66,11 @@ public class RideController {
             produces = "application/json"
     )
     public ResponseEntity<?> changeRide(@PathVariable("id") long id) {
-        Ride ride = this.rideService.changeRide(id);
+        Ride ride = this.rideService.endRide(id);
         MapRideDto returnRideDTO = new MapRideDto(ride);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/ended-ride", returnRideDTO);
+        for (String email : returnRideDTO.getClientEmails()) {
+            simpMessagingTemplate.convertAndSendToUser(email, "/map-updates/ended-ride", returnRideDTO);
+        }
         return new ResponseEntity<>(returnRideDTO, HttpStatus.OK);
     }
 

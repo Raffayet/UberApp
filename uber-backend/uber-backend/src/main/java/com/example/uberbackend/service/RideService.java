@@ -1,10 +1,13 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.NotFoundException;
+import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.Point;
 import com.example.uberbackend.model.Ride;
 import com.example.uberbackend.model.VehicleType;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
+import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.repositories.RideRepository;
 import com.example.uberbackend.repositories.VehicleTypeRepository;
 import lombok.AllArgsConstructor;
@@ -18,7 +21,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +32,7 @@ public class RideService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final MapService mapService;
     private final VehicleTypeRepository vehicleTypeRepository;
+    private final DriverRepository driverRepository;
 
     public Page<Ride> findAll(Pageable pageable) {
         return rideRepository.findAll(pageable);
@@ -42,7 +45,7 @@ public class RideService {
         List<MapRideDto> mapRideDtos = new ArrayList<>();
 
         for (Ride ride :rides) {
-            if(ride.getTimeOfReservation().isAfter(LocalDateTime.now()))
+            if(ride.getTimeOfReservation()!=null && ride.getTimeOfReservation().isAfter(LocalDateTime.now()))
                 continue;
             PathInfoDto pathInfoDto = null;
             List<Point> points = ride.getLocations()
@@ -82,11 +85,24 @@ public class RideService {
 
     }
 
-    public Ride changeRide(long id) {
+
+    public Ride endRide(long id) {
         Ride ride = this.rideRepository.findById(id).orElseThrow(() -> new NotFoundException("Ride does not exist!"));
         ride.setRideStatus(RideStatus.ENDED);
-        return this.rideRepository.save(ride);
+        this.rideRepository.save(ride);
 
+        Driver driver = this.driverRepository.findById(ride.getDriver().getId()).orElse(null);
+        boolean newRideExist = false;
+        for (Ride driverRide:driver.getRides())
+            if(driverRide.getRideStatus() == RideStatus.WAITING)
+                newRideExist = true;
+
+        if(!newRideExist){
+            driver.setDrivingStatus(DrivingStatus.ONLINE);
+            this.driverRepository.save(driver);
+        }
+
+        return ride;
     }
 
     public Double calculatePrice(String vehicleType, double totalDistance) {
@@ -112,5 +128,43 @@ public class RideService {
 //            historyRideDto.setEndDate(String.valueOf(endedRide.getTimeOfReservation()));
 //            historyRideDtos.add(historyRideDto);
 //        }
+    }
+
+    public void updateRideStatus(MapRideDto mapRideDto) {
+        LocationDto startPoint = mapRideDto.getAtomicPoints().get(0);
+        if(mapRideDto.getDriver().getLatitude() == startPoint.getLatitude() && mapRideDto.getDriver().getLongitude() == startPoint.getLongitude()){
+            mapRideDto.setStatus(RideStatus.STARTED);
+            Ride ride = rideRepository.findById(mapRideDto.getId()).orElse(null);
+            ride.setRideStatus(RideStatus.STARTED);
+            rideRepository.save(ride);
+        }
+    }
+
+    public void checkIfRideIsCanceled(MapRideDto mapRideDto) {
+        Ride ride = rideRepository.findById(mapRideDto.getId()).orElse(null);
+        if(ride.getRideStatus() == RideStatus.CANCELED)
+            mapRideDto.setStatus(RideStatus.CANCELED);
+
+    }
+
+    public void aproxDuration(MapRideDto mapRideDto) {
+        int distance = 0;
+        if(mapRideDto.getStatus() == RideStatus.WAITING)
+            distance = getRemainingPointsSize(mapRideDto.getAtomicPointsBeforeRide(), mapRideDto.getDriver());
+        else
+            distance = getRemainingPointsSize(mapRideDto.getAtomicPoints(), mapRideDto.getDriver());
+        mapRideDto.setDuration(distance*2);
+    }
+
+    private int getRemainingPointsSize(List<LocationDto> allPoint, MapDriverDto mapDriverDto){
+        int index = 0;
+        for (int i =0;i<allPoint.size();i++){
+            LocationDto point = allPoint.get(i);
+            if(point.getLongitude() == mapDriverDto.getLongitude() && point.getLatitude() == mapDriverDto.getLatitude()){
+                index = i;
+                break;
+            }
+        }
+        return allPoint.size() - index;
     }
 }

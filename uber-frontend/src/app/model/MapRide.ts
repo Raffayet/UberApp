@@ -3,7 +3,9 @@ export interface MapRide{
     status:string,
     driver:MapDriver,
     clientEmails:string[],
-    atomicPoints:AtomicPoint[]
+    atomicPoints:AtomicPoint[],
+    atomicPointsBeforeRide:AtomicPoint[],
+    duration:number
 }
 
 export interface MapDriver{
