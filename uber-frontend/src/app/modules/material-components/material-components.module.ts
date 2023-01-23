@@ -86,16 +86,13 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatToolbarModule,
     MatTooltipModule,
     MatStepperModule,
-<<<<<<< HEAD
     RatingModule,
     ChartModule,
     MatDatepickerModule,
-    MatNativeDateModule
-=======
+    MatNativeDateModule,
     MatTableModule,
     MatSortModule,
     RatingModule
->>>>>>> develop
   ]
 })
 export class MaterialComponentsModule { }

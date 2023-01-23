@@ -19,19 +19,17 @@ const routes: Routes = [
     canActivate: [],
   },
   {
-<<<<<<< HEAD
     path: 'report',
     component: ReportPageComponent,
     outlet: 'DriverRouter',
     canActivate: [],
-  }
-=======
+  },
+  {
     path: 'history',
     component: HistoryComponent,
     outlet: 'DriverRouter',
     canActivate: [],
   },
->>>>>>> develop
 ];
 
 @NgModule({
