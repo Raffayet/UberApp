@@ -14,7 +14,7 @@ export class ReportService {
     
   }
 
-  generateReportForDateRange(dateRange:DateRange){
+  generateReportForDateRange(dateRange:DateRange, userEmail:string|null){
     let headers = new HttpHeaders();
     const loggedUser = this.tokenUtilsService.getUserFromToken();
     const startDate = new Date(dateRange.start?.getTime() as number + (12*60*60*1000))
@@ -22,7 +22,7 @@ export class ReportService {
     const data = {
       start:startDate,
       end:endDate,
-      userEmail:loggedUser?.email,
+      userEmail:userEmail?userEmail:loggedUser?.email,
       roleType:loggedUser?.role
     }
 

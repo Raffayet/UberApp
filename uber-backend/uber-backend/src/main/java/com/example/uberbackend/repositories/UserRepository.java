@@ -15,4 +15,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Boolean existsByEmail(String email);
+
+    @Query("select u.email from User u where not u.role.name = 'ADMIN'")
+    List<String> getUserEmails();
 }
