@@ -40,6 +40,11 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
         <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="openOrderDialog(element.locations, element)" [disabled]="currentAmount < element.pricePerPassenger">Order now</button></td>
       </ng-container>
+
+      <ng-container matColumnDef="clientsInfo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer">Clients Details</button></td>
+      </ng-container>
   
       <!-- <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name </th>

@@ -39,7 +39,7 @@ export class HistoryComponent implements OnInit{
   rides: Ride[] = [];
   totalElements: number = 0;
 
-  displayedColumns: string[] = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2'];
+  displayedColumns: string[];
   isLoadingResults = true;
   isRateLimitReached = false;
   resultsLength = 0;
@@ -56,10 +56,19 @@ export class HistoryComponent implements OnInit{
   constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService){}
 
   ngOnInit() {
-    if(this.tokenUtilsService.getRoleFromToken() != "ADMIN"){      
+    if(this.tokenUtilsService.getRoleFromToken() == "CLIENT"){      
       this.email = this.tokenUtilsService.getUsernameFromToken() as string;
+      this.displayedColumns = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2'];
+      this.getHistoryOfRides({ page: 0, size: 5 });
     }
-    this.getHistoryOfRides({ page: 0, size: 5 });
+
+    else if(this.tokenUtilsService.getRoleFromToken() == "DRIVER")
+    {
+      this.email = this.tokenUtilsService.getUsernameFromToken() as string;
+      this.displayedColumns = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'clientsInfo'];
+      this.getHistoryOfDriversRides({ page: 0, size: 5 });
+    }
+
     this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
     this.getAmountOfTokens();
   } 
@@ -118,6 +127,24 @@ export class HistoryComponent implements OnInit{
             console.log(err.error.message);
           },
         });
+  }
+
+  private getHistoryOfDriversRides(request: Request)
+  {
+    // this.rideService.getHistoryOfDriversRides(request, this.email)
+    //   .subscribe({
+    //       next: (data) => {
+    //         console.log(data);
+    //         this.rides = data.content;
+    //         this.totalElements = data.size;
+    //         this.convertStartDateFormat();
+    //         console.log(this.rides);
+    //         this.convertEndDateFormat();
+    //       },
+    //       error: (err) => {
+    //         console.log(err.error.message);
+    //       },
+    //     });
   }
 
   nextPage(event: PageEvent) {
