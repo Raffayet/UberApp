@@ -71,6 +71,11 @@ export class HistoryComponent implements OnInit{
       this.displayedColumns = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'clientsInfo'];
       this.getHistoryOfDriversRides({ page: 0, size: 5 });
     }
+
+    else if (this.tokenUtilsService.getRoleFromToken() == "ADMIN")
+    {
+
+    }
   } 
 
   ngAfterViewInit() {
@@ -198,13 +203,14 @@ export class HistoryComponent implements OnInit{
     });
   }
 
-  openClientsDialog(ride: Ride)
+  openClientsDialog(locations: MapSearchResult[], ride: Ride)
   {
     console.log(ride);
     const clientsDialogRef = this.clientsDialog.open(ClientsInfoDialogComponent,{
       
       data:{
-        ride: ride
+        ride: ride,
+        locations: locations
       }
     });
 
