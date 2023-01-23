@@ -20,6 +20,9 @@ public interface RideRepository extends PagingAndSortingRepository<Ride, Long> {
     @Query("select r from Ride r where r.rideStatus = 'WAITING' ")
     List<Ride> findAllActive();
 
+    @Query("select r from Ride r where r.rideStatus = 'ENDED'")
+    List<Ride> findAllEnded();
+
     Page<Ride> findAllByInitiatorEmailAndRideStatus(String email, RideStatus rideStatus, Pageable pageable);
 
     Page<Ride> findAllByDriverEmailAndRideStatus(String email, RideStatus rideStatus, Pageable pageable);

@@ -312,4 +312,9 @@ public class UserService implements UserDetailsService {
         return "Success";
 
     }
+
+    public List<String> getUserEmails() {
+        List<String> userEmails = userRepository.getUserEmails();
+        return userEmails;
+    }
 }

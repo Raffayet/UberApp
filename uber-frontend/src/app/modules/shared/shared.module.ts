@@ -7,7 +7,8 @@ import { HistoryComponent } from './components/history/history.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReportPageComponent } from './pages/report-page/report-page.component';
 import {MatSortModule} from '@angular/material/sort';
 import { RouteDetailDialogComponent } from './components/route-detail-dialog/route-detail-dialog.component';
 import { OrderExistingRideDialogComponent } from './components/order-existing-ride-dialog/order-existing-ride-dialog.component';
@@ -22,6 +23,7 @@ import { ClientsInfoDialogComponent } from './components/clients-info-dialog/cli
     NavbarComponent,
     MapComponent,
     PaypalPaymentComponent,
+    ReportPageComponent,
     RouteDetailDialogComponent,
     OrderExistingRideDialogComponent,
     ClientsInfoDialogComponent
@@ -31,6 +33,7 @@ import { ClientsInfoDialogComponent } from './components/clients-info-dialog/cli
     SharedRoutingModule,
     MaterialComponentsModule,
     FormsModule,
+    ReactiveFormsModule,
     MatSortModule,
     CalendarModule
   ],

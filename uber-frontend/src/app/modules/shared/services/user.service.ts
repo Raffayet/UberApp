@@ -53,6 +53,10 @@ export class UserService {
     return this.http.put<string>(environment.apiURL + '/client/update-profile-picture', params, { headers, responseType: 'text' as 'json' });      
   }
 
+  getUsers(){
+    return this.http.get<string[]>(environment.apiURL + "/user/");
+  }
+
 
   logOut() {
     localStorage.removeItem("user");
