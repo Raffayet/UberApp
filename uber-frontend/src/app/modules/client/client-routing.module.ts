@@ -1,3 +1,4 @@
+import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RideRequestPageComponent } from 'src/app/modules/client/pages/ride-request-page/ride-request-page.component';
@@ -31,6 +32,13 @@ const routes: Routes = [
     outlet: 'ClientRouter',
     canActivate: [],
   },
+  {
+    path: 'report',
+    component: ReportPageComponent,
+    outlet: 'ClientRouter',
+    canActivate: [],
+  },
+  
 ];
 
 @NgModule({

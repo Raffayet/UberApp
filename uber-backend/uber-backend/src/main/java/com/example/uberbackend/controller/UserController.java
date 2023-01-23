@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -109,4 +110,16 @@ public class UserController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping
+    public ResponseEntity<?> getUserEmails(){
+        try{
+            List<String> userEmails= userService.getUserEmails();
+            return ResponseEntity.ok(userEmails);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

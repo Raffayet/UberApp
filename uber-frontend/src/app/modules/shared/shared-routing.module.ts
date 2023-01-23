@@ -1,3 +1,4 @@
+import { ReportPageComponent } from './pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HistoryComponent } from './components/history/history.component';

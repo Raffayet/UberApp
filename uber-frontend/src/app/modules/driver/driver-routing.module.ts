@@ -1,3 +1,4 @@
+import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HistoryComponent } from '../shared/components/history/history.component';
@@ -14,6 +15,12 @@ const routes: Routes = [
   {
     path: 'rides-to-do',
     component: RidesToDoComponent,
+    outlet: 'DriverRouter',
+    canActivate: [],
+  },
+  {
+    path: 'report',
+    component: ReportPageComponent,
     outlet: 'DriverRouter',
     canActivate: [],
   },

@@ -1,0 +1,40 @@
+<div class="container" [ngStyle]="{'padding-top':userType==='ADMIN'&&'10px'}">
+    <h1>Reports</h1>
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [min]="minDate" [max]="maxDate" [formGroup]="range" [rangePicker]="picker" [max]="">
+              <input matStartDate formControlName="start" placeholder="Start date">
+              <input matEndDate formControlName="end" placeholder="End date">
+            </mat-date-range-input>
+            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          
+            <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+          </mat-form-field>
+          <!-- Dobavljanje klijenata ili vozaca -->
+          <mat-form-field *ngIf="userType==='ADMIN'" class="autocomplete" appearance="fill">
+            <mat-label>User</mat-label>
+            <input type="text"
+                    placeholder="Pick one"
+                    aria-label="User"
+                    matInput
+                    [formControl]="emailControl"
+                    [matAutocomplete]="auto">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <button mat-raised-button class="button" (click)="generateReport()">Generate</button>
+    </div>
+
+    <div class="card">
+        <h5>Graph</h5>
+        <p-chart type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+    </div>
+</div>
