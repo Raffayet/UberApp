@@ -70,6 +70,16 @@
                     </p>
                 </div>
             </mat-list-item>
+            <mat-list-item [routerLink]="['/admin', {outlets: {'AdminRouter': ['block-users']}}]" >
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>block</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Block Users
+                    </p>
+                </div>
+            </mat-list-item>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>

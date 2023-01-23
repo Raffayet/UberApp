@@ -1,0 +1,14 @@
+.containerForm{
+    height: 800px;
+    width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 50px;
+    background-color: #424242;
+    padding-top: 100px;
+    display:block;
+}
+
+.containerForm form{
+    display: block;
+}
