@@ -122,4 +122,13 @@ public class UserController {
         }
     }
 
+    @GetMapping("/get-user-type")
+    public ResponseEntity<?> getUserTypeByEmail(@RequestParam String email){
+        try{
+            String userType = userService.getUserTypeByEmail(email);
+            return ResponseEntity.ok(userType);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

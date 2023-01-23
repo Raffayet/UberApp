@@ -70,6 +70,16 @@
                     </p>
                 </div>
             </mat-list-item>
+            <mat-list-item [routerLink]="['/admin', {outlets: {'AdminRouter': ['history']}}]" >
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>history</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Ride History
+                    </p>
+                </div>
+            </mat-list-item>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>

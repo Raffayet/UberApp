@@ -1,4 +1,21 @@
 <div class="mat-elevation-z8">
+    <mat-form-field *ngIf="userType==='ADMIN'" class="autocomplete" appearance="fill">
+      <mat-label>User</mat-label>
+      <input type="text"
+              placeholder="Pick one"
+              aria-label="User"
+              matInput
+              [formControl]="emailControl"
+              [matAutocomplete]="auto">
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <button *ngIf="userType==='ADMIN'" mat-raised-button class="button" (click)="generateTableForUser()">Generate</button>
+
     <table class="history-table" mat-table [dataSource]="rides" matSort>
      
       <ng-container matColumnDef="id">
@@ -38,7 +55,7 @@
 
       <ng-container matColumnDef="buttonsColumn2">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
-        <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="openOrderDialog(element.locations, element)" [disabled]="currentAmount < element.pricePerPassenger">Order now</button></td>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="openOrderDialog(element.locations, element)" [disabled]="currentAmount < element.pricePerPassenger" *ngIf="userType==='CLIENT'">Order now</button></td>
       </ng-container>
 
       <ng-container matColumnDef="clientsInfo">
