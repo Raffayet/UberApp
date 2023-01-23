@@ -1,0 +1,15 @@
+<div class="confirm-container">
+    <h1 mat-dialog-title>Order another ride from {{locations[0].displayName}} to {{locations[locations.length - 1].displayName}}?</h1>
+
+    <p-calendar [timeOnly]="true" [(ngModel)]="rideRequestStateService.rideRequest.timeOfReservation" [minDate]="minReserveTime" [maxDate]="maxReserveTime" (onSelect)="changeTime()" placeholder="HH:MM" [readonlyInput]="true"></p-calendar>
+
+    <div class="timer-buttons">
+      <button mat-raised-button class="reservation-time-button" [ngStyle]="{'pointer-events': 'none'}" color="accent">{{rideRequestStateService.rideRequest.timeOfReservation | date:'HH:mm' | slice:0:5}}</button>
+      <button mat-raised-button *ngIf="rideRequestStateService.rideRequest.isReserved && rideRequestStateService.rideRequest.timeOfReservation && rideRequestStateService.rideRequest.timeOfReservation.getTime() > currentTime" class="reserved-button" [ngStyle]="{'pointer-events': 'none'}" color="accent">Reserved</button>
+    </div>
+
+    <div mat-dialog-actions style="float:right;margin:20px;" class="buttons">
+      <button mat-button [mat-dialog-close]="{ clicked: 'Accept' }" (click)="orderRide()">Yes</button>
+      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }" (click)="onCloseClick()">No</button>
+    </div>
+</div>

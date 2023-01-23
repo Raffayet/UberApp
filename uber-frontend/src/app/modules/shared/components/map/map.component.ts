@@ -2,7 +2,7 @@ import { RideReviewComponent } from './../../../client/components/ride-review/ri
 import { ToastrService } from 'ngx-toastr';
 import { MapRide } from './../../../../model/MapRide';
 import * as L from 'leaflet';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MapSearchResult } from 'src/app/modules/client/services/map.service';
 import { MapService } from 'src/app/modules/client/services/map.service';
 import 'leaflet-routing-machine';
@@ -21,6 +21,13 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class MapComponent implements AfterViewInit, OnInit {
 
+  setView(newLatLng: any, arg1: number) {
+    throw new Error('Method not implemented.');
+  }
+  fitBounds(arg0: any) {
+    throw new Error('Method not implemented.');
+  }
+
   private map: L.Map;
   private customIcon : L.Icon;
   
@@ -37,6 +44,8 @@ export class MapComponent implements AfterViewInit, OnInit {
   polylinesRide: L.Polyline<any>[] = [];
   private toastNotification: any;
 
+  @Input() containerId: string;
+
   private initMap(): void {
 
     this.customIcon = L.icon({
@@ -45,8 +54,8 @@ export class MapComponent implements AfterViewInit, OnInit {
       iconAnchor: [15, 20],
       popupAnchor: [-3, -76]
     })
-
-    this.map = L.map('map', {
+    
+    this.map = L.map(this.containerId, {
       center: [ 45.26, 19.83 ],
       zoom: 10
     });

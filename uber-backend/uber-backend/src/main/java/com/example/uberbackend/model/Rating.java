@@ -18,7 +18,7 @@ public class Rating {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private Integer startNumber;
+    private Integer starNumber;
     private String comment;
 
     @OneToOne
@@ -27,8 +27,8 @@ public class Rating {
     @OneToOne
     private Client client;
 
-    public Rating(Integer startNumber, String comment) {
-        this.startNumber = startNumber;
+    public Rating(Integer starNumber, String comment) {
+        this.starNumber = starNumber;
         this.comment = comment;
     }
 }

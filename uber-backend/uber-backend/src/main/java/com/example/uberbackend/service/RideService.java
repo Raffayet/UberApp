@@ -113,8 +113,21 @@ public class RideService {
         return Math.round(price * 100.0) / 100.0;
     }
 
-    public Page<Ride> findAllByUserEmail(Pageable paging, String email) {
-        return rideRepository.findAllByInitiatorEmail(email, paging);
+    public Page<Ride> findEndedRidesByEmail(Pageable paging, String email) {
+        Page<Ride> endedRides = rideRepository.findAllByInitiatorEmailAndRideStatus(email, RideStatus.ENDED, paging);
+        return endedRides;
+//        List<HistoryRideDto> historyRideDtos = new ArrayList<HistoryRideDto>();
+//        for(Ride endedRide: endedRides)
+//        {
+//            HistoryRideDto historyRideDto = new HistoryRideDto();
+//            historyRideDto.setId(endedRide.getId());
+//            historyRideDto.setFirstLocation(endedRide.getLocations().get(0).getDisplayName());
+//            historyRideDto.setDestination(endedRide.getLocations().get(1).getDisplayName());
+//            historyRideDto.setPrice(endedRide.getPrice());
+//            historyRideDto.setStartDate(String.valueOf(endedRide.getTimeOfReservation()));      //ovo promeniti na pravi start i end time
+//            historyRideDto.setEndDate(String.valueOf(endedRide.getTimeOfReservation()));
+//            historyRideDtos.add(historyRideDto);
+//        }
     }
 
     public void updateRideStatus(MapRideDto mapRideDto) {
@@ -153,5 +166,10 @@ public class RideService {
             }
         }
         return allPoint.size() - index;
+    }
+
+    public Page<Ride> findEndedDriversRidesByEmail(Pageable paging, String email) {
+        Page<Ride> endedRides = rideRepository.findAllByDriverEmailAndRideStatus(email, RideStatus.ENDED, paging);
+        return endedRides;
     }
 }

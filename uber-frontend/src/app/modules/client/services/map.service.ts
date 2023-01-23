@@ -76,6 +76,26 @@ export class MapService {
         return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-custom-route", points);
     }
   }
+
+  automaticallyFindPathForHistory(routeType: string, locations: MapSearchResult[]): Observable<PathInfoDto>{
+    locations = locations.filter(location => {
+      return parseFloat(location.lat) !== 0 && parseFloat(location.lon) !== 0;
+    });
+
+    let points = locations.map(location => new Point(parseFloat(location.lat),
+    parseFloat(location.lon)));
+
+    switch(routeType){
+      case 'Custom':
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-custom-route", points);
+      case 'Optimal':
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-optimal-route", points);
+      case 'Alternative':
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-alternative-route", points);
+      default:
+        return this.http.post<PathInfoDto>(environment.apiURL + "/map/determine-custom-route", points);
+    }
+  }
   
   getActiveDriver():Observable<any>{
     let queryParams = new HttpParams();

@@ -7,8 +7,8 @@ import { TokenUtilsService } from '../../shared/services/token-utils.service';
 import { RideToTake } from 'src/app/model/RideToTake';
 import { DriveAssignature } from 'src/app/model/DriveAssignature';
 import { DriverRejection } from 'src/app/model/DriverRejection';
-import { Ride } from 'src/app/model/Ride';
 import { RideToShow } from 'src/app/model/RideToShow';
+import { DriverInfo } from 'src/app/model/DriverInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -80,5 +80,13 @@ export class DriverService {
     queryParams = queryParams.append("driverEmail", driverEmail);
     queryParams = queryParams.append("format", "json");
     return this.http.get<RideToShow[]>(environment.apiURL + "/driver/get-rides", { params: queryParams});
+  }
+
+  getDriverInfoByRideId(rideId: number): Observable<DriverInfo>
+  {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("rideId", rideId);
+    queryParams = queryParams.append("format", "json");
+    return this.http.get<DriverInfo>(environment.apiURL + "/driver/get-driver-info", { params: queryParams});
   }
 }

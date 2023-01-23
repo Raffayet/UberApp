@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import { environment } from 'src/app/environments/environment';
-import { Ride } from 'src/app/model/Ride';
 import { RideToShow } from 'src/app/model/RideToShow';
 import { User } from 'src/app/model/User';
 import { ClientService } from 'src/app/modules/client/services/client.service';

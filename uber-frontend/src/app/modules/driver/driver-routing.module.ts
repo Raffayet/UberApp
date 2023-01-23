@@ -1,6 +1,7 @@
 import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HistoryComponent } from '../shared/components/history/history.component';
 import { UserProfilePageComponent } from '../shared/pages/user-profile-page/user-profile-page.component';
 import { RidesToDoComponent } from './pages/rides-to-do/rides-to-do.component';
 
@@ -18,11 +19,19 @@ const routes: Routes = [
     canActivate: [],
   },
   {
+<<<<<<< HEAD
     path: 'report',
     component: ReportPageComponent,
     outlet: 'DriverRouter',
     canActivate: [],
   }
+=======
+    path: 'history',
+    component: HistoryComponent,
+    outlet: 'DriverRouter',
+    canActivate: [],
+  },
+>>>>>>> develop
 ];
 
 @NgModule({
