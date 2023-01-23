@@ -35,7 +35,7 @@ public class DriveRequest {
     @ManyToMany
     private List<Client> people;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.MERGE})
     private List<MapSearchResultDto> locations;
 
     @ManyToMany

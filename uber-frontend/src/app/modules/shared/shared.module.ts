@@ -10,6 +10,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FormsModule } from '@angular/forms';
 import {MatSortModule} from '@angular/material/sort';
 import { RouteDetailDialogComponent } from './components/route-detail-dialog/route-detail-dialog.component';
+import { OrderExistingRideDialogComponent } from './components/order-existing-ride-dialog/order-existing-ride-dialog.component';
+import { CalendarModule } from 'primeng/calendar';
 
 
 @NgModule({
@@ -19,14 +21,16 @@ import { RouteDetailDialogComponent } from './components/route-detail-dialog/rou
     NavbarComponent,
     MapComponent,
     PaypalPaymentComponent,
-    RouteDetailDialogComponent
+    RouteDetailDialogComponent,
+    OrderExistingRideDialogComponent
   ],
   imports: [
     CommonModule,
     SharedRoutingModule,
     MaterialComponentsModule,
     FormsModule,
-    MatSortModule
+    MatSortModule,
+    CalendarModule
   ],
   exports: [
     MapComponent,

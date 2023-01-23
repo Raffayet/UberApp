@@ -54,7 +54,7 @@ public class Ride {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     private List<MapSearchResultDto> locations;
 
     public Ride(DriveRequest driveRequest, Driver driver) {

@@ -16,6 +16,10 @@ import { MapSearchResult } from 'src/app/model/MapSearchResult';
 import { DriverService } from 'src/app/modules/driver/services/driver.service';
 import { DriverInfo } from 'src/app/model/DriverInfo';
 import { MapComponent } from '../map/map.component';
+import { ClientService } from 'src/app/modules/client/services/client.service';
+import { OrderExistingRideDialogComponent } from '../order-existing-ride-dialog/order-existing-ride-dialog.component';
+import { User } from 'src/app/model/User';
+import { PaypalService } from '../../services/paypal.service';
 
 
 export interface Request {
@@ -35,29 +39,40 @@ export class HistoryComponent implements OnInit{
   rides: Ride[] = [];
   totalElements: number = 0;
 
-  displayedColumns: string[] = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn'];
+  displayedColumns: string[] = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2'];
   isLoadingResults = true;
   isRateLimitReached = false;
   resultsLength = 0;
   currentDriverInfo: DriverInfo;
 
   data: GithubIssue[] = [];
+  loggedUser: User | null;
+
+  currentAmount: number;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService){}
+  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService){}
 
   ngOnInit() {
     if(this.tokenUtilsService.getRoleFromToken() != "ADMIN"){      
       this.email = this.tokenUtilsService.getUsernameFromToken() as string;
     }
     this.getHistoryOfRides({ page: 0, size: 5 });
+    this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
+    this.getAmountOfTokens();
   } 
 
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+  }
+
+  getAmountOfTokens(){
+    this.paypalService.getAmountOfTokens(this.loggedUser?.email as string).subscribe(      
+      (data: number) => this.currentAmount = data
+    );
   }
 
   convertStartDateFormat(){
@@ -92,6 +107,7 @@ export class HistoryComponent implements OnInit{
       this.rideService.getHistoryOfRides(request, this.email)
       .subscribe({
           next: (data) => {
+            console.log(data);
             this.rides = data.content;
             this.totalElements = data.size;
             this.convertStartDateFormat();
@@ -141,6 +157,20 @@ export class HistoryComponent implements OnInit{
     });
   }
 
+  openOrderDialog(locations: MapSearchResult[], ride: Ride)
+  {
+    const orderDialogRef = this.orderDialog.open(OrderExistingRideDialogComponent,{
+      
+      data:{
+        locations: locations,
+        ride: ride
+      }
+    });
+
+    orderDialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      
+    });
+  }
 }
 
 export interface GithubApi {

@@ -31,6 +31,22 @@ export class RouteDetailDialogComponent {
         this.locations = data.locations;
         this.rideRequestStateService.mapa.pinNewResult(this.locations[0], 0);
         this.rideRequestStateService.mapa.pinNewResult(this.locations[1], 1);
+        
+        if(this.locations.length === 3)
+        {
+          this.rideRequestStateService.mapa.pinNewResult(this.locations[2], 2);
+        }
+
+        else if(this.locations.length === 4)
+        {
+          this.rideRequestStateService.mapa.pinNewResult(this.locations[3], 3);
+        }
+
+        else if(this.locations.length === 5)
+        {
+          this.rideRequestStateService.mapa.pinNewResult(this.locations[4], 4);
+        }
+
         this.automaticallyFindPath('Custom');
       }
   }
@@ -41,8 +57,9 @@ export class RouteDetailDialogComponent {
   }
 
   automaticallyFindPath(routeType: string): void{
-    this.mapService.automaticallyFindPath(routeType, this.rideRequestStateService.mapa.locations).subscribe({
+    this.mapService.automaticallyFindPathForHistory(routeType, this.locations).subscribe({
       next: data => {
+          console.log(data);
           let coords: Array<Point> = data.atomicPoints;
           coords = coords.map(coord => new Point(coord.lat, coord.lng));
           this.rideRequestStateService.mapa.drawRoute(coords);

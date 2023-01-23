@@ -1,0 +1,30 @@
+.confirm-container{
+    width: 30vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3vh 3vh;
+    text-align: center;
+}
+
+.buttons{
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.reservation-time-button{
+    width: 15%;
+}
+
+.reserved-button{
+    width: 15%;
+}
+
+.timer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+}

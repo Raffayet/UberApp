@@ -13,5 +13,6 @@ export interface Ride{
     startTime: string,
     endTime: string,
     formattedStartTime: string,
-    formattedEndTime: string
+    formattedEndTime: string,
+    vehicleType: string
 }
