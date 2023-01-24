@@ -1,6 +1,6 @@
 <div class="containerForm">
-    <h1>Block Users</h1>
-    <form [formGroup]="blockForm">
+    <h1>Block User</h1>
+    <form [formGroup]="blockForm" (submit)="banUser()">
         <mat-form-field class="autocomplete" appearance="fill">
             <mat-label>User</mat-label>
             <input type="text"
@@ -16,13 +16,14 @@
             </mat-autocomplete>
           </mat-form-field><br/>
           <mat-form-field [style.fontSize]="'20px'"  appearance="fill">
-            <mat-label>Autosize textarea</mat-label>
+            <mat-label>Block Description</mat-label>
             <textarea matInput
                       cdkTextareaAutosize
                       #autosize="cdkTextareaAutosize"
+                      formControlName="description"
                       cdkAutosizeMinRows="1"
                       cdkAutosizeMaxRows="5"></textarea>
           </mat-form-field><br/>
-          <button mat-raised-button (click)="banUser()" class="button" color="accent">Register Driver</button>
+          <button mat-raised-button class="button" color="accent">Block User</button>
     </form>
 </div>

@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.javatuples.Pair;
 import org.springframework.core.io.ResourceLoader;
 //import org.springframework.data.util.Pair;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,6 +48,7 @@ public class UserService implements UserDetailsService {
     private final DriverRepository driverRepository;
     private final VehicleTypeRepository vehicleTypeRepository;
     private final VehicleRepository vehicleRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
 
     @Override
@@ -314,7 +316,22 @@ public class UserService implements UserDetailsService {
     }
 
     public List<String> getUserEmails() {
-        List<String> userEmails = userRepository.getUserEmails();
-        return userEmails;
+        return userRepository.getUserEmails();
+    }
+
+    public List<String> getNotBlockedUserEmails() {
+        return userRepository.getNotBlockedUserEmails();
+    }
+
+    public UserDto blockUser(BlockUserRequestDto blockUserRequestDto) {
+        User user = userRepository.findByEmail(blockUserRequestDto.getUserEmail()).orElse(null);
+        if(user == null)
+            throw new NullPointerException();
+        user.setBlocked(true);
+        userRepository.save(user);
+
+        simpMessagingTemplate.convertAndSendToUser(blockUserRequestDto.getUserEmail(), "/blocked-user", blockUserRequestDto);
+
+        return new UserDto(user);
     }
 }
