@@ -44,16 +44,18 @@ insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_ty
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(2, 1, 4, 4, 'Regular', 'Custom', false, '2022-03-04T10:15:30', '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');
 
 -- finished rides (for reports)
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status)
-values(2, 1, 6.78, 2, 'Standard', 'Custom', false, '20230119 04:30:00 PM', 'ENDED');
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status)
-values(6, 1, 6.18, 2, 'Standard', 'Alternative', false, '20230119 6:20:00 PM', 'ENDED');
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status)
-values(6, 1, 8, 2, 'Baby Seat', 'Optimal', false, '20230121 3:20:00 PM', 'ENDED');
-
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status)
+            values(2, 1, 6.78, 2, 'Standard', 'Custom', false, '2023-01-19T16:00:00', '2023-01-19T16:00:00', '2023-01-19T16:00:00', 'ENDED');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status)
+            values(6, 1, 6.18, 2, 'Standard', 'Alternative', false, '20230119 6:20:00 PM', '20230119 6:20:00 PM', '20230119 6:20:00 PM', 'ENDED');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status)
+            values(6, 1, 8, 2, 'Baby Seat', 'Optimal', false, '20230121 3:20:00 PM', '20230121 3:20:00 PM', '20230121 3:20:00 PM',  'ENDED');
 
 insert into ride_clients(ride_id, clients_id) values (1, 1);
 insert into ride_clients(ride_id, clients_id) values (1, 3);
+
+insert into ride_clients(ride_id, clients_id) values (3, 3);
+insert into ride_clients(ride_id, clients_id) values (3, 5);
 
 insert into ride_locations(ride_id, locations_id) values (1, 1);
 insert into ride_locations(ride_id, locations_id) values (1, 2);

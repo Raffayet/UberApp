@@ -334,4 +334,13 @@ public class UserService implements UserDetailsService {
 
         return new UserDto(user);
     }
+
+    public String getUserTypeByEmail(String email) {
+        Optional<User> user = this.userRepository.findByEmail(email);
+        if(user.isPresent())
+        {
+            return user.get().getRole().getName();
+        }
+        return "";
+    }
 }

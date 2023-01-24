@@ -68,6 +68,15 @@ export class UserService {
     return this.http.post<User>(environment.apiURL + "/user/block", data);
   }
 
+  getUserTypeByEmail(email: string)
+  {
+    let headers = new HttpHeaders();
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("email", email);
+
+    return this.http.get<string>(environment.apiURL + '/user/get-user-type', {params:queryParams, headers, responseType: 'text' as 'json'});
+  }
+
 
   logOut() {
     localStorage.removeItem("user");

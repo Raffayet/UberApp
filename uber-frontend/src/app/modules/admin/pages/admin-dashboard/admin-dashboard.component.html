@@ -76,7 +76,17 @@
                         <mat-icon>block</mat-icon>
                     </p>
                     <p class="itemName">
-                        Block Users
+                        Block Users 
+                    </p>
+                </div>
+            </mat-list-item>
+            <mat-list-item [routerLink]="['/admin', {outlets: {'AdminRouter': ['history']}}]" >
+                <div class="menuItem">
+                    <p>
+                        <mat-icon>history</mat-icon>
+                    </p>
+                    <p class="itemName">
+                        Ride History
                     </p>
                 </div>
             </mat-list-item>

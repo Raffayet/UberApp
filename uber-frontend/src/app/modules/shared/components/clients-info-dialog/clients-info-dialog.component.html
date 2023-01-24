@@ -1,1 +1,24 @@
-<p>clients-info-dialog works!</p>
+<div class="confirm-container">
+    <h1 mat-dialog-title>Passengers</h1>
+    <div mat-dialog-content> 
+      <div class="client-info-window">
+        <h2>Initiator</h2>
+        <div>Email: <b>{{ ride.initiator.email }}</b></div>
+        <div>Name: <b> {{ ride.initiator.name }}</b></div>
+        <div>Last name: <b>{{ ride.initiator.surname }}</b></div>
+      </div>
+      <div class="client-info-window" *ngFor="let client of ride.clients; let i = index">
+        <h2>Client {{ i + 1 }} </h2>
+        <div>Email: <b>{{ client.email }}</b></div>
+        <div>Name: <b>{{ client.name }}</b></div>
+        <div>Last name: <b>{{ client.surname }}</b></div>
+      </div>
+    </div>
+  
+    <div mat-dialog-actions style="float:right;margin:20px;">
+      <button mat-button [mat-dialog-close]="{ clicked: 'Reject' }" (click)="onCloseClick()">
+        Close
+      </button>
+    </div>
+</div>
+  

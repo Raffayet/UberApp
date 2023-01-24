@@ -4,6 +4,7 @@ import { RegisteredDriverComponent } from './../auth/pages/registered-driver/reg
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RegisterDriverComponent } from './pages/register-driver/register-driver.component';
+import { HistoryComponent } from '../shared/components/history/history.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,12 @@ const routes: Routes = [
   {
     path: 'block-users',
     component: BlockUsersComponent,
+    outlet: 'AdminRouter',
+    canActivate: [],
+  },
+  {
+    path: 'history',
+    component: HistoryComponent,
     outlet: 'AdminRouter',
     canActivate: [],
   },
