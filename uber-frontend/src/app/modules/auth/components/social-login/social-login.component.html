@@ -1,0 +1,11 @@
+
+    <h1 class="google-login-header">Log In With</h1>
+    <div class="asl-button-container">
+        <asl-google-signin-button></asl-google-signin-button>
+        <button type="button" id="facebook-button" (click)="recognizeFacebookAccount()"><i class="pi pi-facebook"></i></button>
+    </div>
+    <hr width="60%">
+    <button type="button" id="continue-button" (click)="signIn()" style="visibility: visible;" *ngIf="user">Continue</button>
+    <div class="link-container-register">
+        <a class="register-link" href="/registration">Don't have an account yet? Register now</a>
+    </div>
