@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class UserService {
+  
  
 
   constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService, private router: Router) { }
@@ -77,6 +78,13 @@ export class UserService {
     return this.http.get<string>(environment.apiURL + '/user/get-user-type', {params:queryParams, headers, responseType: 'text' as 'json'});
   }
 
+  checkIfUserIsBlocked(email: string | undefined) {
+    let headers = new HttpHeaders();
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("email", email as string);
+
+    return this.http.get<boolean>(environment.apiURL + '/user/is-blocked', {params:queryParams, headers});
+  }
 
   logOut() {
     localStorage.removeItem("user");

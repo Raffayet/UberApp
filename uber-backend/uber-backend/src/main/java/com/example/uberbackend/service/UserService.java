@@ -343,4 +343,11 @@ public class UserService implements UserDetailsService {
         }
         return "";
     }
+
+    public boolean checkIfUserIsBlocked(String email) {
+        Optional<User> user = this.userRepository.findByEmail(email);
+        if(user.isPresent())
+            return user.get().getBlocked();
+        return false;
+    }
 }

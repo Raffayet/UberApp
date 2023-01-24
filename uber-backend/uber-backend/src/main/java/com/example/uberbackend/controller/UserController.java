@@ -152,4 +152,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/is-blocked")
+    public ResponseEntity<?> isUserBlocked(@RequestParam String email){
+        try{
+            boolean isBlocked = userService.checkIfUserIsBlocked(email);
+            return ResponseEntity.ok(isBlocked);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
