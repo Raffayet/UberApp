@@ -7,8 +7,8 @@
             <input *ngIf="!this.success && this.submitted" id="float-input-error" type="email" pInputText placeholder="Email" formControlName="email" required="">
 
             <label class="password-label">Password</label>
-            <input *ngIf="!(!this.success && this.submitted)" class="password-field" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
-            <input *ngIf="!this.success && this.submitted" class="password-field-error" type="password" pPassword [feedback]=false placeholder="Password" formControlName="password" required=""/>
+            <input *ngIf="!(!this.success && this.submitted)" class="password-field" type="password" pPassword placeholder="Password" formControlName="password" required=""/>
+            <input *ngIf="!this.success && this.submitted" class="password-field-error" type="password" pPassword placeholder="Password" formControlName="password" required=""/>
         
             <div class="link-container-forgot-password">
                 <a class="forgot-password-link" href="/forgot-password">Forgot password?</a>
@@ -18,16 +18,7 @@
             </div>
         </div>
     </div>
-    <div class="alternative-login-container">
-        <h1 class="google-login-header">Log In With</h1>
-        <div class="asl-button-container">
-            <asl-google-signin-button></asl-google-signin-button>
-            <button type="button" id="facebook-button" (click)="recognizeFacebookAccount()"><i class="pi pi-facebook"></i></button>
-        </div>
-        <hr width="60%">
-        <button type="button" id="continue-button" (click)="signIn()" style="visibility: visible;" *ngIf="user">Continue</button>
-        <div class="link-container-register">
-            <a class="register-link" href="/registration">Don't have an account yet? Register now</a>
-        </div>
+    <div class="alternative-login-container">       
+        <app-social-login></app-social-login>
     </div>
 </form>
