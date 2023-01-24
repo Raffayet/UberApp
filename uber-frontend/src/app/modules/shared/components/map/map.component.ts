@@ -1,3 +1,4 @@
+import { OnDestroy } from '@angular/core';
 import { RideReviewComponent } from './../../../client/components/ride-review/ride-review.component';
 import { ToastrService } from 'ngx-toastr';
 import { MapRide } from './../../../../model/MapRide';
@@ -78,6 +79,7 @@ export class MapComponent implements AfterViewInit, OnInit {
 
 
   ngOnInit(): void {
+    this.map.panBy([0,0]);
     let ws = new SockJS(environment.apiURL + "/ws");
     this.stompClient = Stomp.over(ws);
     this.stompClient.debug = null;
@@ -86,7 +88,6 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.stompClient.connect({}, function () {
       that.openGlobalSocket();
     });
-    
   }
 
   openDialog():void{
@@ -104,9 +105,6 @@ export class MapComponent implements AfterViewInit, OnInit {
     let loggedUser = this.tokenUtilsService.getUserFromToken();
 
     this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/update-ride-state', (message: { body: string }) => {
-      let msg = JSON.parse(message.body);
-      let geoLayerRouteGroup: LayerGroup = new LayerGroup();
-      // console.log(msg);
       let mapRide: MapRide= JSON.parse(message.body);
       if(!this.driver || Object.keys(this.driver).length===0){
         let geoLayerRouteGroup: LayerGroup = new LayerGroup();

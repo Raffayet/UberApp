@@ -26,7 +26,7 @@ export class RideTypeComponent implements OnInit{
   currentAmount: number;
 
   constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toastr: ToastrService, private driverService:DriverService, 
-              private userService:UserService, private tokenUtilsService: TokenUtilsService, private router:Router){}
+              private userService:UserService, protected tokenUtilsService: TokenUtilsService, private router:Router){}
   
   
   ngOnInit(): void {
@@ -74,6 +74,10 @@ export class RideTypeComponent implements OnInit{
     this.pageNum.emit(1);
   }
 
+  goToLogin(){
+    this.router.navigateByUrl("/login");
+
+  }
 
   changePageNumber(){
     this.pageNum.emit(3);

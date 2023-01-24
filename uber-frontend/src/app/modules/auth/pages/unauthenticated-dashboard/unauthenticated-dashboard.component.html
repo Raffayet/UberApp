@@ -1,6 +1,6 @@
 <app-navbar [navbarLabels]="navbarLabels" [navbarPaths]="navbarPaths" (chosenOption)="changeOption($event)"></app-navbar>
 <container-element [ngSwitch]="option">
-    <!-- <ride-request-page *ngSwitchCase="'/'"></ride-request-page> -->
+    <ride-request-page *ngSwitchCase="'/'"></ride-request-page>
     <app-login *ngSwitchCase="'/login'"></app-login>
     <app-registration-page *ngSwitchCase="'/registration'"></app-registration-page>
 </container-element>

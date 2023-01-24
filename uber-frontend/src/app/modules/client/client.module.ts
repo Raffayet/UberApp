@@ -37,6 +37,9 @@ import { RideReviewComponent } from './components/ride-review/ride-review.compon
     MatDialogModule,
     CalendarModule,
     ReactiveFormsModule
+  ],
+  exports:[
+    RideRequestPageComponent
   ]
 })
 export class ClientModule { }
