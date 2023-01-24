@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ClientModule } from './../client/client.module';
+import { NgModule } from '@angular/core'
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { AuthRoutingModule } from './auth-routing.module';
 import { RegisteredDriverComponent } from './pages/registered-driver/registered-driver.component';
@@ -33,6 +33,7 @@ import { RegistrationPageComponent } from './pages/registration-page/registratio
     FormsModule,
     BrowserAnimationsModule,
     SocialLoginModule,
+    ClientModule,
     // DragDropModule,   
     MaterialComponentsModule,
     ToastrModule.forRoot({
