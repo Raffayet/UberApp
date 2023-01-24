@@ -1,3 +1,5 @@
+import { User } from 'src/app/model/User';
+import { BlockUserRequest } from './../../../model/BlockUserRequest';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
@@ -55,6 +57,15 @@ export class UserService {
 
   getUsers(){
     return this.http.get<string[]>(environment.apiURL + "/user/");
+  }
+  
+  getNotBlockedUsers(){
+    return this.http.get<string[]>(environment.apiURL + "/user/not-blocked");
+  }
+
+  blockUser(data:BlockUserRequest){
+
+    return this.http.post<User>(environment.apiURL + "/user/block", data);
   }
 
   getUserTypeByEmail(email: string)

@@ -13,6 +13,7 @@ import { ClientService } from '../../services/client.service';
 import { ResponseToIniciator } from 'src/app/model/ResponseToIniciator';
 import { RideReminder } from 'src/app/model/RideReminder';
 import { ToastrService } from 'ngx-toastr';
+import { BlockUserRequest } from 'src/app/model/BlockUserRequest';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -47,6 +48,11 @@ export class ClientDashboardComponent {
       this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/ride-invites", this.onRideInvitesReceived);
       this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/remind-for-ride", this.onRideReminder);
       this.stompClient.subscribe("/topic/response-to-other-clients", (data) => this.onResponseToOtherClients(data));
+
+      this.stompClient.subscribe("/user/" + this.loggedUser?.email  + '/blocked-user', (message: { body: string }) => {
+        let blockUserRequest: BlockUserRequest= JSON.parse(message.body);
+        this.toastr.warning(`You have been blocked because: ${blockUserRequest.description}\nYou won't be able to create new rides.`, "Blocked", {timeOut:20000});
+      });
 
       this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
           .subscribe(val => this.rideInvites = val);  

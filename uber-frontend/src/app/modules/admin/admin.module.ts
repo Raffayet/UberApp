@@ -4,11 +4,13 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { RegisterDriverComponent } from './pages/register-driver/register-driver.component';
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BlockUsersComponent } from './pages/block-users/block-users.component';
 
 
 @NgModule({
   declarations: [
-    RegisterDriverComponent
+    RegisterDriverComponent,
+    BlockUsersComponent
   ],
   imports: [
     CommonModule,

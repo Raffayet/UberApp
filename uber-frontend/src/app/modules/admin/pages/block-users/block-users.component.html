@@ -1,0 +1,29 @@
+<div class="containerForm">
+    <h1>Block User</h1>
+    <form [formGroup]="blockForm" (submit)="banUser()">
+        <mat-form-field class="autocomplete" appearance="fill">
+            <mat-label>User</mat-label>
+            <input type="text"
+                    placeholder="Pick one"
+                    aria-label="User"
+                    matInput
+                    formControlName="emailControl"
+                    [matAutocomplete]="auto">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field><br/>
+          <mat-form-field [style.fontSize]="'20px'"  appearance="fill">
+            <mat-label>Block Description</mat-label>
+            <textarea matInput
+                      cdkTextareaAutosize
+                      #autosize="cdkTextareaAutosize"
+                      formControlName="description"
+                      cdkAutosizeMinRows="1"
+                      cdkAutosizeMaxRows="5"></textarea>
+          </mat-form-field><br/>
+          <button mat-raised-button class="button" color="accent">Block User</button>
+    </form>
+</div>
