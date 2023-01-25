@@ -1,3 +1,4 @@
+import { HomepageComponent } from './pages/homepage/homepage.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -10,7 +11,8 @@ import { BlockUsersComponent } from './pages/block-users/block-users.component';
 @NgModule({
   declarations: [
     RegisterDriverComponent,
-    BlockUsersComponent
+    BlockUsersComponent,
+    HomepageComponent
   ],
   imports: [
     CommonModule,

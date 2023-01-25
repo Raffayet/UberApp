@@ -65,12 +65,13 @@ public class RideController {
             path = "/{id}",
             produces = "application/json"
     )
-    public ResponseEntity<?> changeRide(@PathVariable("id") long id) {
+    public ResponseEntity<?> endRide(@PathVariable("id") long id) {
         Ride ride = this.rideService.endRide(id);
         MapRideDto returnRideDTO = new MapRideDto(ride);
         for (String email : returnRideDTO.getClientEmails()) {
             simpMessagingTemplate.convertAndSendToUser(email, "/map-updates/ended-ride", returnRideDTO);
         }
+        simpMessagingTemplate.convertAndSend("/map-updates/update-driver-status", returnRideDTO.getDriver());
         return new ResponseEntity<>(returnRideDTO, HttpStatus.OK);
     }
 

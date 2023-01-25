@@ -1,0 +1,41 @@
+.containerForm{
+    height: 450px;
+    width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.mainH{
+    text-align: center;
+    font-size: 50px;
+    margin-top: 100px;
+}
+
+.block{
+    height:200px;
+    width: 300px;
+    background-color: #424242;
+    border: 1px solid black;
+    transition: transform ease 0.5s;
+    cursor: pointer;
+}
+
+.block:hover{
+    transform: scale(0.95);
+}
+
+.block p{
+    margin-top:60px;
+    font-size: 50px;
+
+}
+
+.mat-icon{
+    width: 50px;
+    height: 50px;
+    font-size: 50px;
+}

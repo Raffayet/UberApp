@@ -2,6 +2,7 @@ package com.example.uberbackend.controller;
 
 
 import com.example.uberbackend.dto.*;
+import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.User;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.security.JwtTokenGenerator;
@@ -10,6 +11,7 @@ import com.example.uberbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
     private final EmailService emailService;
-
+    private final SimpMessagingTemplate simpMessagingTemplate;
     private final JwtTokenGenerator tokenGenerator;
 
     @PostMapping
@@ -104,6 +105,8 @@ public class UserController {
     public ResponseEntity<?> changeUserDrivingStatus(@RequestBody UserDrivingStatus dto){
         try{
             User u = userService.changeUserDrivingStatus(dto.getEmail(), dto.getStatus());
+            if(u instanceof Driver)
+                simpMessagingTemplate.convertAndSend("/map-updates/driver-inactive", new MapDriverDto((Driver) u));
             String token = tokenGenerator.generateToken(u);
             return ResponseEntity.ok(token);
         }catch(Exception ex){
