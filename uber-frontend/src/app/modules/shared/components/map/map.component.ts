@@ -1,7 +1,7 @@
-import { OnDestroy } from '@angular/core';
+import { DriverService } from './../../../driver/services/driver.service';
 import { RideReviewComponent } from './../../../client/components/ride-review/ride-review.component';
 import { ToastrService } from 'ngx-toastr';
-import { MapRide } from './../../../../model/MapRide';
+import { MapRide, MapDriver } from './../../../../model/MapRide';
 import * as L from 'leaflet';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MapSearchResult } from 'src/app/modules/client/services/map.service';
@@ -44,6 +44,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   polylinesBeforeRide: L.Polyline<any>[] = [];
   polylinesRide: L.Polyline<any>[] = [];
   private toastNotification: any;
+  private activeDrivers: any = {}
 
   @Input() containerId: string;
 
@@ -70,7 +71,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService, public dialog: MatDialog) {}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService, public dialog: MatDialog, private driverService:DriverService) {}
 
   public reset(){
     this.map.remove();
@@ -79,7 +80,6 @@ export class MapComponent implements AfterViewInit, OnInit {
 
 
   ngOnInit(): void {
-    this.map.panBy([0,0]);
     let ws = new SockJS(environment.apiURL + "/ws");
     this.stompClient = Stomp.over(ws);
     this.stompClient.debug = null;
@@ -106,77 +106,99 @@ export class MapComponent implements AfterViewInit, OnInit {
 
     this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/update-ride-state', (message: { body: string }) => {
       let mapRide: MapRide= JSON.parse(message.body);
-      if(!this.driver || Object.keys(this.driver).length===0){
-        let geoLayerRouteGroup: LayerGroup = new LayerGroup();
-        let markerLayer = marker([mapRide.driver.latitude, mapRide.driver.longitude], {
-          icon: icon({
-            iconUrl: 'assets/car.png',
-            iconSize: [35, 45],
-            iconAnchor: [18, 45],
-          }),
-        });
-        let coordinates:L.LatLng[] = mapRide.atomicPoints.map(point=>new L.LatLng(point.latitude, point.longitude));
-        let coordinatesBeforeRide:L.LatLng[] = mapRide.atomicPointsBeforeRide.map(point=>new L.LatLng(point.latitude, point.longitude));
-        let p = L.polyline(coordinatesBeforeRide, {color: 'green'}).addTo(this.map);
-        let p1 = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
-        this.toastNotification = this.toaster.info(`Remaining time: ${mapRide.duration}s`,"Waiting for driver", {timeOut: 0});
-        this.polylinesBeforeRide.push(p);
-        this.polylinesRide.push(p1);
-        markerLayer.addTo(geoLayerRouteGroup);
-        this.driver = markerLayer;
-        this.driver.addTo(this.map);
-      }
-      else{
-        let existingVehicle = this.driver;
-        existingVehicle.setLatLng([mapRide.driver.latitude, mapRide.driver.longitude]);
-        let coordinates:L.LatLng[] = mapRide.atomicPoints.map(point=>new L.LatLng(point.latitude, point.longitude));
-        let coordinatesBeforeRide:L.LatLng[] = mapRide.atomicPointsBeforeRide.map(point=>new L.LatLng(point.latitude, point.longitude));
-        let that = this;
-        this.polylinesBeforeRide.forEach(function (item) {
-          that.map.removeLayer(item);
-        });
-
-        if (this.toaster.currentlyActive > 0) {
-          let componentInstance = this.toastNotification.toastRef.componentInstance;
-          componentInstance.message = `Remaining time: ${mapRide.duration}s`;
-          componentInstance.title = mapRide.status === "WAITING"?"Waiting for driver":"Ride ends";
-        }else{
-          this.toastNotification = this.toaster.info(`Remaining time: ${mapRide.duration}s`,mapRide.status === "WAITING"?"Waiting for driver":"Ride ends",{timeOut: 0,});
-        }
-
-        if(mapRide.status === "WAITING"){
-          let index = coordinatesBeforeRide.findIndex(cord=>cord.lat===mapRide.driver.latitude && cord.lng ===mapRide.driver.longitude);
-          coordinatesBeforeRide = coordinatesBeforeRide.slice(index);
-          let p = L.polyline(coordinatesBeforeRide, {color: 'green'}).addTo(this.map);
-          this.polylinesBeforeRide.push(p);
-        }
-        else{
-          this.polylinesRide.forEach(function (item) {
-            that.map.removeLayer(item);
-          });
-          coordinates = coordinates.slice(coordinates.findIndex(cord=>cord.lat===mapRide.driver.latitude && cord.lng ===mapRide.driver.longitude))
-          let p = L.polyline(coordinates, {color: 'red'}).addTo(this.map);
-          this.polylinesRide.push(p);
-        }
-        existingVehicle.update();
-      }
+      this.updateRideState(mapRide);
     });
-
     this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/ended-ride', (message: { body: string }) => {
-      let that = this;
-      this.polylinesBeforeRide.forEach(function (item) {
-        that.map.removeLayer(item);
-      });
-      this.map.removeLayer(this.driver);
-      this.driver = {}
-      this.toaster.clear();
-      this.toaster.info(`Ride successfully ended`,"Ride ended", {timeOut: 5000});
-
-      this.openDialog();
-      
+      this.endRide();
     });
+
+    if(!loggedUser){
+
+      this.driverService.findAllOnline().subscribe({
+        next: (data:MapDriver[]) => {
+          
+          this.createDriversOnMap(data);
+
+          this.stompClient.subscribe('/map-updates/driver-active', (message: { body: string }) => {
+            let driver: MapDriver= JSON.parse(message.body);
+            this.createDriversOnMap([driver]);
+          });
+          
+          this.stompClient.subscribe('/map-updates/driver-inactive', (message: { body: string }) => {
+            let driver: MapDriver= JSON.parse(message.body);
+            this.map.removeLayer(this.activeDrivers[driver.id]);
+            delete this.activeDrivers[driver.id]
+          });
+
+          this.stompClient.subscribe('/map-updates/update-ride-state-unauth', (message: { body: string }) => {
+            let driver: MapDriver= JSON.parse(message.body);
+            if(this.activeDrivers[driver.id]){
+              let existingVehicle = this.activeDrivers[driver.id];
+              (existingVehicle as L.Marker<any>).setIcon(icon({
+                iconUrl: 'assets/BusyCar.png',
+                iconSize: [35, 45],
+                iconAnchor: [18, 45],
+              }))
+              existingVehicle.setLatLng([driver.latitude, driver.longitude]);
+              existingVehicle.update();
+            }
+            else
+              this.createDriversOnMap([driver]);
+          });
+
+          this.stompClient.subscribe('/map-updates/update-driver-status', (message: { body: string }) => {
+            let driver: MapDriver= JSON.parse(message.body);
+            if(this.activeDrivers[driver.id]){
+              let existingVehicle = this.activeDrivers[driver.id];
+              (existingVehicle as L.Marker<any>).setIcon(icon({
+                iconUrl: 'assets/AvailableCar.png',
+                iconSize: [35, 45],
+                iconAnchor: [18, 45],
+              }))
+            }
+            else
+              this.createDriversOnMap([driver]);
+          });
+          
+
+
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+  createDriversOnMap(data: MapDriver[]) {
+    for (let onlineDriver of data) {
+      console.log(onlineDriver);
+      let geoLayerRouteGroup: LayerGroup = new LayerGroup();
+      let markerLayer = marker([onlineDriver.latitude, onlineDriver.longitude], {
+        icon: icon({
+          iconUrl: 'assets/AvailableCar.png',
+          iconSize: [35, 45],
+          iconAnchor: [18, 45],
+        }),
+      });
+      markerLayer.addTo(geoLayerRouteGroup);
+      this.activeDrivers[onlineDriver.id] = markerLayer;
+      this.activeDrivers[onlineDriver.id].addTo(this.map);
+    }
   }
 
+
+  private endRide() {
+    let that = this;
+    this.polylinesBeforeRide.forEach(function (item) {
+      that.map.removeLayer(item);
+    });
+    this.map.removeLayer(this.driver);
+    this.driver = {};
+    this.toaster.clear();
+    this.toaster.info(`Ride successfully ended`, "Ride ended", { timeOut: 5000 });
+
+    this.openDialog();
+  }
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -187,7 +209,72 @@ export class MapComponent implements AfterViewInit, OnInit {
 
     this.stateManagement.mapa = this;
   }
+
+  updateRideState(mapRide: MapRide){
+    if(!this.driver || Object.keys(this.driver).length===0){
+      this.createRouteForDrive(mapRide);
+    }
+    else{
+      this.updateDriverOnMap(mapRide);
+    }
+  }
   
+  private updateDriverOnMap(mapRide: MapRide) {
+    let existingVehicle = this.driver;
+    existingVehicle.setLatLng([mapRide.driver.latitude, mapRide.driver.longitude]);
+    let coordinates: L.LatLng[] = mapRide.atomicPoints.map(point => new L.LatLng(point.latitude, point.longitude));
+    let coordinatesBeforeRide: L.LatLng[] = mapRide.atomicPointsBeforeRide.map(point => new L.LatLng(point.latitude, point.longitude));
+    let that = this;
+    this.polylinesBeforeRide.forEach(function (item) {
+      that.map.removeLayer(item);
+    });
+
+    if (this.toaster.currentlyActive > 0) {
+      let componentInstance = this.toastNotification.toastRef.componentInstance;
+      componentInstance.message = `Remaining time: ${mapRide.duration}s`;
+      componentInstance.title = mapRide.status === "WAITING" ? "Waiting for driver" : "Ride ends";
+    } else {
+      this.toastNotification = this.toaster.info(`Remaining time: ${mapRide.duration}s`, mapRide.status === "WAITING" ? "Waiting for driver" : "Ride ends", { timeOut: 0, });
+    }
+
+    if (mapRide.status === "WAITING") {
+      let index = coordinatesBeforeRide.findIndex(cord => cord.lat === mapRide.driver.latitude && cord.lng === mapRide.driver.longitude);
+      coordinatesBeforeRide = coordinatesBeforeRide.slice(index);
+      let p = L.polyline(coordinatesBeforeRide, { color: 'green' }).addTo(this.map);
+      this.polylinesBeforeRide.push(p);
+    }
+    else {
+      this.polylinesRide.forEach(function (item) {
+        that.map.removeLayer(item);
+      });
+      coordinates = coordinates.slice(coordinates.findIndex(cord => cord.lat === mapRide.driver.latitude && cord.lng === mapRide.driver.longitude));
+      let p = L.polyline(coordinates, { color: 'red' }).addTo(this.map);
+      this.polylinesRide.push(p);
+    }
+    existingVehicle.update();
+  }
+
+  private createRouteForDrive(mapRide: MapRide) {
+    let geoLayerRouteGroup: LayerGroup = new LayerGroup();
+    let markerLayer = marker([mapRide.driver.latitude, mapRide.driver.longitude], {
+      icon: icon({
+        iconUrl: 'assets/BusyCar.png',
+        iconSize: [35, 45],
+        iconAnchor: [18, 45],
+      }),
+    });
+    let coordinates: L.LatLng[] = mapRide.atomicPoints.map(point => new L.LatLng(point.latitude, point.longitude));
+    let coordinatesBeforeRide: L.LatLng[] = mapRide.atomicPointsBeforeRide.map(point => new L.LatLng(point.latitude, point.longitude));
+    let p = L.polyline(coordinatesBeforeRide, { color: 'green' }).addTo(this.map);
+    let p1 = L.polyline(coordinates, { color: 'red' }).addTo(this.map);
+    this.toastNotification = this.toaster.info(`Remaining time: ${mapRide.duration}s`, "Waiting for driver", { timeOut: 0 });
+    this.polylinesBeforeRide.push(p);
+    this.polylinesRide.push(p1);
+    markerLayer.addTo(geoLayerRouteGroup);
+    this.driver = markerLayer;
+    this.driver.addTo(this.map);
+  }
+
   pinNewResult(pin: MapSearchResult, i: number): void {
     let newLatLng = new L.LatLng(parseFloat(pin.lat), parseFloat(pin.lon));
 

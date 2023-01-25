@@ -313,4 +313,14 @@ public class DriverService {
         }
         driverInfoDto.setAverageRating(averageRating);
     }
+
+    public List<MapDriverDto> getActiveDrivers() {
+        List<Driver> activeDrivers = driverRepository.findAllOnline();
+        List<MapDriverDto> mapDriverDtos = new ArrayList<>();
+        for (Driver driver :activeDrivers) {
+            mapDriverDtos.add(new MapDriverDto(driver));
+        }
+        return mapDriverDtos;
+
+    }
 }

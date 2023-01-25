@@ -2,6 +2,7 @@ package com.example.uberbackend.controller;
 
 import com.example.uberbackend.dto.AuthResponseDto;
 import com.example.uberbackend.dto.LoginDto;
+import com.example.uberbackend.dto.MapDriverDto;
 import com.example.uberbackend.dto.RegisterDto;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.User;
@@ -14,6 +15,7 @@ import com.example.uberbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,9 +40,12 @@ public class AuthController {
     private JwtTokenGenerator jwtTokenGenerator;
     private UserService userService;
     private DriverRepository driverRepository;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenGenerator jwtTokenGenerator, UserService userService, DriverRepository driverRepository) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository,
+                          PasswordEncoder passwordEncoder, JwtTokenGenerator jwtTokenGenerator, UserService userService,
+                          DriverRepository driverRepository, SimpMessagingTemplate simpMessagingTemplate) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -48,6 +53,7 @@ public class AuthController {
         this.jwtTokenGenerator = jwtTokenGenerator;
         this.userService = userService;
         this.driverRepository = driverRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @PostMapping("login")
@@ -65,6 +71,10 @@ public class AuthController {
         driver.ifPresent(value -> value.setLastTimeOfLogin(LocalDateTime.now()));
 
         driver.ifPresent(value -> this.driverRepository.save(value));
+
+        driver.ifPresent(value -> {
+            simpMessagingTemplate.convertAndSend("/map-updates/driver-active", new MapDriverDto(value));
+        });
 
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }

@@ -36,8 +36,8 @@ insert into map_search_result_dto(display_name, lat, lon) values ('Rumenacki put
 insert into map_search_result_dto(display_name, lat, lon) values ('Bulevar Cara Lazara', '45.23963407377123', '19.823456917184668');
 insert into map_search_result_dto(display_name, lat, lon) values ('Vladimira Perica Valtera', '45.24599993155166', '19.85093227027388');
 
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(2, 1, 6.78, 2, 'Standard', 'Custom', false, null, 'WAITING');
-insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(6, 5, 6.18, 2, 'Standard', 'Custom', false, null, 'WAITING');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(2, 1, 6.78, 2, 'Standard', 'Custom', false, '2022-03-04T10:15:30', 'WAITING');
+insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, ride_status) values(6, 5, 6.18, 2, 'Standard', 'Custom', false, '2022-03-04T10:15:30', 'WAITING');
 
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(2, 1, 11, 11, 'Regular', 'Custom', false, '2022-03-04T10:15:30', '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');
 insert into ride(driver_id, initiator_id, price, price_per_passenger, vehicle_type, route_type, reserved, time_of_reservation, start_time, end_time, ride_status) values(6, 1, 4, 4, 'Regular', 'Custom', false, '2022-03-04T10:15:30', '2022-03-04T10:15:30', '2022-03-04T10:15:30', 'ENDED');

@@ -76,7 +76,7 @@ public class ReportService {
             double ridePrice = 0;
             labels.add(startDate.getDayOfMonth()+"."+ startDate.getMonthValue()+"."+ startDate.getYear()+".");
             for (Ride ride : rideList) {
-                if(isUserInRide(ride, reportRequestDto, allUsers) && ride.getTimeOfReservation().toLocalDate().isEqual(startDate)) {
+                if(isUserInRide(ride, reportRequestDto, allUsers) && ride.getStartTime().toLocalDate().isEqual(startDate)) {
                     if(reportRequestDto.getRoleType() == RoleType.CLIENT) {
                         if (ride.getPrice() == ride.getPricePerPassenger()) {
                             if (ride.getInitiator().getEmail().equals(reportRequestDto.getUserEmail()))
@@ -118,7 +118,7 @@ public class ReportService {
             labels.add(startDate.getDayOfMonth()+"."+ startDate.getMonthValue()+"."+ startDate.getYear()+".");
             for (Ride ride : rideList) {
                 if(isUserInRide(ride, reportRequestDto, allUsers)
-                    && ride.getTimeOfReservation().toLocalDate().isEqual(startDate)){
+                    && ride.getStartTime().toLocalDate().isEqual(startDate)){
                     double distance = rideDistanceMap.get(ride.getId());
                     kmPerDay += distance;
                 }
@@ -167,7 +167,7 @@ public class ReportService {
             labels.add(startDate.getDayOfMonth()+"."+ startDate.getMonthValue()+"."+ startDate.getYear()+".");
             for (Ride ride : rideList) {
                 if(isUserInRide(ride, reportRequestDto, allUsers)
-                && ride.getTimeOfReservation().toLocalDate().isEqual(startDate))
+                && ride.getStartTime().toLocalDate().isEqual(startDate))
                     dayRides++;
             }
             values.add(dayRides);

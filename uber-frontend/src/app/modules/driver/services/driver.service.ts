@@ -1,3 +1,4 @@
+import { MapDriver } from './../../../model/MapRide';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
@@ -14,6 +15,7 @@ import { DriverInfo } from 'src/app/model/DriverInfo';
   providedIn: 'root'
 })
 export class DriverService {
+  
   constructor(private http: HttpClient, private tokenUtilsService: TokenUtilsService) { }
 
   updatePersonalInfo(infoForm: FormGroup) : Observable<string>{
@@ -89,4 +91,9 @@ export class DriverService {
     queryParams = queryParams.append("format", "json");
     return this.http.get<DriverInfo>(environment.apiURL + "/driver/get-driver-info", { params: queryParams});
   }
+
+  findAllOnline() {
+    return this.http.get<MapDriver[]>(environment.apiURL + "/driver/get-all-active");
+  }
+
 }
