@@ -7,10 +7,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./ride-review.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
+
+
 export class RideReviewComponent implements OnInit{
 	reviewFormGroup:FormGroup;
-
-
+	clientEmail: string;
+	driverEmail: string;
+	
 	ngOnInit(): void {
 		this.reviewFormGroup = new FormGroup({
 		  rating: new FormControl(1,[Validators.required]),

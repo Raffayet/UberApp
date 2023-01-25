@@ -9,6 +9,7 @@ import { DriveAssignature } from 'src/app/model/DriveAssignature';
 import { DriverRejection } from 'src/app/model/DriverRejection';
 import { RideToShow } from 'src/app/model/RideToShow';
 import { DriverInfo } from 'src/app/model/DriverInfo';
+import { RateDriverDto } from 'src/app/model/RateDriverDto';
 
 @Injectable({
   providedIn: 'root'
@@ -88,5 +89,44 @@ export class DriverService {
     queryParams = queryParams.append("rideId", rideId);
     queryParams = queryParams.append("format", "json");
     return this.http.get<DriverInfo>(environment.apiURL + "/driver/get-driver-info", { params: queryParams});
+  }
+
+  rateDriver(numberOfStars: number, comment: string, clientEmail: string, driverEmail: string): Observable<String>
+  {
+    let headers = new HttpHeaders();
+
+    let rateDriverDto : RateDriverDto = {
+      numberOfStars: numberOfStars,
+      comment: comment,
+      clientEmail: clientEmail,
+      driverEmail: driverEmail
+    }
+
+    return this.http.post<String>(environment.apiURL + "/driver/rate-driver", rateDriverDto, { headers, responseType: 'text' as 'json' });
+  }
+
+  getAlreadyRatedRideIds(clientEmail: string): Observable<number[]>
+  {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("clientEmail", clientEmail);
+    queryParams = queryParams.append("format", "json");
+    
+    return this.http.get<number[]>(environment.apiURL + "/driver/get-already-rated-rides", { params:queryParams});
+  }
+
+  getDriverEmailById(driverId: number): Observable<string>
+  {
+    let headers = new HttpHeaders();
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("driverId", driverId);
+    
+    return this.http.get<string>(environment.apiURL + "/driver/get-email-by-id", { params:queryParams, headers, responseType: 'text' as 'json'});
+  }
+
+  setTimerForRatingExpiration(rideId: number)
+  {
+    let headers = new HttpHeaders();
+
+    return this.http.post<String>(environment.apiURL + "/driver/set-rating-expiration", rideId, { headers, responseType: 'text' as 'json' });
   }
 }

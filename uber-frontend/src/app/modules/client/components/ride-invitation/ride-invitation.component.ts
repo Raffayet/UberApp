@@ -61,9 +61,9 @@ export class RideInvitationComponent implements OnInit{
   }
 
   onConnected = () => {
-    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-ride-invites", (data) => this.onRideInviteResponseReceived(data));
-    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/response-to-client", (data) => this.onResponseToClient(data));
-    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/invited-person-not-have-tokens", (data) => this.notEnoughTokens(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email + "/response-ride-invites", (data) => this.onRideInviteResponseReceived(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email + "/response-to-client", (data) => this.onResponseToClient(data));
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email + "/invited-person-not-have-tokens", (data) => this.notEnoughTokens(data));
   }
 
   onResponseToClient = (payload: StompMessage) => {
@@ -198,7 +198,7 @@ export class RideInvitationComponent implements OnInit{
   
   submitRequest(): void {    
     this.stateManagement.rideRequest.initiatorEmail = this.loggedUser?.email as string;
-
+    
     if(this.stateManagement.rideRequest.isReserved)
     {
       this.submitReservation();
