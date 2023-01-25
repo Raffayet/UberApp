@@ -133,6 +133,7 @@ public class DriverController {
         return ResponseEntity.ok(driverInfoDto);
     }
 
+
     @GetMapping("get-all-active")
     public ResponseEntity<?> getActiveDrivers(){
         try {
@@ -145,4 +146,46 @@ public class DriverController {
 
     }
 
+    @PostMapping("rate-driver")
+    public ResponseEntity<?> rateDriver(@RequestBody RateDriverDto rateDriverDto){
+        try{
+            this.driverService.rateDriver(rateDriverDto);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("get-already-rated-rides")
+    public ResponseEntity<?> getAlreadyRatedRides(@RequestParam("clientEmail") String clientEmail){
+        List<Long> alreadyRatedRideIds;
+        try{
+            List<Driver> allRatedDrivers = this.driverService.getAllRatedDrivers(clientEmail);
+            alreadyRatedRideIds = this.driverService.findRideIdsByDriver(allRatedDrivers);
+        }catch(Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(alreadyRatedRideIds);
+    }
+
+    @GetMapping("get-email-by-id")
+    public ResponseEntity<String> getEmailById(@RequestParam("driverId") Long driverId){
+        String driverEmail = "";
+        try{
+            driverEmail = this.driverService.getDriverEmailById(driverId);
+        }catch(Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(driverEmail);
+    }
+
+    @PostMapping("set-rating-expiration")
+    public ResponseEntity<?> setRatingExpiration(@RequestBody Long rideId){
+        try{
+            this.driverService.setRatingExpiration(rideId);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

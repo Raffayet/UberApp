@@ -100,7 +100,7 @@ export class LocationPickerComponent implements OnInit{
   }
 
   automaticallyFindPath(routeType: string): void{
-    this.stateManagement.mapa.reset()
+    this.stateManagement.mapa.reset();
     
     this.mapService.automaticallyFindPath(routeType, this.stateManagement.mapa.locations).subscribe({
       next: data => {
