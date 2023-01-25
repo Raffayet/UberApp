@@ -1,22 +1,9 @@
 import { RideRequestStateService } from './../../services/ride-request-state.service';
-import { trigger, transition, style, animate } from "@angular/animations";
 
 import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
-
-import { Router } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
-import { Observable, of } from "rxjs";
-import { environment } from "src/app/environments/environment";
-import { Point } from "src/app/model/Point";
 import { User } from "src/app/model/User";
-import { MapComponent } from "src/app/modules/shared/components/map/map.component";
 import { TokenUtilsService } from "src/app/modules/shared/services/token-utils.service";
 import { ClientService } from "../../services/client.service";
-import { MapSearchResult, MapService } from "../../services/map.service";
-import { PaypalService } from 'src/app/modules/shared/services/paypal.service';
-import * as SockJS from 'sockjs-client';
-import { over, Client, Message as StompMessage} from 'stompjs';
-import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'ride-request-page',
@@ -48,7 +35,7 @@ export class RideRequestPageComponent implements OnInit, OnDestroy{
 
   changePage(eventData: number): void{      
     this.currentPage = eventData;
-  }  
+  }
 
   triggerBack()
   {

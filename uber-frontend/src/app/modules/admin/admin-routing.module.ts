@@ -1,3 +1,4 @@
+import { BlockUsersComponent } from './pages/block-users/block-users.component';
 import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { RegisteredDriverComponent } from './../auth/pages/registered-driver/registered-driver.component';
 import { NgModule } from '@angular/core';
@@ -21,6 +22,12 @@ const routes: Routes = [
   {
     path: 'report',
     component: ReportPageComponent,
+    outlet: 'AdminRouter',
+    canActivate: [],
+  },
+  {
+    path: 'block-users',
+    component: BlockUsersComponent,
     outlet: 'AdminRouter',
     canActivate: [],
   },

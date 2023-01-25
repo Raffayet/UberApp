@@ -1,3 +1,4 @@
+import { UserService } from './../../../shared/services/user.service';
 import { DriverService } from './../../../admin/services/driver.service';
 import { RideRequestStateService } from '../../services/ride-request-state.service';
 import { Component, OnInit, ViewChild, Output, EventEmitter } from "@angular/core";
@@ -5,6 +6,8 @@ import { MapService } from '../../services/map.service';
 import { Point } from 'src/app/model/Point';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
+import { TokenUtilsService } from 'src/app/modules/shared/services/token-utils.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ride-type',
@@ -22,7 +25,8 @@ export class RideTypeComponent implements OnInit{
 
   currentAmount: number;
 
-  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toastr: ToastrService, private driverService:DriverService){}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toastr: ToastrService, private driverService:DriverService, 
+              private userService:UserService, protected tokenUtilsService: TokenUtilsService, private router:Router){}
   
   
   ngOnInit(): void {
@@ -44,9 +48,35 @@ export class RideTypeComponent implements OnInit{
   }
 
   next(){
-    if(this.currentAmount < this.stateManagement.rideRequest.pricePerPassenger)
-        this.toastr.warning('You do not have enough tokens for ride!')
-    this.changePageNumber();
+    const loggedUser = this.tokenUtilsService.getUserFromToken();
+    this.userService.checkIfUserIsBlocked(loggedUser?.email).subscribe({
+      next: (data:boolean) => {
+          if(data){
+            this.toastr.warning("You can't request a new ride because you are blocked!", "Blocked");
+            this.stateManagement.reset();
+            this.goBack();
+          }
+          else{
+            if(this.currentAmount < this.stateManagement.rideRequest.pricePerPassenger)
+                this.toastr.warning('You do not have enough tokens for ride!')
+            this.changePageNumber();
+          }
+
+      },
+      error: error => {
+          console.error('There was an error!', error);
+      }
+    });;
+
+  }
+
+  goBack(){
+    this.pageNum.emit(1);
+  }
+
+  goToLogin(){
+    this.router.navigateByUrl("/login");
+
   }
 
   changePageNumber(){

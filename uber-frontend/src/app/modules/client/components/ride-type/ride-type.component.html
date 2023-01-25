@@ -22,5 +22,7 @@
             </mat-expansion-panel>
 
         </div>
-      <button mat-raised-button class="next-button" style="margin-right:2rem;" [disabled]="!stateManagement.rideRequest.vehicleType" (click)="next()">Next</button>
+      <button *ngIf="this.tokenUtilsService.getUserFromToken()" mat-raised-button class="next-button" style="margin-right:2rem;" [disabled]="!stateManagement.rideRequest.vehicleType && !tokenUtilsService.getUserFromToken()" (click)="next()">Next</button>
+
+      <button mat-raised-button class="next-button" style="margin-right:2rem; font-size: 20px;" [disabled]="this.tokenUtilsService.getUserFromToken()" (click)="goToLogin()">Log In to continue</button>
 </div>

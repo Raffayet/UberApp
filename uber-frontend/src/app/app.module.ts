@@ -4,18 +4,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './modules/auth/pages/login/login.component';
 import {PasswordModule} from 'primeng/password';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RegistrationPageComponent } from './modules/auth/pages/registration-page/registration-page.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt-interceptor';
 import { ActivatedAccountComponent } from './modules/auth/pages/activated-account/activated-account.component';
 import { RegisteredAccountPageComponent } from './modules/auth/pages/registered-account-page/registered-account-page.component';
 import { ClientDashboardComponent } from './modules/client/pages/client-dashboard/client-dashboard.component';
-import { DriverDashboardComponent } from './modules/driver/pages/driver-dashboard/driver-dashboard.component';
 import { AdminDashboardComponent } from './modules/admin/pages/admin-dashboard/admin-dashboard.component';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ToastrModule } from 'ngx-toastr';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import {
@@ -24,24 +20,20 @@ import {
 } from '@abacritt/angularx-social-login';
 import { AdditionalLoginInfoComponent } from './modules/auth/components/additional-login-info/additional-login-info.component';
 import { RegisteredSocialAccountComponent } from './modules/auth/pages/registered-social-account/registered-social-account.component';
-import { UnauthenticatedDashboard } from './modules/auth/pages/unauthenticated-dashboard/unauthenticated-dashboard.component';
 import { UserProfilePageComponent } from './modules/shared/pages/user-profile-page/user-profile-page.component';
 import { MaterialComponentsModule } from './modules/material-components/material-components.module';
 import { SharedModule } from './modules/shared/shared.module';
-
+import { AuthModule } from './modules/auth/auth.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegistrationPageComponent,
     ActivatedAccountComponent,
     RegisteredAccountPageComponent,
     ClientDashboardComponent,
     AdminDashboardComponent,
     AdditionalLoginInfoComponent,
     RegisteredSocialAccountComponent,
-    UnauthenticatedDashboard,
     UserProfilePageComponent,
     RegisteredAccountPageComponent,
     RegisteredDriverComponent
@@ -57,6 +49,7 @@ import { SharedModule } from './modules/shared/shared.module';
     SocialLoginModule,
     // DragDropModule,   
     MaterialComponentsModule,
+    AuthModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-bottom-right',

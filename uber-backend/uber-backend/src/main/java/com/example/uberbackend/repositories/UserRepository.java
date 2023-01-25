@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u.email from User u where not u.role.name = 'ADMIN'")
     List<String> getUserEmails();
+
+    @Query("select u.email from User u where not u.role.name = 'ADMIN' and u.blocked = false ")
+    List<String> getNotBlockedUserEmails();
 }

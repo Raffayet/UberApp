@@ -7,7 +7,7 @@ export interface User{
     phoneNumber: string,
     activeAccount: boolean,
     blocked: boolean,
-    profileImage: string,
+    profileImage?: string,
     drivingStatus: string,
     accountStatus: string
   }

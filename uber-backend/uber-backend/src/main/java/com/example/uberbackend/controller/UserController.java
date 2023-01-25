@@ -122,6 +122,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/not-blocked")
+    public ResponseEntity<?> getNotBlockedUserEmails(){
+        try{
+            List<String> userEmails= userService.getNotBlockedUserEmails();
+            return ResponseEntity.ok(userEmails);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/get-user-type")
     public ResponseEntity<?> getUserTypeByEmail(@RequestParam String email){
         try{
@@ -131,4 +141,25 @@ public class UserController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/block")
+    public ResponseEntity<?> blockUser(@RequestBody BlockUserRequestDto blockUserRequestDto){
+        try{
+            UserDto userDto= userService.blockUser(blockUserRequestDto);
+            return ResponseEntity.ok(userDto);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/is-blocked")
+    public ResponseEntity<?> isUserBlocked(@RequestParam String email){
+        try{
+            boolean isBlocked = userService.checkIfUserIsBlocked(email);
+            return ResponseEntity.ok(isBlocked);
+        }catch(Exception ex){
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

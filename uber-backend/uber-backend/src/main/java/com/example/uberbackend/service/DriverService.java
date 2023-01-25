@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -62,9 +63,11 @@ public class DriverService {
 
     public DriverFoundDto findDriverForRequest(DriveRequest request) throws IOException {
         List<Driver> availableDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE);
+        availableDrivers = availableDrivers.stream().filter(avDriver -> !avDriver.getBlocked()).collect(Collectors.toList());
         Optional<Driver> driver = findClosestAvailableDriver(availableDrivers, request);
 
         List<Driver> busyDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY);
+        busyDrivers = busyDrivers.stream().filter(buDriver -> !buDriver.getBlocked()).collect(Collectors.toList());
         Optional<Driver> closestToFinishDriver = findDriverClosestToFinish(busyDrivers, request);
 
         if(driver.isPresent()){
