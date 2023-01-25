@@ -30,7 +30,7 @@ public class RideController {
     private final DriverService driverService;
 
     @GetMapping("get-all")
-    public Page<Ride> getEndedRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String email) {
+    public Page<Ride> getEndedRides(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam String email) {
         Pageable paging = PageRequest.of(page, size);
         return rideService.findEndedRidesByEmail(paging, email);
     }

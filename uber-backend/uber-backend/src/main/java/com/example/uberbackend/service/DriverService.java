@@ -6,7 +6,9 @@ import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
+import com.example.uberbackend.task.DisableRatingScheduler;
 import com.example.uberbackend.task.NotificationScheduler;
+import com.example.uberbackend.task.ReservationScheduler;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +16,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.ZoneOffset;
 import java.util.EmptyStackException;
@@ -37,6 +40,9 @@ public class DriverService {
     private final RideRepository rideRepository;
     private final MapService mapService;
     private final RejectionRepository rejectionRepository;
+    private final ClientRepository clientRepository;
+    private final RatingRepository ratingRepository;
+    private ThreadPoolTaskScheduler taskScheduler;
 
     public void updatePersonalInfo(PersonalInfoUpdateDto newInfo) {
         Optional<User> u = userRepository.findByEmail(newInfo.getEmail());
@@ -312,5 +318,63 @@ public class DriverService {
             averageRating = averageRating / driver.getRatingsFromClients().size();
         }
         driverInfoDto.setAverageRating(averageRating);
+    }
+
+    public void rateDriver(RateDriverDto rateDriverDto) {
+        Optional<Driver> driver = this.driverRepository.findByEmail(rateDriverDto.getDriverEmail());
+        Optional<Client> client = this.clientRepository.findByEmail(rateDriverDto.getClientEmail());
+
+        if(driver.isPresent() && client.isPresent())
+        {
+            Rating rating = new Rating();
+            rating.setStarNumber(rateDriverDto.getNumberOfStars());
+            rating.setComment(rateDriverDto.getComment());
+            rating.setDriver(driver.get());
+            rating.setClient(client.get());
+            this.ratingRepository.save(rating);
+            driver.get().getRatingsFromClients().add(rating);
+            this.driverRepository.save(driver.get());
+        }
+    }
+
+    public List<Driver> getAllRatedDrivers(String clientEmail) {
+        List<Driver> allRatedDrivers = new ArrayList<Driver>();
+        List<Rating> allRatings = this.ratingRepository.findAll();
+        for(Rating rating: allRatings)
+        {
+            if(rating.getClient().getEmail().equals(clientEmail) && !allRatedDrivers.contains(rating.getDriver()))
+            {
+                allRatedDrivers.add(rating.getDriver());
+            }
+        }
+        return allRatedDrivers;
+    }
+
+    public List<Long> findRideIdsByDriver(List<Driver> allRatedDrivers) {
+        List<Long> alreadyRatedRideIds = new ArrayList<>();
+        for(Driver driver: allRatedDrivers)
+        {
+            for(Ride ride: driver.getRides())
+            {
+                alreadyRatedRideIds.add(ride.getId());
+            }
+        }
+        return alreadyRatedRideIds;
+    }
+
+    public String getDriverEmailById(Long driverId) {
+        Optional<Driver> driver = this.driverRepository.findById(driverId);
+        String driverEmail = "";
+        if(driver.isPresent())
+        {
+            driverEmail = driver.get().getEmail();
+        }
+        return driverEmail;
+    }
+
+    public void setRatingExpiration(Long rideId) {
+        Optional<Ride> ride = this.rideRepository.findById(rideId);
+        LocalDateTime scheduledFor = LocalDateTime.now();
+        ride.ifPresent(value -> taskScheduler.schedule(new DisableRatingScheduler(value, this.simpMessagingTemplate, this.rideRepository), scheduledFor.minusHours(1).plusDays(3).toInstant(ZoneOffset.UTC)));
     }
 }

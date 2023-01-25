@@ -4,10 +4,7 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.PaymentFailedException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.RideInviteStatus;
-import com.example.uberbackend.repositories.ClientRepository;
-import com.example.uberbackend.repositories.DriveRequestRepository;
-import com.example.uberbackend.repositories.RideInviteRepository;
-import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +32,8 @@ public class ClientService {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     private final RideRepository rideRepository;
+
+    private final RatingRepository ratingRepository;
 
     public double getTokensByEmail(String email){
         return clientRepository.getTokensByEmail(email);

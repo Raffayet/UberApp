@@ -25,7 +25,7 @@ public class Ride {
     @JsonIgnore
     private Driver driver;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Client> clients;
 
     @Enumerated(EnumType.STRING)
@@ -56,6 +56,8 @@ public class Ride {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     private List<MapSearchResultDto> locations;
+
+    private Boolean ratingExpired;
 
     public Ride(DriveRequest driveRequest, Driver driver) {
         this.driver = driver;

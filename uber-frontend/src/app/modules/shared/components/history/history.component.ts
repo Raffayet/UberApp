@@ -23,6 +23,11 @@ import { PaypalService } from '../../services/paypal.service';
 import { ClientsInfoDialogComponent } from '../clients-info-dialog/clients-info-dialog.component';
 import { FormControl } from '@angular/forms';
 import { UserService } from '../../services/user.service';
+import { RideReviewComponent } from 'src/app/modules/client/components/ride-review/ride-review.component';
+import * as SockJS from 'sockjs-client';
+import { environment } from 'src/app/environments/environment';
+import { Client, over,  Message as StompMessage, Frame } from 'stompjs';
+import { RatingExpiration } from 'src/app/model/RatingExpiration';
 
 
 export interface Request {
@@ -43,14 +48,13 @@ export class HistoryComponent implements OnInit{
   totalElements: number = 0;
 
   displayedColumns: string[];
-  displayedColumnsClients = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2'];
+  displayedColumnsClients = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2', 'rating'];
   displayedColumnsDrivers = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'clientsInfo'];
   isLoadingResults = true;
   isRateLimitReached = false;
   resultsLength = 0;
   currentDriverInfo: DriverInfo;
 
-  data: GithubIssue[] = [];
   loggedUser: User | null;
 
   currentAmount: number;
@@ -60,19 +64,30 @@ export class HistoryComponent implements OnInit{
   options: string[] = ['One', 'Two', 'Three'];
   filteredOptions: Observable<string[]>;
 
+  alreadyRatedRideIds: number[];
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  stompClient: Client;
 
-  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog, private userService: UserService){}
+  ratingExpirationMap = new Map<number, boolean>();
+
+  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog, private userService: UserService, private ratingDialog: MatDialog){}
 
   ngOnInit() {
     if(this.tokenUtilsService.getRoleFromToken() == "CLIENT"){   
       this.userType = "CLIENT";
       this.email = this.tokenUtilsService.getUsernameFromToken() as string;
       this.displayedColumns = this.displayedColumnsClients;
-      this.getHistoryOfRides({ page: 0, size: 5 });
       this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
+      this.getAlreadyRatedRideIds(this.loggedUser?.email as string);
       this.getAmountOfTokens();
+
+      let Sock = new SockJS(environment.apiURL + "/ws");
+      this.stompClient = over(Sock);
+      this.stompClient.connect({}, this.onConnected, (error) => {
+        this.onError(error);
+      }); 
     }
 
     else if(this.tokenUtilsService.getRoleFromToken() == "DRIVER")
@@ -80,7 +95,7 @@ export class HistoryComponent implements OnInit{
       this.userType = "DRIVER";
       this.email = this.tokenUtilsService.getUsernameFromToken() as string;
       this.displayedColumns = this.displayedColumnsDrivers;
-      this.getHistoryOfDriversRides({ page: 0, size: 5 });
+      this.getHistoryOfDriversRides({ page: 0, size: 10 });
     }
 
     else if (this.tokenUtilsService.getRoleFromToken() == "ADMIN")
@@ -89,6 +104,24 @@ export class HistoryComponent implements OnInit{
       this.getUsers();
     }
   } 
+
+  onConnected = () => {
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/disable-rating", (data) => this.onRatingExpired(data));
+  }
+
+  onError = (error: string | Frame) => {
+    console.log(error);    
+  }
+
+  onRatingExpired(payload: StompMessage)
+  {
+    console.log(payload);
+    let payloadData = JSON.parse(payload.body);
+    let ratingExpiration: RatingExpiration;
+    ratingExpiration = payloadData;
+    this.ratingExpirationMap.set(ratingExpiration.rideId, true);
+    console.log(this.ratingExpirationMap.get(ratingExpiration.rideId));
+  }
 
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
@@ -105,13 +138,13 @@ export class HistoryComponent implements OnInit{
     if(this.watchedUserType === "CLIENT")
     {
       this.displayedColumns = this.displayedColumnsClients;
-      this.getHistoryOfRides({ page: 0, size: 5 });
+      this.getHistoryOfRides({ page: 0, size: 10 });
     }
 
     else if(this.watchedUserType === "DRIVER")
     {
       this.displayedColumns = this.displayedColumnsDrivers;
-      this.getHistoryOfDriversRides({ page: 0, size: 5 });
+      this.getHistoryOfDriversRides({ page: 0, size: 10 });
     }
   }
 
@@ -160,12 +193,13 @@ export class HistoryComponent implements OnInit{
   convertStartDateFormat(){
     for(let i = 0; i < this.rides.length; i++)
     {
+      console.log(this.rides[i].startTime[0])
       let year = this.rides[i].startTime[0];
-      let month = this.rides[i].startTime[1];
-      let day = this.rides[i].startTime[2];
-      let hours = this.rides[i].startTime[3];
-      let minutes = this.rides[i].startTime[4];
-      let seconds = this.rides[i].startTime[5];
+      let month = this.rides[i].startTime[1].toString().padStart(2, '0');
+      let day = this.rides[i].startTime[2].toString().padStart(2, '0');
+      let hours = this.rides[i].startTime[3].toString().padStart(2, '0');
+      let minutes = this.rides[i].startTime[4].toString().padStart(2, '0');
+      let seconds = this.rides[i].startTime[5] ? this.rides[i].startTime[5].toString().padStart(2, '0') : "00";
       let formattedStartTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
       this.rides[i].formattedStartTime = formattedStartTime;
     }
@@ -174,12 +208,12 @@ export class HistoryComponent implements OnInit{
   convertEndDateFormat(){
     for(let i = 0; i < this.rides.length; i++)
     {
-      let year = this.rides[i].startTime[0];
-      let month = this.rides[i].startTime[1];
-      let day = this.rides[i].startTime[2];
-      let hours = this.rides[i].startTime[3];
-      let minutes = this.rides[i].startTime[4];
-      let seconds = this.rides[i].startTime[5];
+      let year = this.rides[i].endTime[0];
+      let month = this.rides[i].endTime[1].toString().padStart(2, '0');
+      let day = this.rides[i].endTime[2].toString().padStart(2, '0');
+      let hours = this.rides[i].endTime[3].toString().padStart(2, '0');
+      let minutes = this.rides[i].endTime[4].toString().padStart(2, '0');
+      let seconds = this.rides[i].endTime[5] ? this.rides[i].endTime[5].toString().padStart(2, '0') : "00";
       let formattedEndTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
       this.rides[i].formattedEndTime = formattedEndTime;
     }
@@ -224,12 +258,18 @@ export class HistoryComponent implements OnInit{
     this.getHistoryOfRides(request);
   }
 
-  getDriverInfo(locations: MapSearchResult[], rideId: number) {
+  getDriverInfo(rideId: number, locations?: MapSearchResult[]) {
     this.driverService.getDriverInfoByRideId(rideId)
       .subscribe({
         next: (data) => {
           this.currentDriverInfo = data;
-          this.openDialog(data, locations);
+          if(locations)
+          {
+            this.openDialog(data, locations);
+          }
+          else{
+            this.openRatingDialog();
+          }
         },
         error: (error) => {
           console.error(error);
@@ -285,14 +325,47 @@ export class HistoryComponent implements OnInit{
       
     });
   }
-}
 
-export interface GithubApi {
-  items: GithubIssue[];
-  total_count: number;
-}
+  openRatingDialog():void{
+    const ratingDialogRef = this.ratingDialog.open(RideReviewComponent,{
+      data:{
+        clientEmail: this.loggedUser?.email,
+        driverEmail: this.currentDriverInfo.email
+      }
+    });
 
-export interface GithubIssue {
-  id: number;
-  price: number;
+    ratingDialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.rateDriver(result.rating, result.comment);
+      }
+    });
+  }
+
+  rateDriver(numberOfStars: number, comment: string) {
+    this.driverService.rateDriver(numberOfStars, comment, this.loggedUser?.email as string, this.currentDriverInfo.email)
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          this.getAlreadyRatedRideIds(this.loggedUser?.email as string);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+  }
+
+  getAlreadyRatedRideIds(clientEmail: string)
+  {
+    this.driverService.getAlreadyRatedRideIds(clientEmail)
+    .subscribe({
+      next: (data) => {
+        this.alreadyRatedRideIds = data;
+        console.log(this.alreadyRatedRideIds)
+        this.getHistoryOfRides({ page: 0, size: 10 });
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
 }

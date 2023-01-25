@@ -20,7 +20,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DriverDashboardComponent {
 
-  chatHidden:boolean = false;
+  chatHidden: boolean = false;
   navbarLabels: string[] = ["Profile", "Rides To Do", "History", "Report"];
   navbarPaths: string[] = ["profile-page", "rides-to-do", "history", 'report'];
   option: string = this.navbarPaths[0];

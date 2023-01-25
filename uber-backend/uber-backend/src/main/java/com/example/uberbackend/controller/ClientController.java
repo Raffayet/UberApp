@@ -3,6 +3,7 @@ package com.example.uberbackend.controller;
 import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
+import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.task.NotificationScheduler;
@@ -145,5 +146,4 @@ public class ClientController {
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
 }

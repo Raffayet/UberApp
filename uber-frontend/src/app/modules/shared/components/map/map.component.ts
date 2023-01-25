@@ -14,6 +14,8 @@ import {  icon, LayerGroup, marker } from 'leaflet';
 import { RideRequestStateService } from 'src/app/modules/client/services/ride-request-state.service';
 import { TokenUtilsService } from '../../services/token-utils.service';
 import { MatDialog } from '@angular/material/dialog';
+import { DriverService } from 'src/app/modules/driver/services/driver.service';
+import { User } from 'src/app/model/User';
 
 @Component({
   selector: 'app-map',
@@ -45,6 +47,9 @@ export class MapComponent implements AfterViewInit, OnInit {
   polylinesRide: L.Polyline<any>[] = [];
   private toastNotification: any;
 
+  loggedUser: User | null;
+  driverEmail: string;
+
   @Input() containerId: string;
 
   private initMap(): void {
@@ -70,7 +75,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService, public dialog: MatDialog) {}
+  constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService, public dialog: MatDialog, private driverService: DriverService) {}
 
   public reset(){
     this.map.remove();
@@ -88,17 +93,58 @@ export class MapComponent implements AfterViewInit, OnInit {
     this.stompClient.connect({}, function () {
       that.openGlobalSocket();
     });
+    this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
   }
 
-  openDialog():void{
+  openDialog(driverId: number):void{
+    
     const dialogRef = this.dialog.open(RideReviewComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
-        console.log(`Dialog result:`);
-        console.log(result);
+        this.getDriverEmailById(driverId, result.rating, result.comment);
       }
     });
+  }
+
+  setTimerForRatingExpiration(driverId: number, rideId: number)
+  {
+    this.driverService.setTimerForRatingExpiration(rideId)
+    .subscribe({
+      next: data => {
+        console.log(data);
+        this.openDialog(driverId);
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+  }
+
+  getDriverEmailById(driverId: number, numberOfStars: number, comment: string)
+  {
+    this.driverService.getDriverEmailById(driverId).subscribe({
+      next: data => {
+        console.log(data);
+        this.driverEmail = data;
+        this.rateDriver(numberOfStars, comment);
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+  }
+
+  rateDriver(numberOfStars: number, comment: string) {
+    this.driverService.rateDriver(numberOfStars, comment, this.loggedUser?.email as string, this.driverEmail)
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
   }
   
   openGlobalSocket() {
@@ -163,6 +209,7 @@ export class MapComponent implements AfterViewInit, OnInit {
     });
 
     this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/ended-ride', (message: { body: string }) => {
+      const mapRide: MapRide = JSON.parse(message.body);
       let that = this;
       this.polylinesBeforeRide.forEach(function (item) {
         that.map.removeLayer(item);
@@ -172,7 +219,7 @@ export class MapComponent implements AfterViewInit, OnInit {
       this.toaster.clear();
       this.toaster.info(`Ride successfully ended`,"Ride ended", {timeOut: 5000});
 
-      this.openDialog();
+      this.setTimerForRatingExpiration(mapRide.driver.id, mapRide.id);
       
     });
   }
