@@ -6,8 +6,11 @@ import com.example.uberbackend.dto.DriverFoundDto;
 import com.example.uberbackend.dto.MapSearchResultDto;
 import com.example.uberbackend.model.Client;
 import com.example.uberbackend.model.DriveRequest;
+import com.example.uberbackend.model.Driver;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.ClientRepository;
 import com.example.uberbackend.repositories.DriveRequestRepository;
+import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.service.DriverService;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,8 @@ public class ClientServiceTests {
     ClientRepository clientRepository;
     @Mock
     DriveRequestRepository driveRequestRepository;
+    @Mock
+    DriverRepository driverRepository;
 
     @Test
     void createDriveRequestTest() throws IOException {
@@ -84,6 +89,33 @@ public class ClientServiceTests {
 
     }
 
+    @Test
+    void findDriverForRequestTestSuccess()
+    {
+        DriveRequest driveRequest = new DriveRequest();
 
+        Client client = new Client();
+        driveRequest.setInitiator(client);
+
+        driveRequest.setPeople(new ArrayList<Client>());
+        driveRequest.setPrice(100);
+        driveRequest.setPricePerPassenger(100);
+        driveRequest.setVehicleType("Standard");
+        driveRequest.setIsReserved(false);
+        driveRequest.setTimeOfReservation(LocalDateTime.now());
+        driveRequest.setTimeOfRequestForReservation(LocalDateTime.now());
+
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto(1L,"Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto(2L,"Futoska", "45.11", "19.00")
+        );
+        driveRequest.setLocations(locations);
+
+        driveRequest.setDriversThatRejected(new ArrayList<Driver>());
+
+        List<Driver> drivers = new ArrayList<Driver>();
+        Mockito.when(driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE)).thenReturn(drivers);
+        Mockito.when(driverService.findClosestAvailableDriver(any(List<Driver.class>))).thenReturn(Optional.of(new Driver()));
+    }
 
 }
