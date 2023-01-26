@@ -7,6 +7,7 @@ import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -67,12 +68,18 @@ public class ClientService {
     public void createDriveRequest(DriveRequestDto dto) throws IOException {
         DriveRequest request = new DriveRequest();
         Optional<Client> initiator = clientRepository.findByEmail(dto.getInitiatorEmail());
-        initiator.ifPresent(request::setInitiator);
+        if(initiator.isEmpty())
+            throw new UsernameNotFoundException("Initiator not found");
+
+        request.setInitiator(initiator.get());
 
         List<Client> clients = new ArrayList<>();
         for(String email : dto.getPeople()){
             Optional<Client> invited = clientRepository.findByEmail(email);
-            invited.ifPresent(clients::add);
+            if(invited.isEmpty())
+                throw new UsernameNotFoundException("Initiator not found");
+            clients.add(invited.get());
+
         }
         request.setPeople(clients);
 
@@ -93,9 +100,15 @@ public class ClientService {
                 throw new PaymentFailedException("Payment failed!");
             }
 
-            this.driverService.sendRequestToDriver(request, driverFoundDto);
+            this.sendRequestToDriver(request, driverFoundDto);
         }
     }
+
+    private void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
+        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved(), request.getTimeOfReservation());
+        simpMessagingTemplate.convertAndSendToUser(driverFoundDto.getDriverEmail(), "/driver-notification", rideToTakeDto);
+    }
+
 
     public String invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {
         boolean allHaveTokens = true;

@@ -123,7 +123,7 @@ public class DriverService {
 
     private Optional<Driver> findClosestAvailableDriver(List<Driver> drivers, DriveRequest request) throws IOException {
         Optional<Driver> closest = Optional.empty();
-        double minDistance = 9999;
+        double minDistance = Double.POSITIVE_INFINITY;
         for(Driver d : drivers){
             if(!request.getDriversThatRejected().contains(d) && d.getDailyActiveInterval() <= 480){
                 if(calculateDistance(request.getLocations().get(0), d.getCurrentLocation()) < minDistance) {
@@ -145,10 +145,7 @@ public class DriverService {
         return dto.getDistance();
     }
 
-    public void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
-        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved(), request.getTimeOfReservation());
-        simpMessagingTemplate.convertAndSendToUser(driverFoundDto.getDriverEmail(), "/driver-notification", rideToTakeDto);
-    }
+
 
     @Scheduled(cron = "0 0 0 * * *")
     public void resetDailyWorkingInterval()
