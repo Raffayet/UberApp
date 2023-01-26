@@ -1,6 +1,8 @@
 package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.PathInfoDto;
+import com.example.uberbackend.exception.NotEnoughPointsForRouteException;
+import com.example.uberbackend.exception.TooManyPointsForRouteException;
 import com.example.uberbackend.model.Point;
 import org.springframework.beans.factory.annotation.Value;
 import okhttp3.OkHttpClient;
@@ -21,17 +23,23 @@ public class MapService {
         OkHttpClient client = new OkHttpClient();
         String queryParams = new String();
 
+        if(points.size() < 2)
+            throw new NotEnoughPointsForRouteException("More locations are needed in order to create route.");
+        if(points.size() > 5)
+            throw new TooManyPointsForRouteException("There is too many locations for route creation.");
+
         for(Point p : points){
             queryParams = insertPointString(p, queryParams);
         }
 
         Request request = new Request.Builder()
-                .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&profile=car&locale=de&key=").concat(graphhopperApiKey))
+                .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&profile=car&locale=de&key=").concat("05c46d80-8250-4308-9cde-cf76b18b1cb4"))
                 .get()
                 .build();
         Response response = client.newCall(request).execute();
 
-        return getPathInfoGraphhoperResponse(response, 0);
+        PathInfoDto dto = getPathInfoGraphhoperResponse(response, 0);
+        return dto;
     }
 
     private PathInfoDto getPathInfoGraphhoperResponse(Response response, int index) throws IOException {
@@ -61,13 +69,18 @@ public class MapService {
         double distance = 0;
         int i = 0;
 
+        if(points.size() < 2)
+            throw new NotEnoughPointsForRouteException("More locations are needed in order to create route.");
+        if(points.size() > 5)
+            throw new TooManyPointsForRouteException("There is too many locations for route creation.");
+
         while(i < points.size() - 1){
             String queryParams = new String();
             queryParams = insertPointString(points.get(i), queryParams);
             queryParams = insertPointString(points.get(i + 1), queryParams);
 
             Request request = new Request.Builder()
-                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=7&key=").concat(graphhopperApiKey))
+                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=7&key=").concat("05c46d80-8250-4308-9cde-cf76b18b1cb4"))
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
@@ -85,13 +98,18 @@ public class MapService {
         double distance = 0;
         int i = 0;
 
+        if(points.size() < 2)
+            throw new NotEnoughPointsForRouteException("More locations are needed in order to create route.");
+        if(points.size() > 5)
+            throw new TooManyPointsForRouteException("There is too many locations for route creation.");
+
         while(i < points.size() - 1){
             String queryParams = new String();
             queryParams = insertPointString(points.get(i), queryParams);
             queryParams = insertPointString(points.get(i + 1), queryParams);
 
             Request request = new Request.Builder()
-                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=1&key=").concat(graphhopperApiKey))
+                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=1&key=").concat("05c46d80-8250-4308-9cde-cf76b18b1cb4"))
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
