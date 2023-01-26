@@ -37,14 +37,14 @@ export class UserService {
     let headers = new HttpHeaders();
     let params = {...infoForm.getRawValue(), role: this.tokenUtilsService.getRoleFromToken()};
 
-    return this.http.put<string>(environment.apiURL + '/client/update-personal-info', params, { headers, responseType: 'text' as 'json' });      
+    return this.http.put<string>(environment.apiURL + '/user/update-personal-info', params, { headers, responseType: 'text' as 'json' });      
   }
 
   updatePassword(passwordForm: FormGroup, email: string): Observable<string>{
     let headers = new HttpHeaders();
     let params = {...passwordForm.getRawValue(), email: email};
 
-    return this.http.put<string>(environment.apiURL + '/client/update-password', params, { headers, responseType: 'text' as 'json' });      
+    return this.http.put<any>(environment.apiURL + '/user/update-password', params, { headers });      
   }
 
   changeProfilePicture(email: string, b64Image: string | ArrayBuffer | null){    
@@ -53,7 +53,7 @@ export class UserService {
 
     let params = {email: email, b64Image: b64.split(',', 2)[1]};       
 
-    return this.http.put<string>(environment.apiURL + '/client/update-profile-picture', params, { headers, responseType: 'text' as 'json' });      
+    return this.http.put<string>(environment.apiURL + '/user/update-profile-picture', params, { headers, responseType: 'text' as 'json' });      
   }
 
   getUsers(){

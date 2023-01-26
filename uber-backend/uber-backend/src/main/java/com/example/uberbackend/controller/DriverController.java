@@ -1,13 +1,10 @@
 package com.example.uberbackend.controller;
 import com.example.uberbackend.dto.*;
-import com.example.uberbackend.model.Driver;
-import com.example.uberbackend.model.Ride;
-import com.example.uberbackend.model.RideInvite;
+import com.example.uberbackend.model.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
 import com.example.uberbackend.dto.RegisterDriverDto;
 import com.example.uberbackend.dto.RegisterDto;
 import com.example.uberbackend.dto.UserDrivingStatus;
-import com.example.uberbackend.model.User;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.service.DriverService;
@@ -15,6 +12,7 @@ import com.example.uberbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,12 +35,14 @@ public class DriverController {
 
     private final UserService userService;
     private final DriverService driverService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     private final JwtTokenGenerator tokenGenerator;
 
     @PutMapping(value = "/update-personal-info")
     public ResponseEntity<?> updatePersonalInfo(@RequestBody PersonalInfoUpdateDto dto){
         try{
             driverService.updatePersonalInfo(dto);
+            simpMessagingTemplate.convertAndSend("/info-changed-request", "ok");
             return ResponseEntity.ok("Your changes have been sent on approval to admin!");
         }catch (Exception ex){
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
@@ -185,6 +185,27 @@ public class DriverController {
             this.driverService.setRatingExpiration(rideId);
             return ResponseEntity.ok("Success!");
         }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("get-info-requests")
+    public ResponseEntity<?> getDriverInfoChangeRequests(){
+        try{
+            List<DriverInfoChangeRequest> driverRequests = this.driverService.getDriverInfoChangeRequests();
+            return ResponseEntity.ok(driverRequests);
+        }catch(Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("respond-to-info-request")
+    public ResponseEntity<?> respondToInfoRequest(@RequestBody DriverInfoChangeRequest dto){
+        try{
+            DriverInfoChangeResponse driverInfoChangeResponse = this.driverService.respondToInfoRequest(dto);
+            simpMessagingTemplate.convertAndSendToUser(dto.getOldData().getEmail(),"/info-changed-request", driverInfoChangeResponse);
+            return ResponseEntity.ok(driverInfoChangeResponse);
+        }catch(Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

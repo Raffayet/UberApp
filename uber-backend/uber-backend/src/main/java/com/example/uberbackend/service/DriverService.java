@@ -6,6 +6,7 @@ import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.PersonalInfoUpdateDto;
+import com.example.uberbackend.security.JwtTokenGenerator;
 import com.example.uberbackend.task.DisableRatingScheduler;
 import com.example.uberbackend.task.NotificationScheduler;
 import com.example.uberbackend.task.ReservationScheduler;
@@ -43,6 +44,7 @@ public class DriverService {
     private final ClientRepository clientRepository;
     private final RatingRepository ratingRepository;
     private ThreadPoolTaskScheduler taskScheduler;
+    private final JwtTokenGenerator tokenGenerator;
 
     public void updatePersonalInfo(PersonalInfoUpdateDto newInfo) {
         Optional<User> u = userRepository.findByEmail(newInfo.getEmail());
@@ -53,10 +55,12 @@ public class DriverService {
 
             DriverInfoChangeRequest di = new DriverInfoChangeRequest();
             di.setAccepted(false);
+            di.setReviewed(false);
             di.setNewData(newInfo);
             di.setOldData(oldInfo);
 
             driverInfoChangeRequestRepository.save(di);
+            return;
         }
         throw new UsernameNotFoundException("User with the given email does not exist!");
     }
@@ -385,5 +389,42 @@ public class DriverService {
         Optional<Ride> ride = this.rideRepository.findById(rideId);
         LocalDateTime scheduledFor = LocalDateTime.now();
         ride.ifPresent(value -> taskScheduler.schedule(new DisableRatingScheduler(value, this.simpMessagingTemplate, this.rideRepository), scheduledFor.minusHours(1).plusDays(3).toInstant(ZoneOffset.UTC)));
+    }
+
+    public List<DriverInfoChangeRequest> getDriverInfoChangeRequests() {
+        List<DriverInfoChangeRequest> driverInfoChangeRequests = driverInfoChangeRequestRepository.findAll();
+        driverInfoChangeRequests = driverInfoChangeRequests.stream().filter(di-> !di.getReviewed()).collect(Collectors.toList());
+        return driverInfoChangeRequests;
+    }
+
+    public DriverInfoChangeResponse respondToInfoRequest(DriverInfoChangeRequest dto) {
+        DriverInfoChangeResponse driverInfoChangeResponse = new DriverInfoChangeResponse();
+
+        Optional<DriverInfoChangeRequest> driverInfoChangeRequest = driverInfoChangeRequestRepository.findById(dto.getId());
+        if(driverInfoChangeRequest.isPresent()){
+            DriverInfoChangeRequest diRequest = driverInfoChangeRequest.get();
+            diRequest.setReviewed(true);
+            diRequest.setAccepted(dto.getAccepted());
+            driverInfoChangeRequestRepository.save(diRequest);
+            driverInfoChangeResponse.setAccepted(dto.getAccepted());
+            driverInfoChangeResponse.setId(dto.getId());
+
+
+            if(dto.getAccepted()) {
+                User user = userRepository.findByEmail(dto.getOldData().getEmail()).orElse(null);
+                if (user != null) {
+                    user.setName(dto.getNewData().getName());
+                    user.setSurname(dto.getNewData().getSurname());
+                    user.setCity(dto.getNewData().getCity());
+                    user.setPhoneNumber(dto.getNewData().getPhone());
+                    userRepository.save(user);
+                    driverInfoChangeResponse.setToken(tokenGenerator.generateToken(user));
+                    return driverInfoChangeResponse;
+                }
+            }
+            else
+                return driverInfoChangeResponse;
+        }
+        throw new NoSuchElementException("No driver info change requests");
     }
 }

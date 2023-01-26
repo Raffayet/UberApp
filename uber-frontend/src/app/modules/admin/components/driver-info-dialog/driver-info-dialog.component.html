@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Review Driver Info</h1>
+<div mat-dialog-content>
+    <h3>{{"Name: "}}<i><b>{{driverInfo.newData.name}}</b></i></h3>
+    <h3>{{"Surname: "}}<i><b>{{driverInfo.newData.surname}}</b></i></h3>
+    <h3>{{"City: "}}<i><b>{{driverInfo.newData.city}}</b></i></h3>
+    <h3>{{"Phone: "}}<i><b>{{driverInfo.newData.phone}}</b></i></h3>
+</div> 
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close="exit">Close</button>
+  <button mat-button [mat-dialog-close]="false">Reject</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Accept</button>
+</div>

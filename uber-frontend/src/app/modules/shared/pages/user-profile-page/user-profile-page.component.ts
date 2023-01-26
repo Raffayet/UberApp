@@ -1,3 +1,4 @@
+import { DriverChangeRequest } from 'src/app/model/DriverInfoChangeRequest';
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { User } from 'src/app/model/User';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
@@ -11,6 +12,7 @@ import { DriverService } from 'src/app/modules/driver/services/driver.service';
 import * as SockJS from 'sockjs-client';
 import { environment } from 'src/app/environments/environment';
 import { over, Client, Message as StompMessage} from 'stompjs';
+import { DriverInfoChangeResponse } from 'src/app/model/DriverInfoChangeResponse';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -43,7 +45,7 @@ export class UserProfilePageComponent {
                     
         }});
       this.infoForm = new FormGroup({
-        'email': new FormControl(this.loggedUser?.email, Validators.required),
+        'email': new FormControl({value:this.loggedUser?.email, disabled:true}, Validators.required),
         'name': new FormControl(this.loggedUser?.name, Validators.required),
         'surname': new FormControl(this.loggedUser?.surname, Validators.required),
         'city': new FormControl(this.loggedUser?.city, Validators.required),
@@ -51,7 +53,7 @@ export class UserProfilePageComponent {
     });    
 
     this.passwordForm = new FormGroup({
-      'oldPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
+      'oldPassword': new FormControl('', [Validators.required]),
       'newPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
       'confirmNewPassword': new FormControl('', [Validators.required, Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}")]),
     });   
@@ -63,6 +65,16 @@ export class UserProfilePageComponent {
 
   onConnected = () => {
     this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/change-driving-status-slider", this.onNotificationReceived);  
+    this.stompClient.subscribe("/user/" + this.loggedUser?.email  + '/info-changed-request', (message: { body: string }) => {
+      let driverRequest: DriverInfoChangeResponse= JSON.parse(message.body);
+      this.toastr.info("","Request "+(driverRequest.accepted?"Accepted":"Denied"));
+      if(driverRequest.accepted){
+        localStorage.setItem("user", driverRequest.token);
+      }
+      window.location.reload();
+
+
+    });
   }
 
   onError = () => {
@@ -107,6 +119,7 @@ export class UserProfilePageComponent {
   }
 
   onSave(){
+    if(this.infoForm.valid){
       this.userService.updatePersonalInfo(this.infoForm)
       .subscribe({
         next: (token: string) => {
@@ -114,9 +127,10 @@ export class UserProfilePageComponent {
           this.toastr.success("You have successfully updated personal info!")
         },
         error: (err: HttpErrorResponse) => {          
-          this.toastr.warning(err.error);
+          this.toastr.warning(err.error, );
         }
       });
+    }
   }
 
   onSaveDriver(){
@@ -129,19 +143,24 @@ export class UserProfilePageComponent {
         this.toastr.warning(err.error);
       }
     });
-}
+  }
 
   onPasswordChange(){
+    if(this.passwordForm.valid){
       this.userService.updatePassword(this.passwordForm, this.loggedUser?.email as string)
-      .subscribe({
+      .subscribe(
+        {
         next: (response: string) => {
+          console.log(response);
           this.toastr.success(response);
           this.passwordForm.reset();
         },
         error: (err: HttpErrorResponse) => {
-          this.toastr.warning(err.error);
-        }
-      });
+          console.log(err);
+          this.toastr.warning(err.error, "Error setting new password");
+        }}
+      );
+    }
   }
 
   onFileSelected(event: Event, fileInput: HTMLInputElement){

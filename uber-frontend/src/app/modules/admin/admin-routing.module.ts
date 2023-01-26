@@ -1,3 +1,5 @@
+import { DriverInfoRequestComponent } from './pages/driver-info-request/driver-info-request.component';
+import { UserProfilePageComponent } from './../shared/pages/user-profile-page/user-profile-page.component';
 import { LivechatComponent } from './../shared/components/livechat/livechat.component';
 
 import { BlockUsersComponent } from './pages/block-users/block-users.component';
@@ -19,6 +21,12 @@ const routes: Routes = [
   {
     path: 'register-confirmation',
     component: RegisteredDriverComponent,
+    outlet: 'AdminRouter',
+    canActivate: [],
+  },
+  {
+    path: 'driver-info-request',
+    component: DriverInfoRequestComponent,
     outlet: 'AdminRouter',
     canActivate: [],
   },
@@ -48,6 +56,12 @@ const routes: Routes = [
   {
     path: 'homepage',
     component: HomepageComponent,
+    outlet: 'AdminRouter',
+    canActivate: [],
+  },
+  {
+    path: 'profile',
+    component: UserProfilePageComponent,
     outlet: 'AdminRouter',
     canActivate: [],
   },
