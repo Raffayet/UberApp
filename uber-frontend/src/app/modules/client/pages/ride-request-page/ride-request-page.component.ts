@@ -26,7 +26,8 @@ export class RideRequestPageComponent implements OnInit, OnDestroy{
   constructor(private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {}
 
   ngOnInit() { 
-    this.loggedUser = this.tokenUtilsService.getUserFromToken();   
+    this.loggedUser = this.tokenUtilsService.getUserFromToken(); 
+    console.log(this.loggedUser);  
   }  
 
   ngOnDestroy(): void {

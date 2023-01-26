@@ -28,6 +28,7 @@ import * as SockJS from 'sockjs-client';
 import { environment } from 'src/app/environments/environment';
 import { Client, over,  Message as StompMessage, Frame } from 'stompjs';
 import { RatingExpiration } from 'src/app/model/RatingExpiration';
+import { ToastrService } from 'ngx-toastr';
 
 
 export interface Request {
@@ -72,7 +73,7 @@ export class HistoryComponent implements OnInit{
 
   ratingExpirationMap = new Map<number, boolean>();
 
-  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog, private userService: UserService, private ratingDialog: MatDialog){}
+  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog, private userService: UserService, private ratingDialog: MatDialog, private toastrService: ToastrService){}
 
   ngOnInit() {
     if(this.tokenUtilsService.getRoleFromToken() == "CLIENT"){   
@@ -146,6 +147,24 @@ export class HistoryComponent implements OnInit{
       this.displayedColumns = this.displayedColumnsDrivers;
       this.getHistoryOfDriversRides({ page: 0, size: 10 });
     }
+  }
+
+  checkIfUserIsBlocked(locations: MapSearchResult[], ride: Ride)
+  {
+    this.userService.checkIfUserIsBlocked(this.loggedUser?.email).subscribe({
+      next: (data:boolean) => {
+          if(data){
+            this.toastrService.warning("You can't request a new ride because you are blocked!", "Blocked");
+          }
+          else{
+            this.openOrderDialog(locations, ride);
+          }
+  
+      },
+      error: error => {
+          console.error('There was an error!', error);
+      }
+    });
   }
 
   getUserTypeByEmail()

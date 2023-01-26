@@ -12,6 +12,7 @@ import { environment } from "src/app/environments/environment";
 import { MapComponent } from 'src/app/modules/shared/components/map/map.component';
 import { Point } from 'src/app/model/Point';
 import { PaypalService } from 'src/app/modules/shared/services/paypal.service';
+import { User } from 'src/app/model/User';
 
 @Component({
   selector: 'app-location-picker',
@@ -31,10 +32,13 @@ export class LocationPickerComponent implements OnInit{
 
   options: Observable<MapSearchResult[]>[] = [];
 
+  loggedUser: User | null;
+
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router,  private paypalService: PaypalService,
     private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {}
 
   ngOnInit(): void {
+    this.loggedUser = this.tokenUtilsService.getUserFromToken();  
   }
   
   changePageNumber(){
@@ -111,6 +115,19 @@ export class LocationPickerComponent implements OnInit{
       },
       error: error => {
           console.error('There was an error!', error);
+      }
+    });
+  }
+
+  createFavoriteRoute(): void
+  {
+    this.clientService.addFavoriteRoute(this.stateManagement.rideRequest.locations, this.loggedUser?.email as string)
+    .subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: error => {
+        console.error(error);
       }
     });
   }

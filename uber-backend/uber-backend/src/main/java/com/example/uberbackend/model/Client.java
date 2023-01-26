@@ -16,7 +16,7 @@ public class Client extends User {
     private List<DriveRequest> driveRequests;
 
     @OneToMany
-    private List<Route> favoriteRoutes;
+    private List<FavoriteRoute> favoriteRoutes;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Ride> takenRides;

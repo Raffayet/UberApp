@@ -3,6 +3,7 @@ package com.example.uberbackend.controller;
 import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
+import com.example.uberbackend.dto.FavoriteRouteDto;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
@@ -141,6 +142,17 @@ public class ClientController {
     {
         try{
             this.clientService.refundTokensAfterAccepting(requestId);
+            return ResponseEntity.ok("Success!");
+        }catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("add-favorite-route")
+    public ResponseEntity<?> addFavoriteRoute(@RequestBody FavoriteRouteDto favoriteRouteDto)
+    {
+        try{
+            this.clientService.addFavoriteRoute(favoriteRouteDto);
             return ResponseEntity.ok("Success!");
         }catch (Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);

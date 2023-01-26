@@ -55,7 +55,7 @@
 
     <ng-container matColumnDef="buttonsColumn2">
       <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
-      <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="openOrderDialog(element.locations, element)" [disabled]="currentAmount < element.pricePerPassenger" *ngIf="userType==='CLIENT'">Order now</button></td>
+      <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="checkIfUserIsBlocked(element.locations, element)" [disabled]="currentAmount < element.pricePerPassenger" *ngIf="userType==='CLIENT'">Order now</button></td>
     </ng-container>
 
     <ng-container matColumnDef="clientsInfo">

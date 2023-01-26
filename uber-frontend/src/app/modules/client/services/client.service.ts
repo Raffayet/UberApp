@@ -9,6 +9,7 @@ import { User } from 'src/app/model/User';
 import { over, Client, Message as StompMessage} from 'stompjs';
 import { RideRequestStateService } from './ride-request-state.service';
 import { CheckForEnoughTokens } from 'src/app/model/CheckForEnoughTokens';
+import { FavoriteRouteDto } from 'src/app/model/FavoriteRouteDto';
 
 @Injectable({
   providedIn: 'root'
@@ -78,5 +79,16 @@ export class ClientService {
   refundTokensAfterAccepting(requestId: number): Observable<String>{
     let headers = new HttpHeaders();
     return this.http.post<String>(environment.apiURL + "/client/refund-tokens-after-accepting", requestId, { headers, responseType: 'text' as 'json' });
+  }
+
+  addFavoriteRoute(locations: MapSearchResult[], clientEmail: string): Observable<String>
+  {
+    let headers = new HttpHeaders();
+    let favoriteRouteDto: FavoriteRouteDto = {
+      locations: locations,
+      clientEmail: clientEmail
+    }
+
+    return this.http.post<String>(environment.apiURL + "/client/add-favorite-route", favoriteRouteDto, { headers, responseType: 'text' as 'json' });
   }
 }

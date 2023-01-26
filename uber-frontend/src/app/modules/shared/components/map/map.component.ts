@@ -53,7 +53,6 @@ export class MapComponent implements AfterViewInit, OnInit {
   @Input() containerId: string;
 
   private initMap(): void {
-
     this.customIcon = L.icon({
       iconUrl: 'https://www.freeiconspng.com/thumbs/pin-png/pin-png-28.png',
       iconSize: [30, 40],
@@ -84,7 +83,6 @@ export class MapComponent implements AfterViewInit, OnInit {
 
 
   ngOnInit(): void {
-    this.map.panBy([0,0]);
     let ws = new SockJS(environment.apiURL + "/ws");
     this.stompClient = Stomp.over(ws);
     this.stompClient.debug = null;
@@ -149,7 +147,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   
   openGlobalSocket() {
     let loggedUser = this.tokenUtilsService.getUserFromToken();
-
+    console.log(loggedUser)
     this.stompClient.subscribe("/user/" + loggedUser?.email  + '/map-updates/update-ride-state', (message: { body: string }) => {
       let mapRide: MapRide= JSON.parse(message.body);
       if(!this.driver || Object.keys(this.driver).length===0){

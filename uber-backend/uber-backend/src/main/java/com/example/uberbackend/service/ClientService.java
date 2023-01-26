@@ -35,6 +35,8 @@ public class ClientService {
 
     private final RatingRepository ratingRepository;
 
+    private final FavoriteRouteRepository favoriteRouteRepository;
+
     public double getTokensByEmail(String email){
         return clientRepository.getTokensByEmail(email);
     }
@@ -185,5 +187,15 @@ public class ClientService {
         double currentBalance = client.getTokens();
         client.setTokens(currentBalance + priceToRefund);
         this.clientRepository.save(client);
+    }
+
+    public void addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
+        FavoriteRoute favoriteRoute = new FavoriteRoute();
+        favoriteRoute.setLocations(favoriteRouteDto.getLocations());
+        Optional<Client> client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail());
+        client.ifPresent(favoriteRoute::setClient);
+        this.favoriteRouteRepository.save(favoriteRoute);
+        client.ifPresent(value -> value.getFavoriteRoutes().add(favoriteRoute));
+        this.clientRepository.save(favoriteRoute.getClient());
     }
 }
