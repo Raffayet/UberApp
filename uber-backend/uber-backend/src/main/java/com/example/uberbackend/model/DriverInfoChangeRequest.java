@@ -19,6 +19,8 @@ public class DriverInfoChangeRequest {
 
     private Boolean accepted;
 
+    private Boolean reviewed;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "personalInfoUpdateOldDtoId")
     private PersonalInfoUpdateDto oldData;

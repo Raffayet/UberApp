@@ -6,13 +6,17 @@ import { RegisterDriverComponent } from './pages/register-driver/register-driver
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BlockUsersComponent } from './pages/block-users/block-users.component';
+import { DriverInfoRequestComponent } from './pages/driver-info-request/driver-info-request.component';
+import { DriverInfoDialogComponent } from './components/driver-info-dialog/driver-info-dialog.component';
 
 
 @NgModule({
   declarations: [
     RegisterDriverComponent,
     BlockUsersComponent,
-    HomepageComponent
+    HomepageComponent,
+    DriverInfoRequestComponent,
+    DriverInfoDialogComponent
   ],
   imports: [
     CommonModule,
