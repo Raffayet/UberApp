@@ -9,6 +9,34 @@ import { UserService } from 'src/app/modules/shared/services/user.service';
 })
 export class AdminDashboardComponent {
   chatHidden:boolean = false;
+  navbarItems = [
+    {
+      label:'Dashboard',
+      icon: 'dashboard',
+      router: '#'
+    },{
+      label:'Register Driver',
+      icon: 'person_add',
+      router: 'register-driver'
+    },{
+      label:'Report',
+      icon: 'bar_chart',
+      router: 'report'
+    },{
+      label:'Live Chat',
+      icon: 'chat',
+      router: 'adminChat'
+    },{
+      label:'Block Users ',
+      icon: 'block',
+      router: 'block-users'
+    },{
+      label:'Ride History',
+      icon: 'history',
+      router: 'history'
+    },
+
+];
 
   constructor(private router: Router, private userService:UserService){}
 

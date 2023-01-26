@@ -320,6 +320,15 @@ public class DriverService {
         driverInfoDto.setAverageRating(averageRating);
     }
 
+    public List<MapDriverDto> getActiveDrivers() {
+        List<Driver> activeDrivers = driverRepository.findAllOnline();
+        List<MapDriverDto> mapDriverDtos = new ArrayList<>();
+        for (Driver driver : activeDrivers) {
+            mapDriverDtos.add(new MapDriverDto(driver));
+        }
+        return mapDriverDtos;
+    }
+
     public void rateDriver(RateDriverDto rateDriverDto) {
         Optional<Driver> driver = this.driverRepository.findByEmail(rateDriverDto.getDriverEmail());
         Optional<Client> client = this.clientRepository.findByEmail(rateDriverDto.getClientEmail());

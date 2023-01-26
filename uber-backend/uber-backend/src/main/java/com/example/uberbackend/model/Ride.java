@@ -54,7 +54,7 @@ public class Ride {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private List<MapSearchResultDto> locations;
 
     private Boolean ratingExpired;

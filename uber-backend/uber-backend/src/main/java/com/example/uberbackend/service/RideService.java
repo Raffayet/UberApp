@@ -89,6 +89,7 @@ public class RideService {
     public Ride endRide(long id) {
         Ride ride = this.rideRepository.findById(id).orElseThrow(() -> new NotFoundException("Ride does not exist!"));
         ride.setRideStatus(RideStatus.ENDED);
+        ride.setEndTime(LocalDateTime.now());
         this.rideRepository.save(ride);
 
         Driver driver = this.driverRepository.findById(ride.getDriver().getId()).orElse(null);
@@ -136,15 +137,17 @@ public class RideService {
             mapRideDto.setStatus(RideStatus.STARTED);
             Ride ride = rideRepository.findById(mapRideDto.getId()).orElse(null);
             ride.setRideStatus(RideStatus.STARTED);
+            ride.setStartTime(LocalDateTime.now());
             rideRepository.save(ride);
         }
     }
 
     public void checkIfRideIsCanceled(MapRideDto mapRideDto) {
         Ride ride = rideRepository.findById(mapRideDto.getId()).orElse(null);
-        if(ride.getRideStatus() == RideStatus.CANCELED)
+        if(ride.getRideStatus() == RideStatus.CANCELED) {
             mapRideDto.setStatus(RideStatus.CANCELED);
-
+            simpMessagingTemplate.convertAndSend("/map-updates/update-driver-status", new MapDriverDto(ride.getDriver()));
+        }
     }
 
     public void aproxDuration(MapRideDto mapRideDto) {

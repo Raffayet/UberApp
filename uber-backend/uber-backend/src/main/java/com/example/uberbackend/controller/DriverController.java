@@ -133,6 +133,19 @@ public class DriverController {
         return ResponseEntity.ok(driverInfoDto);
     }
 
+
+    @GetMapping("get-all-active")
+    public ResponseEntity<?> getActiveDrivers(){
+        try {
+            List<MapDriverDto> mapDriverDtos = driverService.getActiveDrivers();
+            return ResponseEntity.ok(mapDriverDtos);
+        }
+        catch (Exception ex){
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @PostMapping("rate-driver")
     public ResponseEntity<?> rateDriver(@RequestBody RateDriverDto rateDriverDto){
         try{

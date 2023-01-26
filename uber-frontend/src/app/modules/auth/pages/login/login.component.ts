@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/driver', {outlets: {'DriverRouter': ['profile-page']}}]);
                 break;
               case 'ADMIN':
-                this.router.navigateByUrl('/admin');
+                this.router.navigate(['/admin', {outlets: {'AdminRouter': ['homepage']}}]);
                 break;
               default:
                 this.router.navigateByUrl('/login');

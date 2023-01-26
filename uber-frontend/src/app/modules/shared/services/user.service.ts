@@ -87,8 +87,9 @@ export class UserService {
   }
 
   logOut() {
+    this.changeUserDrivingStatus(this.tokenUtilsService.getUsernameFromToken() as string, 1).subscribe();
     localStorage.removeItem("user");
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/');
   }
 
 }

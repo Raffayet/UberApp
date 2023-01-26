@@ -15,4 +15,7 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     List<Driver> findByDrivingStatusEquals(DrivingStatus drivingStatus);
 
     Optional<Driver> findByEmail(String email);
+
+    @Query("select d from Driver d where not d.drivingStatus = 1")
+    List<Driver> findAllOnline();
 }

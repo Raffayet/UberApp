@@ -75,8 +75,8 @@ public class MapController {
         rideService.updateRideStatus(mapRideDto);
         rideService.checkIfRideIsCanceled(mapRideDto);
         rideService.aproxDuration(mapRideDto);
-//        MapDriverDto mapDriverDto = new MapDriverDto(driver);
-//        this.simpMessagingTemplate.convertAndSend("/map-updates/update-ride-state", mapRideDto);
+
+        this.simpMessagingTemplate.convertAndSend("/map-updates/update-ride-state-unauth", mapRideDto.getDriver());
 
         for (String email : mapRideDto.getClientEmails()) {
             simpMessagingTemplate.convertAndSendToUser(email, "/map-updates/update-ride-state", mapRideDto);
