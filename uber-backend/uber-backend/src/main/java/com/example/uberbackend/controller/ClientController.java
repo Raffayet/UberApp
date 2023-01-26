@@ -4,7 +4,6 @@ import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.dto.FavoriteRouteDto;
-import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.task.NotificationScheduler;
@@ -149,13 +148,13 @@ public class ClientController {
     }
 
     @PostMapping("add-favorite-route")
-    public ResponseEntity<?> addFavoriteRoute(@RequestBody FavoriteRouteDto favoriteRouteDto)
+    public ResponseEntity<Boolean> addFavoriteRoute(@RequestBody FavoriteRouteDto favoriteRouteDto)
     {
         try{
-            this.clientService.addFavoriteRoute(favoriteRouteDto);
-            return ResponseEntity.ok("Success!");
+            boolean success = this.clientService.addFavoriteRoute(favoriteRouteDto);
+            return ResponseEntity.ok(success);
         }catch (Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Boolean>(Boolean.valueOf(ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

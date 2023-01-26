@@ -7,6 +7,7 @@ import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -189,13 +190,23 @@ public class ClientService {
         this.clientRepository.save(client);
     }
 
-    public void addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
+    public boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
         FavoriteRoute favoriteRoute = new FavoriteRoute();
         favoriteRoute.setLocations(favoriteRouteDto.getLocations());
         Optional<Client> client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail());
         client.ifPresent(favoriteRoute::setClient);
-        this.favoriteRouteRepository.save(favoriteRoute);
-        client.ifPresent(value -> value.getFavoriteRoutes().add(favoriteRoute));
-        this.clientRepository.save(favoriteRoute.getClient());
+        if(client.isPresent()) {
+            for (FavoriteRoute clientsFavoriteRoute : client.get().getFavoriteRoutes()) {
+                if (favoriteRoute.equals(clientsFavoriteRoute)) {
+                    return false;
+                }
+            }
+
+            this.favoriteRouteRepository.save(favoriteRoute);
+            client.get().getFavoriteRoutes().add(favoriteRoute);
+            this.clientRepository.save(favoriteRoute.getClient());
+            return true;
+        }
+        throw new UsernameNotFoundException("User not found");
     }
 }

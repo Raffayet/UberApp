@@ -81,7 +81,7 @@ export class ClientService {
     return this.http.post<String>(environment.apiURL + "/client/refund-tokens-after-accepting", requestId, { headers, responseType: 'text' as 'json' });
   }
 
-  addFavoriteRoute(locations: MapSearchResult[], clientEmail: string): Observable<String>
+  addFavoriteRoute(locations: MapSearchResult[], clientEmail: string): Observable<Boolean>
   {
     let headers = new HttpHeaders();
     let favoriteRouteDto: FavoriteRouteDto = {
@@ -89,6 +89,6 @@ export class ClientService {
       clientEmail: clientEmail
     }
 
-    return this.http.post<String>(environment.apiURL + "/client/add-favorite-route", favoriteRouteDto, { headers, responseType: 'text' as 'json' });
+    return this.http.post<Boolean>(environment.apiURL + "/client/add-favorite-route", favoriteRouteDto, { headers, responseType: 'text' as 'json' });
   }
 }

@@ -68,6 +68,11 @@
       <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="getDriverInfo(element.id)" *ngIf="userType==='CLIENT'" [disabled]="alreadyRatedRideIds.includes(element.id) || ratingExpirationMap.get(element.id) || element.ratingExpired">Rate Driver</button></td>
     </ng-container>
 
+    <ng-container matColumnDef="addToFavorite">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+      <td mat-cell *matCellDef="let element"><button mat-raised-button color="accent" style="cursor:pointer" (click)="addToFavorites(element)" *ngIf="userType==='CLIENT'">Add To Favorite <mat-icon>star</mat-icon></button></td>
+    </ng-container>
+
     <!-- <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
       <td mat-cell *matCellDef="let element"> {{element.name}} </td>

@@ -125,6 +125,14 @@ export class LocationPickerComponent implements OnInit{
     .subscribe({
       next: data => {
         console.log(data);
+        if(String(data) === 'true')
+        {
+          this.toastr.success("Successfully added to favorite routes");
+        }
+
+        else{
+          this.toastr.warning("Already added to favorites");
+        }
       },
       error: error => {
         console.error(error);
