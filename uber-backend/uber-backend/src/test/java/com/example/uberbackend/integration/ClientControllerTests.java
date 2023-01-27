@@ -27,8 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -131,10 +130,40 @@ public class ClientControllerTests {
                 new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
                 new MapSearchResultDto("Futoska", "45.11", "19.00")
         );
-
         driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
         driveRequestDto.setPeople(new ArrayList<>());
         driveRequestDto.setPrice(250);
+        driveRequestDto.setPricePerPassenger(250);
+        driveRequestDto.setVehicleType("Standard");
+        driveRequestDto.setRouteType("Custom");
+        driveRequestDto.setIsReserved(false);
+        driveRequestDto.setTimeOfReservation(LocalDateTime.now());
+        driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.now());
+        driveRequestDto.setLocations(locations);
+
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("dejanmatic@gmail.com");
+        loginDto.setPassword("sasa123");
+        String loginJson = TestUtil.json(loginDto);
+        mockMvc.perform(post(AUTH_URL_PREFIX+"/login").contentType(contentType).content(loginJson));
+
+        String json = TestUtil.json(driveRequestDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
+                .andExpect(status().isPaymentRequired());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveRequestBadRequestTest() throws Exception {
+        DriveRequestDto driveRequestDto = new DriveRequestDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveRequestDto.setPeople(new ArrayList<>());
+        driveRequestDto.setPrice(-50);
         driveRequestDto.setPricePerPassenger(250);
         driveRequestDto.setVehicleType("Standard");
         driveRequestDto.setRouteType("Custom");

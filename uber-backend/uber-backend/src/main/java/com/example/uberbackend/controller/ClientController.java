@@ -16,6 +16,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -71,11 +73,7 @@ public class ClientController {
 
     @PostMapping("create-drive-invitation")
     public ResponseEntity<?> createDriveInvitation(@RequestBody DriveInvitationDto driveInvitationDTO){
-        try{
-            this.clientService.createDriveInvitation(driveInvitationDTO);
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        this.clientService.createDriveInvitation(driveInvitationDTO);
         return ResponseEntity.ok(driveInvitationDTO);
     }
 
@@ -90,13 +88,9 @@ public class ClientController {
     }
 
     @PostMapping("create-drive-request")
-    public ResponseEntity<?> createDriveRequest(@RequestBody DriveRequestDto driveRequestDto){
-        try{
-            this.clientService.createDriveRequest(driveRequestDto);
-            return ResponseEntity.ok("Success!");
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> createDriveRequest(@RequestBody @Valid DriveRequestDto driveRequestDto) throws IOException {
+        this.clientService.createDriveRequest(driveRequestDto);
+        return ResponseEntity.ok("Success!");
     }
 
     @PostMapping("create-reservation-drive-request")
