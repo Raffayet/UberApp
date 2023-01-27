@@ -3,6 +3,7 @@ package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.CustomValidationException;
 import com.example.uberbackend.exception.EmailAlreadyTakenException;
+import com.example.uberbackend.exception.UserNotFoundException;
 import com.example.uberbackend.exceptions.InvalidPasswordException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.AccountStatus;
@@ -345,7 +346,7 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean checkIfUserIsBlocked(String email) {
-        Optional<User> user = this.userRepository.findByEmail(email);
+        Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new));
         if(user.isPresent())
             return user.get().getBlocked();
         return false;
