@@ -4,11 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-public class DriverNotFoundException extends RuntimeException {
-
-    public DriverNotFoundException() {
-        super("Driver has not been found!");
+public class UserNotFoundException extends RuntimeException{
+    public UserNotFoundException() {
+        super("User has not been found!");
     }
-
 }
-

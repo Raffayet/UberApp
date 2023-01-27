@@ -1,6 +1,7 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
-import com.example.uberbackend.exception.NotFoundException;
+import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.RideNotFoundException;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.Point;
 import com.example.uberbackend.model.Ride;
@@ -37,7 +38,6 @@ public class RideService {
     public Page<Ride> findAll(Pageable pageable) {
         return rideRepository.findAll(pageable);
     }
-
 
     public List<MapRideDto> getActiveRides(){
         List<Ride> rides = rideRepository.findAllActive();
@@ -85,16 +85,15 @@ public class RideService {
 
     }
 
-
     public Ride endRide(long id) {
-        Ride ride = this.rideRepository.findById(id).orElseThrow(() -> new NotFoundException("Ride does not exist!"));
+        Ride ride = this.rideRepository.findById(id).orElseThrow(RideNotFoundException::new);
         ride.setRideStatus(RideStatus.ENDED);
         ride.setEndTime(LocalDateTime.now());
         this.rideRepository.save(ride);
 
-        Driver driver = this.driverRepository.findById(ride.getDriver().getId()).orElse(null);
+        Driver driver = this.driverRepository.findById(ride.getDriver().getId()).orElseThrow(DriverNotFoundException::new);
         boolean newRideExist = false;
-        for (Ride driverRide:driver.getRides())
+        for (Ride driverRide : driver.getRides())
             if(driverRide.getRideStatus() == RideStatus.WAITING)
                 newRideExist = true;
 
@@ -131,23 +130,28 @@ public class RideService {
 //        }
     }
 
-    public void updateRideStatus(MapRideDto mapRideDto) {
+    public Ride updateRideStatus(MapRideDto mapRideDto) {
         LocationDto startPoint = mapRideDto.getAtomicPoints().get(0);
+        Ride ride = rideRepository.findById(mapRideDto.getId()).orElseThrow(RideNotFoundException::new);
+
         if(mapRideDto.getDriver().getLatitude() == startPoint.getLatitude() && mapRideDto.getDriver().getLongitude() == startPoint.getLongitude()){
             mapRideDto.setStatus(RideStatus.STARTED);
-            Ride ride = rideRepository.findById(mapRideDto.getId()).orElse(null);
             ride.setRideStatus(RideStatus.STARTED);
             ride.setStartTime(LocalDateTime.now());
             rideRepository.save(ride);
+            return ride;
         }
+        return ride;
     }
 
-    public void checkIfRideIsCanceled(MapRideDto mapRideDto) {
-        Ride ride = rideRepository.findById(mapRideDto.getId()).orElse(null);
+    public boolean checkIfRideIsCanceled(MapRideDto mapRideDto) {
+        Ride ride = rideRepository.findById(mapRideDto.getId()).orElseThrow(RideNotFoundException::new);
         if(ride.getRideStatus() == RideStatus.CANCELED) {
             mapRideDto.setStatus(RideStatus.CANCELED);
             simpMessagingTemplate.convertAndSend("/map-updates/update-driver-status", new MapDriverDto(ride.getDriver()));
+            return true;
         }
+        return false;
     }
 
     public void aproxDuration(MapRideDto mapRideDto) {

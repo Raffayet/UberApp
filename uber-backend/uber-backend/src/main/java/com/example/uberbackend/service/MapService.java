@@ -33,7 +33,7 @@ public class MapService {
         }
 
         Request request = new Request.Builder()
-                .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&profile=car&locale=de&key=").concat("05c46d80-8250-4308-9cde-cf76b18b1cb4"))
+                .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&profile=car&locale=de&key=").concat(graphhopperApiKey))
                 .get()
                 .build();
         Response response = client.newCall(request).execute();
@@ -80,7 +80,7 @@ public class MapService {
             queryParams = insertPointString(points.get(i + 1), queryParams);
 
             Request request = new Request.Builder()
-                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=7&key=").concat("05c46d80-8250-4308-9cde-cf76b18b1cb4"))
+                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=7&key=").concat(graphhopperApiKey))
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
@@ -109,7 +109,7 @@ public class MapService {
             queryParams = insertPointString(points.get(i + 1), queryParams);
 
             Request request = new Request.Builder()
-                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=1&key=").concat("05c46d80-8250-4308-9cde-cf76b18b1cb4"))
+                    .url("https://graphhopper.com/api/1/route?".concat(queryParams).concat("points_encoded=false&algorithm=alternative_route&alternative_route.max_weight_factor=1&key=").concat(graphhopperApiKey))
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
