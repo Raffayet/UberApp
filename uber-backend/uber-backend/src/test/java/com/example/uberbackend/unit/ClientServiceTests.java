@@ -1,6 +1,5 @@
 package com.example.uberbackend.unit;
 
-import com.example.uberbackend.configuration.WebConfig;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.dto.DriverFoundDto;
@@ -18,15 +17,11 @@ import com.example.uberbackend.repositories.RideRepository;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.service.DriverService;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -42,7 +37,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-//@RunWith(SpringRunner.class)
 @SpringBootTest
 public class ClientServiceTests {
 
@@ -363,7 +357,4 @@ public class ClientServiceTests {
         verify(clientRepository, times(0)).save(any(Client.class));
         verify(rideRepository, times(1)).findById(anyLong());
     }
-
-
-
 }

@@ -200,7 +200,7 @@ public class ClientService {
             }
         }
         else
-            throw new RideNotFoundException("Ride not found for id:"+requestId);
+            throw new RideNotFoundException();
     }
 
     private void refundTokensToClient(Client client, double priceToRefund) {
