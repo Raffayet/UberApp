@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -265,5 +266,56 @@ public class RideServiceTests {
         Ride actual = rideService.updateRideStatus(dto);
         Assertions.assertEquals(RideStatus.WAITING, actual.getRideStatus());
         verify(rideRepository, times(0)).save(any(Ride.class));
+    }
+
+    @Test
+    void aproxDurationTestSuccessWaitingStatus()
+    {
+        MapRideDto mapRideDto = new MapRideDto();
+        mapRideDto.setStatus(RideStatus.WAITING);
+
+        List<LocationDto> atomicPointsBeforeRide = Arrays.asList(
+                new LocationDto(45.18, 19.23),
+                new LocationDto(45.18, 19.23)
+        );
+        mapRideDto.setAtomicPointsBeforeRide(atomicPointsBeforeRide);
+
+        List<LocationDto> atomicPoints = Arrays.asList(
+                new LocationDto(45.28, 19.23),
+                new LocationDto(45.18, 19.33)
+        );
+        mapRideDto.setAtomicPoints(atomicPoints);
+    }
+
+    @Test
+    void aproxDurationTestSuccessNotWaitingStatus()
+    {
+        MapRideDto mapRideDto = new MapRideDto();
+        mapRideDto.setStatus(RideStatus.STARTED);
+
+        List<LocationDto> atomicPointsBeforeRide = Arrays.asList(
+                new LocationDto(45.18, 19.23),
+                new LocationDto(45.18, 19.23)
+        );
+        mapRideDto.setAtomicPointsBeforeRide(atomicPointsBeforeRide);
+
+        List<LocationDto> atomicPoints = Arrays.asList(
+                new LocationDto(45.28, 19.23),
+                new LocationDto(45.18, 19.33)
+        );
+        mapRideDto.setAtomicPoints(atomicPoints);
+    }
+
+    @Test
+    void aproxDurationTestSuccessZeroDistance()
+    {
+        MapRideDto mapRideDto = new MapRideDto();
+        mapRideDto.setStatus(RideStatus.STARTED);
+
+        List<LocationDto> atomicPointsBeforeRide = new ArrayList<>();
+        mapRideDto.setAtomicPointsBeforeRide(atomicPointsBeforeRide);
+
+        List<LocationDto> atomicPoints = new ArrayList<>();
+        mapRideDto.setAtomicPoints(atomicPoints);
     }
 }
