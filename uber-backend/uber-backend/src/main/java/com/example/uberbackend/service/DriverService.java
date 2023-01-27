@@ -96,7 +96,7 @@ public class DriverService {
         double minDistanceToDestination = 9999;
         for(Driver driver: busyDrivers)
         {
-            boolean hasReservedRides =  doesDriverHaveReservedRides(driver);
+            boolean hasReservedRides = doesDriverHaveReservedRides(driver);
             if(!request.getDriversThatRejected().contains(driver) && driver.getDailyActiveInterval() <= 480 && !hasReservedRides)
             {
                 if(calculateDistance(driver.getRides().get(0).getLocations().get(1), driver.getCurrentLocation()) < minDistanceToDestination)
