@@ -1,5 +1,7 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
+import com.example.uberbackend.exception.DriveRequestNotFoundException;
+import com.example.uberbackend.exception.DriverNotFoundException;
 import com.example.uberbackend.exception.NoAvailableDriversException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
@@ -70,25 +72,23 @@ public class DriverService {
         availableDrivers = availableDrivers.stream().filter(avDriver -> !avDriver.getBlocked()).collect(Collectors.toList());
         Optional<Driver> driver = findClosestAvailableDriver(availableDrivers, request);
 
-        List<Driver> busyDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY);
-        busyDrivers = busyDrivers.stream().filter(buDriver -> !buDriver.getBlocked()).collect(Collectors.toList());
-        Optional<Driver> closestToFinishDriver = findDriverClosestToFinish(busyDrivers, request);
-
         if(driver.isPresent()){
             simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + driver.get().getEmail() + " has been found for your ride request."));
             return new DriverFoundDto(driver.get().getEmail(), true);
         }
 
-        else if(closestToFinishDriver.isPresent())
+        List<Driver> busyDrivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY);
+        busyDrivers = busyDrivers.stream().filter(buDriver -> !buDriver.getBlocked()).collect(Collectors.toList());
+        Optional<Driver> closestToFinishDriver = findDriverClosestToFinish(busyDrivers, request);
+
+        if(closestToFinishDriver.isPresent())
         {
             simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverFound", "Driver " + closestToFinishDriver.get().getEmail() + " has been found for your ride request."));
             return new DriverFoundDto(closestToFinishDriver.get().getEmail(), true);
         }
 
-        else{
-            simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("noDrivers", "No available drivers. Please try later."));
-            throw new NoAvailableDriversException("There is no available drivers!");
-        }
+        simpMessagingTemplate.convertAndSendToUser(request.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("noDrivers", "No available drivers. Please try later."));
+        throw new NoAvailableDriversException("There is no available drivers!");
     }
 
     private Optional<Driver> findDriverClosestToFinish(List<Driver> busyDrivers, DriveRequest request) throws IOException {
@@ -172,19 +172,22 @@ public class DriverService {
     public void assignDriveToDriver(DriveAssignatureDto driveAssignatureDto) {
         Optional<Driver> driver = this.driverRepository.findByEmail(driveAssignatureDto.getDriverEmail());
         Optional<DriveRequest> driveRequest = this.driveRequestRepository.findById(driveAssignatureDto.getRequestId());
-        if(driveRequest.isPresent() && driver.isPresent())
-        {
-            Ride ride = new Ride(driveRequest.get(), driver.get());
-            ride.setRideStatus(RideStatus.WAITING);
-            this.rideRepository.save(ride);
-            driver.get().getRides().add(ride);
-            driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
-            this.driverRepository.save(driver.get());
-            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
-            simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getDriverEmail(), "/change-driving-status-slider", "false");
-            Map<String, Object> headers = generateNotificationHeaders(driveRequest.get());
-            simpMessagingTemplate.convertAndSend("/topic/response-to-other-clients", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"), headers);
-        }
+        if(driver.isEmpty())
+            throw new DriverNotFoundException();
+
+        if(driveRequest.isEmpty())
+            throw new DriveRequestNotFoundException();
+
+        Ride ride = new Ride(driveRequest.get(), driver.get());
+        ride.setRideStatus(RideStatus.WAITING);
+        this.rideRepository.save(ride);
+        driver.get().getRides().add(ride);
+        driver.get().setDrivingStatus(DrivingStatus.ONLINE_BUSY);
+        this.driverRepository.save(driver.get());
+        simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getInitiatorEmail(), "/response-to-client", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"));
+        simpMessagingTemplate.convertAndSendToUser(driveAssignatureDto.getDriverEmail(), "/change-driving-status-slider", "false");
+        Map<String, Object> headers = generateNotificationHeaders(driveRequest.get());
+        simpMessagingTemplate.convertAndSend("/topic/response-to-other-clients", new ResponseToIniciatorDto("driverAccepted", "Driver has accepted. Enjoy your ride!"), headers);
     }
 
     private Map<String, Object> generateNotificationHeaders(DriveRequest driveRequest) {
