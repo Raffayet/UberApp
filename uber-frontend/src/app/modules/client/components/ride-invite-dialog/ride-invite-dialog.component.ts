@@ -32,6 +32,6 @@ export class RideInviteDialogComponent {
   }
 
   onCancelClick(): void {
-    this.dialogRef.close(false);
+    this.dialogRef.close(true);
   }
 }

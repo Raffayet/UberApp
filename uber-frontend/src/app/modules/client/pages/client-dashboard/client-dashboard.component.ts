@@ -38,9 +38,21 @@ export class ClientDashboardComponent {
     constructor(private router: Router, private userService: UserService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private clientService: ClientService, private toastr: ToastrService){}
 
     ngOnInit() {
+      this.loggedUser = this.tokenUtilsService.getUserFromToken();  
       let Sock = new SockJS(environment.apiURL + "/ws");
       this.stompClient = over(Sock);
       this.stompClient.connect({}, this.onConnected, this.onError); 
+      this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
+      .subscribe({
+        next: (data) => {
+          console.log(`Data: ${data}`);
+          this.rideInvites = data;
+          console.log(`Ride invites: ${this.rideInvites}`);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
     }
 
     onConnected = () => {
@@ -53,14 +65,20 @@ export class ClientDashboardComponent {
         let blockUserRequest: BlockUserRequest= JSON.parse(message.body);
         this.toastr.warning(`You have been blocked because: ${blockUserRequest.description}\nYou won't be able to create new rides.`, "Blocked", {timeOut:20000});
       });
-
-      this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
-          .subscribe(val => this.rideInvites = val);  
     }
 
     onRideInvitesReceived = (payload: StompMessage) => {
-        let payloadData = JSON.parse(payload.body);     
-        this.rideInvites.push(payloadData);
+      this.clientService.findAllRideInvitesForUser(this.loggedUser?.email as string)
+      .subscribe({
+        next: (data) => {
+          console.log(`Data: ${data}`);
+          this.rideInvites = data;
+          console.log(`Ride invites: ${this.rideInvites}`);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
     }
 
     onRideReminder = (payload: StompMessage) => {
@@ -106,25 +124,33 @@ export class ClientDashboardComponent {
       }
     }
 
-    onAcceptRideInvite(index: number){
+    onAcceptRideInvite(rideInvite: RideInvite, index: number){
+      console.log(this.rideInvites);
       this.stompClient.send('/app/ride-response', {}, JSON.stringify({
-        email: this.rideInvites.at(index)?.emailFrom,
+        email: rideInvite?.emailFrom,
         responderEmail: this.loggedUser?.email,
         isAccepted: true
       }));
-  
-      this.clientService.changeDriveInvitationStatus(this.rideInvites.at(index)?.id as number, true).subscribe();
-      this.rideInvites.splice(index, 1);
+
+      this.clientService.changeDriveInvitationStatus(rideInvite?.id as number, true).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.rideInvites.splice(index, 1);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
     }
   
-    onRejectRideInvite(index: number){
+    onRejectRideInvite(rideInvite: RideInvite, index: number){
       this.stompClient.send('/app/ride-response', {}, JSON.stringify({
-        email: this.rideInvites.at(index)?.emailFrom,
+        email: rideInvite?.emailFrom,
         responderEmail: this.loggedUser?.email,
         isAccepted: false
       }));
   
-      this.clientService.changeDriveInvitationStatus(this.rideInvites.at(index)?.id as number, false).subscribe();
+      this.clientService.changeDriveInvitationStatus(rideInvite?.id as number, false).subscribe();
       this.rideInvites.splice(index, 1);
     }
 
@@ -138,13 +164,14 @@ export class ClientDashboardComponent {
       this.router.navigateByUrl('/');
     }
 
-    openDialog(index: number) {
+    openDialog(rideInvite: RideInvite, index: number) {
+      console.log(this.rideInvites);
       const dialogRef = this.dialog.open(RideInviteDialogComponent,{
         data:{
-          from: `Invite from ${this.rideInvites[index]?.emailFrom}`,
-          firstLocation: `${this.rideInvites[index]?.firstLocation}`,
-          destination: `${this.rideInvites[index]?.destination}`,
-          priceToPay: `${this.rideInvites[index]?.priceToPay} Tokens`,
+          from: `Invite from ${rideInvite?.emailFrom}`,
+          firstLocation: `${rideInvite?.firstLocation}`,
+          destination: `${rideInvite?.destination}`,
+          priceToPay: `${rideInvite?.priceToPay} Tokens`,
           buttonText: {
             ok: 'Accept',
             cancel: 'Reject'
@@ -154,10 +181,10 @@ export class ClientDashboardComponent {
 
       dialogRef.afterClosed().subscribe((confirmed: boolean) => {
         if (confirmed) {
-            this.onAcceptRideInvite(index);
+            this.onAcceptRideInvite(rideInvite, index);
         }
         else{
-            this.onRejectRideInvite(index);
+            this.onRejectRideInvite(rideInvite, index);
         }
       });
     }
