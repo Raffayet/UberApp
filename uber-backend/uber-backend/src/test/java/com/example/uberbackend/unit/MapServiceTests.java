@@ -5,16 +5,20 @@ import com.example.uberbackend.exception.NotEnoughPointsForRouteException;
 import com.example.uberbackend.exception.TooManyPointsForRouteException;
 import com.example.uberbackend.model.Point;
 import com.example.uberbackend.service.MapService;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 @SpringBootTest
 public class MapServiceTests {
@@ -22,6 +26,12 @@ public class MapServiceTests {
     @InjectMocks
     MapService mapService;
 
+    @BeforeEach
+    public void setUp() {
+        ReflectionTestUtils.setField(mapService, "graphhopperApiKey", "05c46d80-8250-4308-9cde-cf76b18b1cb4");
+    }
+
+    // GetOptimalRoute - SW-1-2019
     @Test
     public void shouldReturnOptimalRouteTest() throws IOException {
         //input
@@ -71,6 +81,7 @@ public class MapServiceTests {
                 () -> mapService.getOptimalRoute(input));
     }
 
+    // GetAlternativeRoute - SW-1-2019
     @Test
     public void shouldReturnAlternativeRouteTest() throws IOException {
         //input
@@ -119,6 +130,7 @@ public class MapServiceTests {
                 () -> mapService.getAlternativeRoute(input));
     }
 
+    // GetCustomRoute - SW-1-2019
     @Test
     public void shouldReturnCustomRouteTest() throws IOException {
         //input
