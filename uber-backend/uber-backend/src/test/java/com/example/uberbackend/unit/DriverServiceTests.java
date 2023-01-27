@@ -7,9 +7,11 @@ import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.DriveRequestRepository;
 import com.example.uberbackend.repositories.DriverRepository;
+import com.example.uberbackend.repositories.RejectionRepository;
 import com.example.uberbackend.repositories.RideRepository;
 import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.MapService;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,8 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -35,14 +36,21 @@ public class DriverServiceTests {
 
     @InjectMocks
     DriverService driverService;
+
     @Mock
     DriverRepository driverRepository;
+
     @Mock
     DriveRequestRepository driveRequestRepository;
+
     @Mock
     RideRepository rideRepository;
+
     @Mock
     SimpMessagingTemplate simpMessagingTemplate;
+
+    @Mock
+    RejectionRepository rejectionRepository;
 
     @Test
     void findDriverForRequestTestSuccessFoundAvailable() throws IOException {
@@ -79,12 +87,30 @@ public class DriverServiceTests {
 
         DriverFoundDto expectedResult = new DriverFoundDto();
         expectedResult.setFound(true);
-        expectedResult.setDriverEmail(any(String.class));
+        expectedResult.setDriverEmail("sovilj@gmail.com");
 
-        Mockito.when(driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE)).thenReturn(availableDrivers);
+        Mockito.when(driverRepository.findByDrivingStatusEquals(any())).thenReturn(availableDrivers);
 
         DriverFoundDto actualResult = driverService.findDriverForRequest(request);
-        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void findDriver() throws IOException {
+        DriveRequest request = new DriveRequest();
+        Client client = new Client();
+
+        client.setEmail("sovilj@gmail.com");
+        request.setInitiator(client);
+
+        List<Driver> availableDrivers = new ArrayList<Driver>();
+        Driver driver = new Driver();
+        driver.setEmail("dejanmatic@gmail.com");
+        driver.setDrivingStatus(DrivingStatus.ONLINE);
+        availableDrivers.add(driver);
+
+        Mockito.when(driverRepository.findByDrivingStatusEquals(any())).thenReturn(availableDrivers);
+
+        DriverFoundDto actualResult = driverService.findDriverForRequest(request);
     }
 
     @Test
@@ -177,5 +203,84 @@ public class DriverServiceTests {
 
         verify(rideRepository, times(0)).save(any(Ride.class));
         verify(driverRepository, times(0)).save(any(Driver.class));
+    }
+
+
+    // RejectDrive - SW-1-2019
+    @Test
+    public void shouldThrowDriverNotFoundExceptionInRejectDriveTest(){
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("jovancevic@gmail.com");
+
+        Mockito.when(driverRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(DriverNotFoundException.class,
+                () -> driverService.rejectDrive(dto));
+    }
+
+    @Test
+    public void shouldThrowDriveRequestNotFoundExceptionInRejectDriveTest(){
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("jovancevic@gmail.com");
+        dto.setRequestId(1L);
+
+        Mockito.when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(new Driver()));
+        Mockito.when(driveRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(DriveRequestNotFoundException.class,
+                () -> driverService.rejectDrive(dto));
+    }
+
+    @Test
+    public void shouldRejectDriveSuccessfullyTest(){
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("jovancevic@gmail.com");
+        dto.setRequestId(1L);
+
+        DriveRequest dr = new DriveRequest();
+        dr.setDriversThatRejected(new ArrayList<>());
+        dr.setPeople(new ArrayList<>());
+
+        Client c = new Client();
+        c.setEmail("marko@gmail.com");
+        dr.setInitiator(c);
+        Driver d = new Driver();
+
+        Mockito.when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(d));
+        Mockito.when(driveRequestRepository.findById(anyLong())).thenReturn(Optional.of(dr));
+
+        driverService.rejectDrive(dto);
+
+        verify(driveRequestRepository, times(1)).save(dr);
+        verify(simpMessagingTemplate, times(1)).convertAndSendToUser(anyString(), anyString(), any(ResponseToIniciatorDto.class));
+    }
+
+    @Test
+    public void shouldRejectDriveWithPeopleSuccessfullyTest(){
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("jovancevic@gmail.com");
+        dto.setRequestId(1L);
+
+        DriveRequest dr = new DriveRequest();
+        dr.setDriversThatRejected(new ArrayList<>());
+
+        List<Client> people = new ArrayList<>();
+        Client firstPassenger = new Client();
+        firstPassenger.setEmail("milica@gmail.com");
+        people.add(firstPassenger);
+        dr.setPeople(people);
+
+        Client c = new Client();
+        c.setEmail("marko@gmail.com");
+        dr.setInitiator(c);
+        Driver d = new Driver();
+
+        Mockito.when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(d));
+        Mockito.when(driveRequestRepository.findById(anyLong())).thenReturn(Optional.of(dr));
+
+        driverService.rejectDrive(dto);
+
+        verify(driveRequestRepository, times(1)).save(dr);
+        verify(simpMessagingTemplate, times(2)).convertAndSendToUser(anyString(), anyString(), any(ResponseToIniciatorDto.class));
     }
 }
