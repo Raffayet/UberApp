@@ -204,8 +204,9 @@ public class DriverService {
     }
 
     public void rejectDrive(DriverRejectionDto driverRejectionDto) {
-        Optional<Driver> driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail());
-        Optional<DriveRequest> driveRequest = this.driveRequestRepository.findById(driverRejectionDto.getRequestId());
+        Optional<Driver> driver = Optional.ofNullable(this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail()).orElseThrow(DriverNotFoundException::new));
+        Optional<DriveRequest> driveRequest = Optional.ofNullable(this.driveRequestRepository.findById(driverRejectionDto.getRequestId()).orElseThrow(DriveRequestNotFoundException::new));
+
         if(driveRequest.isPresent() && driver.isPresent())
         {
             driveRequest.get().getDriversThatRejected().add(driver.get());
