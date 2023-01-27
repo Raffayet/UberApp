@@ -6,8 +6,11 @@ import com.example.uberbackend.dto.DriverFoundDto;
 import com.example.uberbackend.dto.MapSearchResultDto;
 import com.example.uberbackend.model.Client;
 import com.example.uberbackend.model.DriveRequest;
+import com.example.uberbackend.model.Driver;
+import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.repositories.ClientRepository;
 import com.example.uberbackend.repositories.DriveRequestRepository;
+import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.service.DriverService;
 import org.junit.jupiter.api.Test;
@@ -83,7 +86,4 @@ public class ClientServiceTests {
 //        assertThrows(StudentNotFoundException.class, ()->examService.examApplication(student.getIdentificationNumber(), exam.getId()));
 
     }
-
-
-
 }
