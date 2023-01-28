@@ -1,9 +1,7 @@
 package com.example.uberbackend.integration;
 
-import com.example.uberbackend.dto.DriveRequestDto;
-import com.example.uberbackend.dto.LoginDto;
-import com.example.uberbackend.dto.MapSearchResultDto;
-import com.example.uberbackend.dto.UserDrivingStatus;
+import com.example.uberbackend.dto.*;
+import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.util.TestUtil;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -34,6 +32,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -55,6 +54,17 @@ public class ClientControllerTests {
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveRequestUsernameNotFoundTest() throws Exception {
+        DriveRequestDto driveRequestDto = new DriveRequestDto();
+
+        driveRequestDto.setInitiatorEmail("notexistingEmail@gmail.com");
+        String json = TestUtil.json(driveRequestDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -176,16 +186,157 @@ public class ClientControllerTests {
         driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.now());
         driveRequestDto.setLocations(locations);
 
-        LoginDto loginDto = new LoginDto();
-        loginDto.setEmail("dejanmatic@gmail.com");
-        loginDto.setPassword("sasa123");
-        String loginJson = TestUtil.json(loginDto);
-        mockMvc.perform(post(AUTH_URL_PREFIX+"/login").contentType(contentType).content(loginJson));
-
         String json = TestUtil.json(driveRequestDto);
         mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.[*].defaultMessage").value(contains("Price can't be negative")));
 
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveRequestPriceLowerThanPricePerPassengerTest() throws Exception {
+        DriveRequestDto driveRequestDto = new DriveRequestDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveRequestDto.setPeople(new ArrayList<>());
+        driveRequestDto.setPrice(0);
+        driveRequestDto.setPricePerPassenger(250);
+        driveRequestDto.setVehicleType("Standard");
+        driveRequestDto.setRouteType("Custom");
+        driveRequestDto.setIsReserved(false);
+        driveRequestDto.setTimeOfReservation(LocalDateTime.now());
+        driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.now());
+        driveRequestDto.setLocations(locations);
+
+        String json = TestUtil.json(driveRequestDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveRequestOneLocationTest() throws Exception {
+        DriveRequestDto driveRequestDto = new DriveRequestDto();
+        List<MapSearchResultDto> locations = List.of(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00")
+        );
+        driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveRequestDto.setPeople(new ArrayList<>());
+        driveRequestDto.setPrice(250);
+        driveRequestDto.setPricePerPassenger(250);
+        driveRequestDto.setVehicleType("Standard");
+        driveRequestDto.setRouteType("Custom");
+        driveRequestDto.setIsReserved(false);
+        driveRequestDto.setTimeOfReservation(LocalDateTime.now());
+        driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.now());
+        driveRequestDto.setLocations(locations);
+
+        String json = TestUtil.json(driveRequestDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveRequestTimeOfReservationExTest() throws Exception {
+        DriveRequestDto driveRequestDto = new DriveRequestDto();
+        List<MapSearchResultDto> locations = List.of(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveRequestDto.setPeople(new ArrayList<>());
+        driveRequestDto.setPrice(250);
+        driveRequestDto.setPricePerPassenger(250);
+        driveRequestDto.setVehicleType("Standard");
+        driveRequestDto.setRouteType("Custom");
+        driveRequestDto.setIsReserved(false);
+        driveRequestDto.setTimeOfReservation(LocalDateTime.of(2022,11,2,5,0));
+        driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.of(2023,1,2,5,0));
+        driveRequestDto.setLocations(locations);
+
+        String json = TestUtil.json(driveRequestDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveInviteSuccessTest() throws Exception {
+        DriveInvitationDto driveInvitationDto = new DriveInvitationDto();
+        driveInvitationDto.setFirstLocation("Rumenacka, Novi Sad");
+        driveInvitationDto.setDestination("Futoska, Novi Sad");
+        driveInvitationDto.setEmailFrom("sasalukic@gmail.com");
+        driveInvitationDto.setRideInviteStatus(RideInviteStatus.PENDING);
+        driveInvitationDto.setEmailsTo(List.of("milicamatic@gmail.com", "strahinjapavlovic@gmail.com"));
+        driveInvitationDto.setPriceToPay(10);
+
+        String json = TestUtil.json(driveInvitationDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-invitation").contentType(contentType).content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveInviteNoEmailsTest() throws Exception {
+        DriveInvitationDto driveInvitationDto = new DriveInvitationDto();
+        driveInvitationDto.setFirstLocation("Rumenacka, Novi Sad");
+        driveInvitationDto.setDestination("Futoska, Novi Sad");
+        driveInvitationDto.setEmailFrom("sasalukic@gmail.com");
+        driveInvitationDto.setRideInviteStatus(RideInviteStatus.PENDING);
+        driveInvitationDto.setEmailsTo(new ArrayList<>());
+        driveInvitationDto.setPriceToPay(10);
+
+        String json = TestUtil.json(driveInvitationDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-invitation").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.[*].defaultMessage").value(contains("Email to list can't be null")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void findAllRideInvitesSuccessTest() throws Exception {
+
+        mockMvc.perform(get(URL_PREFIX + "/get-ride-invites").contentType(contentType).param("email", "sasalukic@gmail.com")).andDo(print())
+                .andExpect(status().isOk()).andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.[*]").value(hasSize(1)))
+                .andExpect(jsonPath("$.[*].emailTo").value(hasItem("sasalukic@gmail.com")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void findAllRideInvitesEmptyTest() throws Exception {
+
+        mockMvc.perform(get(URL_PREFIX + "/get-ride-invites").contentType(contentType).param("email", "notexistingmail@gmail.com")).andDo(print())
+                .andExpect(status().isOk()).andExpect(jsonPath("$.[*]").value(hasSize(0)));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void findAllRideInvitesNullTest() throws Exception {
+
+        mockMvc.perform(get(URL_PREFIX + "/get-ride-invites").contentType(contentType).param("email", "dejanmatic@gmail.com")).andDo(print())
+                .andExpect(status().isOk()).andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.[*]").value(hasSize(0)));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void refundTokensAfterAcceptingSuccessTest() throws Exception {
+        String json = TestUtil.json(1L);
+        mockMvc.perform(post(URL_PREFIX + "/refund-tokens-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isOk()).andExpect(jsonPath("$").exists())
+                .andExpect(content().string("Success!"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void refundTokensAfterAcceptingRideNotFoundExTest() throws Exception {
+        String json = TestUtil.json(-1L);
+        mockMvc.perform(post(URL_PREFIX + "/refund-tokens-after-accepting").contentType(contentType).content(json)).andDo(print())
+                .andExpect(status().isNotAcceptable());
     }
 
 }

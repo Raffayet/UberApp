@@ -4,6 +4,7 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriveRequestNotFoundException;
 import com.example.uberbackend.exception.DriverNotFoundException;
 import com.example.uberbackend.exception.NoAvailableDriversException;
+import com.example.uberbackend.exception.RideNotFoundException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
@@ -494,5 +495,177 @@ public class DriverServiceTests {
         Mockito.when(driverRepository.findById(anyLong())).thenReturn(Optional.empty());
         Assertions.assertThrows(EmptyStackException.class,
                 () -> driverService.updateDriverLocation(id, latitude, longitude));
+    }
+
+    @Test
+    void rejectDriveAfterAcceptingSuccessTest()
+    {
+        DriverRejectionDto driverRejectionDto = new DriverRejectionDto();
+        driverRejectionDto.setDriverEmail("dejanmatic@gmail.com");
+        driverRejectionDto.setRequestId(1L);
+        driverRejectionDto.setInitiatorEmail("sasalukic@gmail.com");
+        driverRejectionDto.setReasonForRejection("Can't continue");
+
+        Client initiator = new Client();
+        initiator.setEmail("sasalukic@gmail.com");
+        initiator.setTokens(15);
+
+        Client passenger1 = new Client();
+        passenger1.setEmail("milicamatic@gmail.com");
+        passenger1.setTokens(8);
+        Client passenger2 = new Client();
+        passenger2.setEmail("strahinjapavlovic@gmail.com");
+        passenger2.setTokens(5);
+
+        Ride ride = new Ride();
+        ride.setId(1L);
+        ride.setInitiator(initiator);
+        ride.setClients(List.of(passenger1, passenger2));
+
+        Ride ride1 = new Ride();
+        ride1.setId(2L);
+        ride1.setInitiator(initiator);
+        ride1.setClients(List.of(passenger1, passenger2));
+        List<Ride> rides = new ArrayList<>(List.of(ride,ride1));
+
+        Driver driver = new Driver();
+        driver.setEmail("dejanmatic@gmail.com");
+        driver.setId(1L);
+        driver.setRides(rides);
+
+        Mockito.when(driverRepository.findByEmail(driverRejectionDto.getDriverEmail())).thenReturn(Optional.of(driver));
+        Mockito.when(rideRepository.findById(driverRejectionDto.getRequestId())).thenReturn(Optional.of(ride));
+
+        driverService.rejectDriveAfterAccepting(driverRejectionDto);
+
+        verify(driverRepository, times(1)).save(any(Driver.class));
+        verify(rideRepository, times(1)).save(any(Ride.class));
+        verify(rejectionRepository, times(1)).save(any(Rejection.class));
+    }
+
+    @Test
+    void rejectDriveAfterAcceptingDriverNotFoundExTest()
+    {
+        DriverRejectionDto driverRejectionDto = new DriverRejectionDto();
+        driverRejectionDto.setDriverEmail("dejanmatic@gmail.com");
+        driverRejectionDto.setRequestId(1L);
+        driverRejectionDto.setInitiatorEmail("sasalukic@gmail.com");
+        driverRejectionDto.setReasonForRejection("Can't continue");
+
+        Client initiator = new Client();
+        initiator.setEmail("sasalukic@gmail.com");
+        initiator.setTokens(15);
+
+        Client passenger1 = new Client();
+        passenger1.setEmail("milicamatic@gmail.com");
+        passenger1.setTokens(8);
+        Client passenger2 = new Client();
+        passenger2.setEmail("strahinjapavlovic@gmail.com");
+        passenger2.setTokens(5);
+
+        Ride ride = new Ride();
+        ride.setId(1L);
+        ride.setInitiator(initiator);
+        ride.setClients(List.of(passenger1, passenger2));
+
+        Ride ride1 = new Ride();
+        ride1.setId(2L);
+        ride1.setInitiator(initiator);
+        ride1.setClients(List.of(passenger1, passenger2));
+        List<Ride> rides = new ArrayList<>(List.of(ride,ride1));
+
+
+        Mockito.when(driverRepository.findByEmail(driverRejectionDto.getDriverEmail())).thenReturn(Optional.empty());
+        Mockito.when(rideRepository.findById(driverRejectionDto.getRequestId())).thenReturn(Optional.of(ride));
+
+        Assertions.assertThrows(DriverNotFoundException.class,
+                () -> driverService.rejectDriveAfterAccepting(driverRejectionDto));
+    }
+
+    @Test
+    void rejectDriveAfterAcceptingRideNotFoundExTest()
+    {
+        DriverRejectionDto driverRejectionDto = new DriverRejectionDto();
+        driverRejectionDto.setDriverEmail("dejanmatic@gmail.com");
+        driverRejectionDto.setRequestId(1L);
+        driverRejectionDto.setInitiatorEmail("sasalukic@gmail.com");
+        driverRejectionDto.setReasonForRejection("Can't continue");
+
+        Client initiator = new Client();
+        initiator.setEmail("sasalukic@gmail.com");
+        initiator.setTokens(15);
+
+        Client passenger1 = new Client();
+        passenger1.setEmail("milicamatic@gmail.com");
+        passenger1.setTokens(8);
+        Client passenger2 = new Client();
+        passenger2.setEmail("strahinjapavlovic@gmail.com");
+        passenger2.setTokens(5);
+
+        Ride ride = new Ride();
+        ride.setId(1L);
+        ride.setInitiator(initiator);
+        ride.setClients(List.of(passenger1, passenger2));
+
+        Ride ride1 = new Ride();
+        ride1.setId(2L);
+        ride1.setInitiator(initiator);
+        ride1.setClients(List.of(passenger1, passenger2));
+        List<Ride> rides = new ArrayList<>(List.of(ride,ride1));
+
+        Driver driver = new Driver();
+        driver.setEmail("dejanmatic@gmail.com");
+        driver.setId(1L);
+        driver.setRides(rides);
+
+
+        Mockito.when(driverRepository.findByEmail(driverRejectionDto.getDriverEmail())).thenReturn(Optional.of(driver));
+        Mockito.when(rideRepository.findById(driverRejectionDto.getRequestId())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RideNotFoundException.class,
+                () -> driverService.rejectDriveAfterAccepting(driverRejectionDto));
+    }
+
+    @Test
+    void rejectDriveAfterAcceptingNullPointerExTest()
+    {
+        DriverRejectionDto driverRejectionDto = new DriverRejectionDto();
+        driverRejectionDto.setDriverEmail("dejanmatic@gmail.com");
+        driverRejectionDto.setRequestId(1L);
+        driverRejectionDto.setInitiatorEmail("sasalukic@gmail.com");
+        driverRejectionDto.setReasonForRejection("Can't continue");
+
+        Client initiator = new Client();
+        initiator.setEmail("sasalukic@gmail.com");
+        initiator.setTokens(15);
+
+        Client passenger1 = new Client();
+        passenger1.setEmail("milicamatic@gmail.com");
+        passenger1.setTokens(8);
+        Client passenger2 = new Client();
+        passenger2.setEmail("strahinjapavlovic@gmail.com");
+        passenger2.setTokens(5);
+
+        Ride ride = new Ride();
+        ride.setId(1L);
+        ride.setClients(List.of(passenger1, passenger2));
+
+        Ride ride1 = new Ride();
+        ride1.setId(2L);
+        ride1.setInitiator(initiator);
+        ride1.setClients(List.of(passenger1, passenger2));
+        List<Ride> rides = new ArrayList<>(List.of(ride,ride1));
+
+        Driver driver = new Driver();
+        driver.setEmail("dejanmatic@gmail.com");
+        driver.setId(1L);
+        driver.setRides(rides);
+
+
+        Mockito.when(driverRepository.findByEmail(driverRejectionDto.getDriverEmail())).thenReturn(Optional.of(driver));
+        Mockito.when(rideRepository.findById(driverRejectionDto.getRequestId())).thenReturn(Optional.of(ride));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> driverService.rejectDriveAfterAccepting(driverRejectionDto));
     }
 }

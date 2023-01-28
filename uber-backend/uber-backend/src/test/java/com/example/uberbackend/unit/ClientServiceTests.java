@@ -225,6 +225,7 @@ public class ClientServiceTests {
         assertThrows(NotEnoughLocationsException.class,()->clientService.createDriveRequest(driveRequestDto));
         verify(clientRepository, times(1)).findByEmail(driveRequestDto.getInitiatorEmail());
     }
+
     @Test
     void createDriveRequestTimeOfReservationExTest() throws IOException {
         DriveRequestDto driveRequestDto = new DriveRequestDto();

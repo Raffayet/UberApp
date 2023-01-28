@@ -1,6 +1,7 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.MapRouteException;
 import com.example.uberbackend.exception.NoVehicleTypesException;
 import com.example.uberbackend.exception.RideNotFoundException;
 import com.example.uberbackend.model.Driver;
@@ -58,21 +59,21 @@ public class RideService {
                 try {
                     pathInfoDto = mapService.getCustomRoute(points);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new MapRouteException("Finding Custom Route Failed");
                 }
             }
             else if(ride.getRouteType().equals("Alternative")){
                 try {
                     pathInfoDto = mapService.getAlternativeRoute(points);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new MapRouteException("Finding Alternative Route Failed");
                 }
             }
             else{
                 try {
                     pathInfoDto = mapService.getOptimalRoute(points);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new MapRouteException("Finding Optimal Route Failed");
                 }
             }
             MapRideDto mapRideDto = new MapRideDto(ride);

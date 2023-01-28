@@ -22,6 +22,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -64,21 +65,19 @@ public class ClientController {
         }catch(Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
+}
 
     @GetMapping("get-ride-invites")
-    public ResponseEntity<?> getRideInvites(@RequestParam("email") String userEmail){
-        List<RideInvite> rideInvites;
-        try{
-            rideInvites = clientService.findAllRideInvites(userEmail);
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getRideInvites( @RequestParam("email")  String userEmail){
+        List<RideInvite> rideInvites = clientService.findAllRideInvites(userEmail);
         return ResponseEntity.ok(rideInvites);
     }
 
     @PostMapping("create-drive-invitation")
-    public ResponseEntity<?> createDriveInvitation(@RequestBody DriveInvitationDto driveInvitationDTO){
+    public ResponseEntity<?> createDriveInvitation(@RequestBody @Valid DriveInvitationDto driveInvitationDTO, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
+        }
         this.clientService.createDriveInvitation(driveInvitationDTO);
         return ResponseEntity.ok(driveInvitationDTO);
     }
@@ -142,11 +141,7 @@ public class ClientController {
     @PostMapping("refund-tokens-after-accepting")
     public ResponseEntity<?> refundTokensAfterAccepting(@RequestBody Long requestId)
     {
-        try{
-            this.clientService.refundTokensAfterAccepting(requestId);
-            return ResponseEntity.ok("Success!");
-        }catch (Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        this.clientService.refundTokensAfterAccepting(requestId);
+        return ResponseEntity.ok("Success!");
     }
 }

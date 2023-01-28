@@ -190,20 +190,16 @@ public class ClientService {
     }
 
     public void refundTokensAfterAccepting(Long requestId) {
-        Optional<Ride> ride = this.rideRepository.findById(requestId);
-        if(ride.isPresent())
+        Ride ride = this.rideRepository.findById(requestId).orElseThrow(RideNotFoundException::new);
+
+        refundTokensToClient(ride.getInitiator(), ride.getPricePerPassenger());
+        if(ride.getPrice() != ride.getPricePerPassenger())
         {
-            refundTokensToClient(ride.get().getInitiator(), ride.get().getPricePerPassenger());
-            if(ride.get().getPrice() != ride.get().getPricePerPassenger())
+            for(Client client: ride.getClients())
             {
-                for(Client client: ride.get().getClients())
-                {
-                    refundTokensToClient(client, ride.get().getPricePerPassenger());
-                }
+                refundTokensToClient(client, ride.getPricePerPassenger());
             }
         }
-        else
-            throw new RideNotFoundException();
     }
 
     private void refundTokensToClient(Client client, double priceToRefund) {

@@ -3,6 +3,7 @@ import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriveRequestNotFoundException;
 import com.example.uberbackend.exception.DriverNotFoundException;
 import com.example.uberbackend.exception.NoAvailableDriversException;
+import com.example.uberbackend.exception.RideNotFoundException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
@@ -221,30 +222,26 @@ public class DriverService {
     }
 
     public void rejectDriveAfterAccepting(DriverRejectionDto driverRejectionDto) {
-        Optional<Driver> driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail());
-        Optional<Ride> ride = this.rideRepository.findById(driverRejectionDto.getRequestId());
+        Driver driver = this.driverRepository.findByEmail(driverRejectionDto.getDriverEmail()).orElseThrow(DriverNotFoundException::new);
+        Ride ride = this.rideRepository.findById(driverRejectionDto.getRequestId()).orElseThrow(RideNotFoundException::new);
 
-        if(ride.isPresent() && driver.isPresent())
+
+        removeRide(driver, ride);
+        simpMessagingTemplate.convertAndSendToUser(ride.getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
+        for (Client client: ride.getClients())
         {
-            removeRide(driver, ride);
-            simpMessagingTemplate.convertAndSendToUser(ride.get().getInitiator().getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
-            for (Client client: ride.get().getClients())
-            {
-                simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.get().getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
-            }
+            simpMessagingTemplate.convertAndSendToUser(client.getEmail(), "/response-to-client", new ResponseToIniciatorDto("driverRejected", "Driver " + driver.getEmail() + " has rejected this drive request. Reason: " + driverRejectionDto.getReasonForRejection()));
         }
         createRejection(driverRejectionDto);
     }
 
-    private void removeRide(Optional<Driver> driver, Optional<Ride> ride) {
-        if(driver.isPresent() && ride.isPresent())
-        {
-            driver.get().getRides().removeIf(driversRide -> Objects.equals(driversRide.getId(), ride.get().getId()));
-            this.driverRepository.save(driver.get());
-            Ride existRide = ride.get();
-            existRide.setRideStatus(RideStatus.CANCELED);
-            this.rideRepository.save(existRide);
-        }
+    private void removeRide(Driver driver, Ride ride) {
+        List<Ride> rides = driver.getRides();
+        rides.removeIf(driversRide -> Objects.equals(driversRide.getId(), ride.getId()));
+        driver.setRides(rides);
+        this.driverRepository.save(driver);
+        ride.setRideStatus(RideStatus.CANCELED);
+        this.rideRepository.save(ride);
     }
 
     private void createRejection(DriverRejectionDto driverRejectionDto) {
