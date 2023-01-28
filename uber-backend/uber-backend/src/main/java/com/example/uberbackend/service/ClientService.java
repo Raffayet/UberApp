@@ -37,6 +37,8 @@ public class ClientService {
     private final RatingRepository ratingRepository;
 
     public double getTokensByEmail(String email){
+        if(email.equals(""))
+            throw new EmptyStringException();
         return clientRepository.getTokensByEmail(email);
     }
 
@@ -58,9 +60,11 @@ public class ClientService {
         }
     }
 
-    public void changeDriveInvitationStatus(HashMap<String, String> dto) {
-        Optional<RideInvite> editedRideInvite = this.rideInviteRepository.findById(Long.parseLong(dto.get("id")));
-        boolean isAccepted = Boolean.parseBoolean(dto.get("isAccepted"));
+    public void changeDriveInvitationStatus(InvitationStatusDto invitationStatusDto) {
+        Optional<RideInvite> editedRideInvite = this.rideInviteRepository.findById(invitationStatusDto.getInvitationId());
+        if(editedRideInvite.isEmpty())
+            throw new RideInviteNotFoundException();
+        boolean isAccepted = invitationStatusDto.isAccepted();
         editedRideInvite.ifPresent(invite -> invite.setRideInviteStatus(isAccepted ? RideInviteStatus.ACCEPTED : RideInviteStatus.REJECTED));
         editedRideInvite.ifPresent(this.rideInviteRepository::save);
     }
@@ -122,13 +126,13 @@ public class ClientService {
         for (String email: checkForEnoughTokens.getPeopleEmails())
         {
             Optional<Client> client = this.clientRepository.findByEmail(email);
-            if (client.isPresent()){
-                if (client.get().getTokens() < checkForEnoughTokens.getPricePerPassenger())
-                {
-                    allHaveTokens = false;
-                    this.invitedNotHaveTokens(checkForEnoughTokens, client);
-                    break;
-                }
+            if(client.isEmpty())
+                throw new UserNotFoundException();
+            if (client.get().getTokens() < checkForEnoughTokens.getPricePerPassenger())
+            {
+                allHaveTokens = false;
+                this.invitedNotHaveTokens(checkForEnoughTokens, client);
+                break;
             }
         }
 
@@ -173,15 +177,14 @@ public class ClientService {
 
     public void refundTokens(Long requestId) {
         Optional<DriveRequest> request = this.driveRequestRepository.findById(requestId);
-        if(request.isPresent())
+        if(request.isEmpty())
+            throw new DriveRequestNotFoundException();
+        refundTokensToClient(request.get().getInitiator(), request.get().getPricePerPassenger());
+        if(request.get().getPrice() != request.get().getPricePerPassenger())
         {
-            refundTokensToClient(request.get().getInitiator(), request.get().getPricePerPassenger());
-            if(request.get().getPrice() != request.get().getPricePerPassenger())
+            for(Client client: request.get().getPeople())
             {
-                for(Client client: request.get().getPeople())
-                {
-                    refundTokensToClient(client, request.get().getPricePerPassenger());
-                }
+                refundTokensToClient(client, request.get().getPricePerPassenger());
             }
         }
     }

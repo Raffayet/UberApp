@@ -1,5 +1,4 @@
 package com.example.uberbackend.unit;
-
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.dto.DriverFoundDto;
@@ -14,21 +13,26 @@ import com.example.uberbackend.repositories.ClientRepository;
 import com.example.uberbackend.repositories.DriveRequestRepository;
 import com.example.uberbackend.repositories.RideInviteRepository;
 import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.dto.*;
+import com.example.uberbackend.exception.DriveRequestNotFoundException;
+import com.example.uberbackend.exception.EmptyStringException;
+import com.example.uberbackend.exception.RideInviteNotFoundException;
+import com.example.uberbackend.exception.UserNotFoundException;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.service.DriverService;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,6 +57,8 @@ public class ClientServiceTests {
     RideInviteRepository rideInviteRepository;
     @Mock
     RideRepository rideRepository;
+    @Mock
+    SimpMessagingTemplate simpMessagingTemplate;
 
     @Test
     void createDriveRequestSuccessTest() throws IOException {
@@ -340,5 +346,192 @@ public class ClientServiceTests {
         assertThrows(RideNotFoundException.class ,()->clientService.refundTokensAfterAccepting(1L));
         verify(clientRepository, times(0)).save(any(Client.class));
         verify(rideRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void getTokensByEmailTestSuccess()
+    {
+        String email = "sasalukic@gmail.com";
+        double expectedValue = 10.0;
+        Mockito.when(clientRepository.getTokensByEmail(email)).thenReturn(10.0);
+
+        double actualValue = clientService.getTokensByEmail(email);
+        Assertions.assertEquals(expectedValue, actualValue);
+    }
+
+    @Test
+    void getTokensByEmailTestEmptyEmail()
+    {
+        String email = "";
+        Assertions.assertThrows(EmptyStringException.class, () -> clientService.getTokensByEmail(email));
+    }
+
+    @Test
+    void invitedHasTokensTestSuccessNoPeopleEmails()
+    {
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{});
+        checkForEnoughTokens.setPricePerPassenger(2);
+
+        String expectedValue = "true";
+        String actualValue = clientService.invitedHasTokens(checkForEnoughTokens);
+        Assertions.assertEquals(expectedValue, actualValue);
+        verify(clientRepository, times(0)).findByEmail(any(String.class));
+    }
+
+    @Test
+    void invitedHasTokensTestSuccessEnoughTokens()
+    {
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{
+                "milicamatic@gmail.com"
+        });
+        checkForEnoughTokens.setPricePerPassenger(2);
+
+        Client milica = new Client();
+        milica.setTokens(3);
+        Mockito.when(clientRepository.findByEmail(checkForEnoughTokens.getPeopleEmails()[0])).thenReturn(Optional.of(milica));
+
+        String expectedValue = "true";
+        String actualValue = clientService.invitedHasTokens(checkForEnoughTokens);
+        Assertions.assertEquals(expectedValue, actualValue);
+        verify(clientRepository, times(1)).findByEmail(any(String.class));
+    }
+
+    @Test
+    void invitedHasTokensTestSuccessNotEnoughTokens()
+    {
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{
+                "milicamatic@gmail.com"
+        });
+        checkForEnoughTokens.setPricePerPassenger(2);
+
+        Client milica = new Client();
+        milica.setTokens(1);
+        Mockito.when(clientRepository.findByEmail(checkForEnoughTokens.getPeopleEmails()[0])).thenReturn(Optional.of(milica));
+
+        String expectedValue = "false";
+        String actualValue = clientService.invitedHasTokens(checkForEnoughTokens);
+        Assertions.assertEquals(expectedValue, actualValue);
+        verify(clientRepository, times(1)).findByEmail(any(String.class));
+    }
+
+    @Test
+    void invitedHasTokensTestInvitedPersonNotExist()
+    {
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{
+                "milicamatic@gmail.com"
+        });
+        checkForEnoughTokens.setPricePerPassenger(2);
+        Mockito.when(clientRepository.findByEmail(checkForEnoughTokens.getPeopleEmails()[0])).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> clientService.invitedHasTokens(checkForEnoughTokens));
+        verify(clientRepository, times(1)).findByEmail(any(String.class));
+    }
+
+    @Test
+    void changeDriveInvitationStatusTestSuccessAccepted()
+    {
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setInvitationId(1L);
+        invitationStatusDto.setAccepted(true);
+
+        RideInvite rideInvite = new RideInvite();
+        Mockito.when(rideInviteRepository.findById(invitationStatusDto.getInvitationId())).thenReturn(Optional.of(rideInvite));
+
+        RideInviteStatus expectedValue = RideInviteStatus.ACCEPTED;
+
+        clientService.changeDriveInvitationStatus(invitationStatusDto);
+        Assertions.assertEquals(expectedValue, rideInvite.getRideInviteStatus());
+        verify(rideInviteRepository, times(1)).save(any(RideInvite.class));
+    }
+
+    @Test
+    void changeDriveInvitationStatusTestSuccessRejected()
+    {
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setInvitationId(1L);
+        invitationStatusDto.setAccepted(false);
+
+        RideInvite rideInvite = new RideInvite();
+        Mockito.when(rideInviteRepository.findById(invitationStatusDto.getInvitationId())).thenReturn(Optional.of(rideInvite));
+
+        RideInviteStatus expectedValue = RideInviteStatus.REJECTED;
+
+        clientService.changeDriveInvitationStatus(invitationStatusDto);
+        Assertions.assertEquals(expectedValue, rideInvite.getRideInviteStatus());
+        verify(rideInviteRepository, times(1)).save(any(RideInvite.class));
+    }
+
+    @Test
+    void changeDriveInvitationStatusTestRideInviteNotFound()
+    {
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setInvitationId(1L);
+        invitationStatusDto.setAccepted(true);
+
+        Mockito.when(rideInviteRepository.findById(invitationStatusDto.getInvitationId())).thenReturn(Optional.empty());
+        Assertions.assertThrows(RideInviteNotFoundException.class, () -> clientService.changeDriveInvitationStatus(invitationStatusDto));
+        verify(rideInviteRepository, times(0)).save(any(RideInvite.class));
+    }
+
+    @Test
+    void refundTokensTestSuccessNoInvitedPeople()
+    {
+        //input
+        Long requestId = 1L;
+        DriveRequest request = new DriveRequest();
+
+        Client initiator = new Client();
+        initiator.setTokens(15);
+
+        request.setInitiator(initiator);
+        request.setPricePerPassenger(5);
+
+        request.setPeople(new ArrayList<>());
+
+        Mockito.when(driveRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+    }
+
+    @Test
+    void refundTokensTestSuccessInvitedPeople()
+    {
+        //input
+        Long requestId = 1L;
+        DriveRequest request = new DriveRequest();
+
+        Client initiator = new Client();
+        initiator.setTokens(15);
+
+        request.setInitiator(initiator);
+        request.setPricePerPassenger(5);
+
+        Client client1 = new Client();
+        client1.setTokens(10);
+        Client client2 = new Client();
+        client1.setTokens(8);
+
+        List<Client> clients = new ArrayList<>();
+        clients.add(client1);
+        clients.add(client2);
+        request.setPeople(clients);
+
+        Mockito.when(driveRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+    }
+
+    @Test
+    void refundTokensTestDriveRequestNotFound()
+    {
+        //input
+        Long requestId = 1L;
+
+        Mockito.when(driveRequestRepository.findById(requestId)).thenReturn(Optional.empty());
+        Assertions.assertThrows(DriveRequestNotFoundException.class, () -> clientService.refundTokens(requestId));
     }
 }

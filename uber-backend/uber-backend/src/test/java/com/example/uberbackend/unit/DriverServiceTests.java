@@ -3,29 +3,32 @@ package com.example.uberbackend.unit;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriveRequestNotFoundException;
 import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.NoAvailableDriversException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
-import com.example.uberbackend.repositories.DriveRequestRepository;
-import com.example.uberbackend.repositories.DriverRepository;
-import com.example.uberbackend.repositories.RejectionRepository;
-import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.model.enums.RideStatus;
+import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.MapService;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cglib.core.Local;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import okhttp3.Request;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
@@ -41,6 +44,9 @@ public class DriverServiceTests {
     DriverRepository driverRepository;
 
     @Mock
+    MapService mapService;
+
+    @Mock
     DriveRequestRepository driveRequestRepository;
 
     @Mock
@@ -51,6 +57,9 @@ public class DriverServiceTests {
 
     @Mock
     RejectionRepository rejectionRepository;
+
+    @Mock
+    PointRepository pointRepository;
 
     @Test
     void findDriverForRequestTestSuccessFoundAvailable() throws IOException {
@@ -80,37 +89,204 @@ public class DriverServiceTests {
         Driver driver = new Driver();
         driver.setEmail("dejanmatic@gmail.com");
         driver.setDrivingStatus(DrivingStatus.ONLINE);
+        driver.setBlocked(false);
+        driver.setCurrentLocation(new Point(45.2530233, 19.7916443));
+        driver.setDailyActiveInterval(350.0);
         availableDrivers.add(driver);
         List<Point> points = new ArrayList<>();
 
         PathInfoDto pathInfoDto = new PathInfoDto();
+        pathInfoDto.setDistance(9.5);
+
+        List<Point> pointsForOptimalRoute = Arrays.asList(
+                new Point(45.2630233, 19.7916443),
+                new Point(45.2530233, 19.7716443)
+        );
+
+        pathInfoDto.setAtomicPoints(pointsForOptimalRoute);
 
         DriverFoundDto expectedResult = new DriverFoundDto();
         expectedResult.setFound(true);
-        expectedResult.setDriverEmail("sovilj@gmail.com");
+        expectedResult.setDriverEmail(driver.getEmail());
 
-        Mockito.when(driverRepository.findByDrivingStatusEquals(any())).thenReturn(availableDrivers);
+        Mockito.when(driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE)).thenReturn(availableDrivers);
+        Mockito.when(mapService.getOptimalRoute(anyList())).thenReturn(pathInfoDto);
 
         DriverFoundDto actualResult = driverService.findDriverForRequest(request);
+        Assertions.assertEquals(expectedResult.getDriverEmail(), actualResult.getDriverEmail());
+        Assertions.assertEquals(expectedResult.isFound(), actualResult.isFound());
     }
 
     @Test
-    public void findDriver() throws IOException {
+    void findDriverForRequestTestSuccessFoundBusy() throws IOException {
+        //input
         DriveRequest request = new DriveRequest();
-        Client client = new Client();
 
-        client.setEmail("sovilj@gmail.com");
+        Client client = new Client();
         request.setInitiator(client);
+
+        request.setPeople(new ArrayList<Client>());
+        request.setPrice(5);
+        request.setPricePerPassenger(5);
+        request.setVehicleType("Standard");
+        request.setIsReserved(false);
+        request.setTimeOfReservation(LocalDateTime.now());
+        request.setTimeOfRequestForReservation(LocalDateTime.now());
+
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto(1L,"Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto(2L,"Futoska", "45.11", "19.00")
+        );
+        request.setLocations(locations);
+
+        request.setDriversThatRejected(new ArrayList<Driver>());
 
         List<Driver> availableDrivers = new ArrayList<Driver>();
         Driver driver = new Driver();
         driver.setEmail("dejanmatic@gmail.com");
-        driver.setDrivingStatus(DrivingStatus.ONLINE);
+        driver.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
+        driver.setBlocked(false);
+        driver.setCurrentLocation(new Point(45.2530233, 19.7916443));
+        driver.setDailyActiveInterval(350.0);
+        List<Ride> driversRides = new ArrayList<>();
+        Ride ride = new Ride();
+        ride.setReserved(false);
+        ride.setTimeOfReservation(LocalDateTime.now());
+        ride.setLocations(locations);
+        driversRides.add(ride);
+        driver.setRides(driversRides);
         availableDrivers.add(driver);
+        List<Point> points = new ArrayList<>();
 
-        Mockito.when(driverRepository.findByDrivingStatusEquals(any())).thenReturn(availableDrivers);
+        PathInfoDto pathInfoDto = new PathInfoDto();
+        pathInfoDto.setDistance(9.5);
+
+        List<Point> pointsForOptimalRoute = Arrays.asList(
+                new Point(45.2630233, 19.7916443),
+                new Point(45.2530233, 19.7716443)
+        );
+
+        pathInfoDto.setAtomicPoints(pointsForOptimalRoute);
+
+        DriverFoundDto expectedResult = new DriverFoundDto();
+        expectedResult.setFound(true);
+        expectedResult.setDriverEmail(driver.getEmail());
+
+        Mockito.when(driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY)).thenReturn(availableDrivers);
+        Mockito.when(mapService.getOptimalRoute(anyList())).thenReturn(pathInfoDto);
 
         DriverFoundDto actualResult = driverService.findDriverForRequest(request);
+        Assertions.assertEquals(expectedResult.getDriverEmail(), actualResult.getDriverEmail());
+        Assertions.assertEquals(expectedResult.isFound(), actualResult.isFound());
+    }
+
+    @Test
+    void findDriverForRequestTestFailureFoundBusy() throws IOException {
+        //input
+        DriveRequest request = new DriveRequest();
+
+        Client client = new Client();
+        request.setInitiator(client);
+
+        request.setPeople(new ArrayList<Client>());
+        request.setPrice(5);
+        request.setPricePerPassenger(5);
+        request.setVehicleType("Standard");
+        request.setIsReserved(false);
+        request.setTimeOfReservation(LocalDateTime.now());
+        request.setTimeOfRequestForReservation(LocalDateTime.now());
+
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto(1L,"Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto(2L,"Futoska", "45.11", "19.00")
+        );
+        request.setLocations(locations);
+
+        request.setDriversThatRejected(new ArrayList<Driver>());
+
+        List<Driver> availableDrivers = new ArrayList<Driver>();
+        Driver driver = new Driver();
+        driver.setEmail("dejanmatic@gmail.com");
+        driver.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
+        driver.setBlocked(false);
+        driver.setCurrentLocation(new Point(45.2530233, 19.7916443));
+        driver.setDailyActiveInterval(350.0);
+        List<Ride> driversRides = new ArrayList<>();
+        Ride ride = new Ride();
+        ride.setReserved(true);
+        ride.setTimeOfReservation(LocalDateTime.now().plusHours(3));
+        ride.setLocations(locations);
+        driversRides.add(ride);
+        driver.setRides(driversRides);
+        availableDrivers.add(driver);
+        List<Point> points = new ArrayList<>();
+
+        PathInfoDto pathInfoDto = new PathInfoDto();
+        pathInfoDto.setDistance(9.5);
+
+        List<Point> pointsForOptimalRoute = Arrays.asList(
+                new Point(45.2630233, 19.7916443),
+                new Point(45.2530233, 19.7716443)
+        );
+
+        pathInfoDto.setAtomicPoints(pointsForOptimalRoute);
+
+        Mockito.when(driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY)).thenReturn(availableDrivers);
+        Mockito.when(mapService.getOptimalRoute(anyList())).thenReturn(pathInfoDto);
+
+        Assertions.assertThrows(NoAvailableDriversException.class,
+                () -> driverService.findDriverForRequest(request));
+    }
+
+    @Test
+    void findDriverForRequestTestAllDriversOffline() throws IOException {
+        //input
+        DriveRequest request = new DriveRequest();
+
+        Client client = new Client();
+        request.setInitiator(client);
+
+        request.setPeople(new ArrayList<Client>());
+        request.setPrice(5);
+        request.setPricePerPassenger(5);
+        request.setVehicleType("Standard");
+        request.setIsReserved(false);
+        request.setTimeOfReservation(LocalDateTime.now());
+        request.setTimeOfRequestForReservation(LocalDateTime.now());
+
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto(1L,"Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto(2L,"Futoska", "45.11", "19.00")
+        );
+        request.setLocations(locations);
+
+        request.setDriversThatRejected(new ArrayList<Driver>());
+
+        List<Driver> availableDrivers = new ArrayList<Driver>();
+        Driver driver = new Driver();
+        driver.setEmail("dejanmatic@gmail.com");
+        driver.setDrivingStatus(DrivingStatus.OFFLINE);
+        driver.setBlocked(false);
+        driver.setCurrentLocation(new Point(45.2530233, 19.7916443));
+        driver.setDailyActiveInterval(350.0);
+        availableDrivers.add(driver);
+        List<Point> points = new ArrayList<>();
+
+        PathInfoDto pathInfoDto = new PathInfoDto();
+        pathInfoDto.setDistance(9.5);
+
+        List<Point> pointsForOptimalRoute = Arrays.asList(
+                new Point(45.2630233, 19.7916443),
+                new Point(45.2530233, 19.7716443)
+        );
+
+        pathInfoDto.setAtomicPoints(pointsForOptimalRoute);
+
+        Mockito.when(driverRepository.findByDrivingStatusEquals(DrivingStatus.OFFLINE)).thenReturn(availableDrivers);
+        Mockito.when(mapService.getOptimalRoute(anyList())).thenReturn(pathInfoDto);
+
+        Assertions.assertThrows(NoAvailableDriversException.class,
+                () -> driverService.findDriverForRequest(request));
     }
 
     @Test
@@ -282,5 +458,41 @@ public class DriverServiceTests {
 
         verify(driveRequestRepository, times(1)).save(dr);
         verify(simpMessagingTemplate, times(2)).convertAndSendToUser(anyString(), anyString(), any(ResponseToIniciatorDto.class));
+    }
+
+    @Test
+    void updateDriverLocationTestSuccess()
+    {
+        long id = 1L;
+        double latitude = 45.31;
+        double longitude = 19.23;
+
+        Driver driver = new Driver();
+
+        Mockito.when(driverRepository.findById(anyLong())).thenReturn(Optional.of(driver));
+
+        Point newPoint = new Point();
+        newPoint.setLat(latitude);
+        newPoint.setLng(longitude);
+
+        driver.setCurrentLocation(newPoint);
+
+        Driver actualResult = driverService.updateDriverLocation(id, latitude, longitude);
+        Assertions.assertEquals(driver, actualResult);
+
+        verify(pointRepository, times(1)).save(newPoint);
+        verify(driverRepository, times(1)).save(driver);
+    }
+
+    @Test
+    void updateDriverLocationTestDriverNotFound()
+    {
+        long id = 1L;
+        double latitude = 45.31;
+        double longitude = 19.23;
+
+        Mockito.when(driverRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Assertions.assertThrows(EmptyStackException.class,
+                () -> driverService.updateDriverLocation(id, latitude, longitude));
     }
 }

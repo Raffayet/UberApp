@@ -3,6 +3,7 @@ package com.example.uberbackend.controller;
 import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
+import com.example.uberbackend.dto.InvitationStatusDto;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
@@ -83,13 +84,13 @@ public class ClientController {
     }
 
     @PutMapping("change-drive-invitation-status")
-    public ResponseEntity<?> changeDriveInvitationStatus(@RequestBody HashMap<String, String> DTO){
+    public ResponseEntity<?> changeDriveInvitationStatus(@RequestBody InvitationStatusDto invitationStatusDto){
         try{
-            this.clientService.changeDriveInvitationStatus(DTO);
+            this.clientService.changeDriveInvitationStatus(invitationStatusDto);
         }catch(Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(DTO);
+        return ResponseEntity.ok(invitationStatusDto);
     }
 
     @PostMapping("create-drive-request")
