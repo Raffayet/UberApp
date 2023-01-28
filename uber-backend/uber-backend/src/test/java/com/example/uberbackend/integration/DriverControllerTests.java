@@ -1,5 +1,6 @@
 package com.example.uberbackend.integration;
 
+import com.example.uberbackend.dto.DriveAssignatureDto;
 import com.example.uberbackend.dto.DriverRejectionDto;
 import com.example.uberbackend.model.DriveRequest;
 import com.example.uberbackend.util.TestUtil;
@@ -25,8 +26,7 @@ import java.util.ArrayList;
 import static org.hamcrest.Matchers.contains;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -157,5 +157,92 @@ public class DriverControllerTests {
         mockMvc.perform(post(URL_PREFIX + "/reject-drive").contentType(contentType).content(json))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void assignDriveToDriverTestSuccess() throws Exception {
+        //input
+        DriveAssignatureDto driveAssignatureDto = new DriveAssignatureDto();
+        driveAssignatureDto.setDriverEmail("dejanmatic@gmail.com");
+        driveAssignatureDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveAssignatureDto.setRequestId(1L);
+
+        String json = TestUtil.json(driveAssignatureDto);
+        mockMvc.perform(post(URL_PREFIX + "/assign-drive-to-driver").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success!"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void assignDriveToDriverTestDriverNotFound() throws Exception {
+        //input
+        DriveAssignatureDto driveAssignatureDto = new DriveAssignatureDto();
+        driveAssignatureDto.setDriverEmail("dejanmatic333@gmail.com");
+        driveAssignatureDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveAssignatureDto.setRequestId(1L);
+
+        String json = TestUtil.json(driveAssignatureDto);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/assign-drive-to-driver").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("Driver has not been found!", result.getResolvedException().getMessage());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void assignDriveToDriverTestDriveRequestNotFound() throws Exception {
+        //input
+        DriveAssignatureDto driveAssignatureDto = new DriveAssignatureDto();
+        driveAssignatureDto.setDriverEmail("dejanmatic@gmail.com");
+        driveAssignatureDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveAssignatureDto.setRequestId(150L);
+
+        String json = TestUtil.json(driveAssignatureDto);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/assign-drive-to-driver").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("Drive request has not been found!", result.getResolvedException().getMessage());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void assignDriveToDriverTestFailureNoId() throws Exception {
+        //input
+        DriveAssignatureDto driveAssignatureDto = new DriveAssignatureDto();
+        driveAssignatureDto.setDriverEmail("dejanmatic@gmail.com");
+        driveAssignatureDto.setInitiatorEmail("sasalukic@gmail.com");
+
+        String json = TestUtil.json(driveAssignatureDto);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/assign-drive-to-driver").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).andReturn();
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void assignDriveToDriverTestNoInitiatorEmail() throws Exception {
+        //input
+        DriveAssignatureDto driveAssignatureDto = new DriveAssignatureDto();
+        driveAssignatureDto.setDriverEmail("dejanmatic@gmail.com");
+        driveAssignatureDto.setRequestId(150L);
+
+        String json = TestUtil.json(driveAssignatureDto);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/assign-drive-to-driver").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void assignDriveToDriverTestNoDriverEmail() throws Exception {
+        //input
+        DriveAssignatureDto driveAssignatureDto = new DriveAssignatureDto();
+        driveAssignatureDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveAssignatureDto.setRequestId(150L);
+
+        String json = TestUtil.json(driveAssignatureDto);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/assign-drive-to-driver").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).andReturn();
     }
 }
