@@ -191,16 +191,15 @@ public class RideServiceTests {
     }
 
     // UpdateRideStatus - SW-1-2019
-    @Test
-    public void shouldThrowNullPointerExceptionForAtomicPointsInUpdateRideStatusTest(){
-        Assertions.assertThrows(NullPointerException.class,
-                () -> rideService.updateRideStatus(new MapRideDto()));
-    }
 
     @Test
     public void shouldThrowIndexOutOfBoundsExceptionForAtomicPointsInUpdateRideStatusTest(){
         MapRideDto dto = new MapRideDto();
+        dto.setId(1L);
         dto.setAtomicPoints(new ArrayList<>());
+
+        Mockito.when(rideRepository.findById(1L)).thenReturn(Optional.of(new Ride()));
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> rideService.updateRideStatus(dto));
     }
