@@ -2,6 +2,7 @@ package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriverNotFoundException;
 import com.example.uberbackend.exception.NoVehicleTypesException;
+import com.example.uberbackend.exception.RideCouldNotBeEndedException;
 import com.example.uberbackend.exception.RideNotFoundException;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.Point;
@@ -89,6 +90,10 @@ public class RideService {
 
     public Ride endRide(long id) {
         Ride ride = this.rideRepository.findById(id).orElseThrow(RideNotFoundException::new);
+
+        if(!ride.getRideStatus().equals(RideStatus.STARTED))
+            throw new RideCouldNotBeEndedException();
+
         ride.setRideStatus(RideStatus.ENDED);
         ride.setEndTime(LocalDateTime.now());
         this.rideRepository.save(ride);
@@ -137,8 +142,8 @@ public class RideService {
     }
 
     public Ride updateRideStatus(MapRideDto mapRideDto) {
-        LocationDto startPoint = mapRideDto.getAtomicPoints().get(0);
         Ride ride = rideRepository.findById(mapRideDto.getId()).orElseThrow(RideNotFoundException::new);
+        LocationDto startPoint = mapRideDto.getAtomicPoints().get(0);
 
         if(mapRideDto.getDriver().getLatitude() == startPoint.getLatitude() && mapRideDto.getDriver().getLongitude() == startPoint.getLongitude()){
             mapRideDto.setStatus(RideStatus.STARTED);

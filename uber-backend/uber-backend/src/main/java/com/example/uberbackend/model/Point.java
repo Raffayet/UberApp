@@ -3,7 +3,8 @@ package com.example.uberbackend.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -17,7 +18,11 @@ public class Point {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Min(value = -90, message = "Invalid value for latitude!")
+    @Max(value = 90, message = "Invalid value for latitude!")
     private Double lat;
+    @Min(value = -180, message = "Invalid value for longitude!")
+    @Max(value = 180, message = "Invalid value for longitude!")
     private Double lng;
 
     @ManyToOne

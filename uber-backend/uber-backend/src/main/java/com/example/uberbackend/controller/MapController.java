@@ -7,6 +7,7 @@ import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.MapService;
 import com.example.uberbackend.service.RideService;
 import com.example.uberbackend.service.UserService;
+import com.example.uberbackend.validator.ValidList;
 import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -19,8 +20,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -36,33 +40,30 @@ public class MapController {
     private final RideService rideService;
 
     @PostMapping(value = "/determine-optimal-route")
-    public ResponseEntity<?> determineOptimalRoute(@RequestBody List<Point> points){
-        try{
-            PathInfoDto response = mapService.getOptimalRoute(points);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception ex){
-            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> determineOptimalRoute(@RequestBody @Valid ValidList<Point> points, BindingResult result) throws IOException {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        PathInfoDto response = mapService.getOptimalRoute(points);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/determine-alternative-route")
-    public ResponseEntity<?> determineAlternativeRoute(@RequestBody List<Point> points){
-        try{
-            PathInfoDto response = mapService.getAlternativeRoute(points);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception ex){
-            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> determineAlternativeRoute(@RequestBody @Valid ValidList<Point> points, BindingResult result) throws IOException {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        PathInfoDto response = mapService.getAlternativeRoute(points);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/determine-custom-route")
-    public ResponseEntity<?> determineCustomRoute(@RequestBody List<Point> points){
-        try{
-            PathInfoDto response = mapService.getCustomRoute(points);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception ex){
-            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> determineCustomRoute(@RequestBody @Valid ValidList<Point> points, BindingResult result) throws IOException {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        PathInfoDto response = mapService.getCustomRoute(points);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping(
@@ -70,7 +71,11 @@ public class MapController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<?> updateDriverOnMap(@RequestBody MapRideDto mapRideDto){
+    public ResponseEntity<?> updateDriverOnMap(@RequestBody @Valid MapRideDto mapRideDto, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
+        }
+
         Driver driver = driverService.updateDriverLocation(mapRideDto.getDriver().getId(), mapRideDto.getDriver().getLatitude(), mapRideDto.getDriver().getLongitude());
         rideService.updateRideStatus(mapRideDto);
         rideService.checkIfRideIsCanceled(mapRideDto);

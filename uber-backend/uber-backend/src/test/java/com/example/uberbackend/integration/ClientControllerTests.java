@@ -85,7 +85,7 @@ public class ClientControllerTests {
         uds.setEmail("dejanmatic@gmail.com");
         uds.setStatus(1);
         String logoutJson = TestUtil.json(uds);
-        mockMvc.perform(post(USER_URL_PREFIX+"/change-user-driving-status").contentType(contentType).content(logoutJson));
+        mockMvc.perform(post(USER_URL_PREFIX + "/change-user-driving-status").contentType(contentType).content(logoutJson));
 
         String json = TestUtil.json(driveRequestDto);
         mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
