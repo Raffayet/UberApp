@@ -1,15 +1,11 @@
 package com.example.uberbackend.integration;
 
-import com.example.uberbackend.dto.DriveRequestDto;
-import com.example.uberbackend.dto.LoginDto;
-import com.example.uberbackend.dto.MapSearchResultDto;
-import com.example.uberbackend.dto.UserDrivingStatus;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.util.TestUtil;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -17,19 +13,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.transaction.Transactional;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -38,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
+@Transactional
 public class ClientControllerTests {
 
     private static final String URL_PREFIX = "/client";
@@ -188,4 +179,216 @@ public class ClientControllerTests {
 
     }
 
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void getTokensByEmailTestSuccess() throws Exception {
+        //input
+        String email = "sasalukic@gmail.com";
+        double expectedAmount = 10.0;
+
+        String json = TestUtil.json(email);
+        //Act
+        mockMvc.perform(get(URL_PREFIX + "/get-tokens?email=" + email))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNumber());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void getTokensByEmailTestEmptyEmail() throws Exception {
+        //input
+        String email = "";
+        double expectedAmount = 10.0;
+
+        String json = TestUtil.json(email);
+        //Act
+        mockMvc.perform(get(URL_PREFIX + "/get-tokens?email=" + email))
+                .andExpect(status().isBadRequest()).andExpect(content().string("Empty string!"));;
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void invitedHasTokensTestSuccessOnlyInitiator() throws Exception {
+        //input
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{});
+        checkForEnoughTokens.setPricePerPassenger(5);
+
+        //Act
+
+        String json = TestUtil.json(checkForEnoughTokens);
+        mockMvc.perform(post(URL_PREFIX + "/invited-has-money").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void invitedHasTokensTestSuccessInvitedPeopleExist() throws Exception {
+        //input
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{
+                "milicamatic@gmail.com",
+                "strahinjapavlovic@gmail.com"});
+        checkForEnoughTokens.setPricePerPassenger(5);
+
+        //Act
+
+        String json = TestUtil.json(checkForEnoughTokens);
+        mockMvc.perform(post(URL_PREFIX + "/invited-has-money").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void invitedHasTokensTestFailureNegativePrice() throws Exception {
+        //input
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{});
+        checkForEnoughTokens.setPricePerPassenger(-5);
+
+        //Act
+
+        String json = TestUtil.json(checkForEnoughTokens);
+        mockMvc.perform(post(URL_PREFIX + "/invited-has-money").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.[*].defaultMessage").value(contains("Price can't be negative")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void invitedHasTokensTestFailureNotEnoughTokens() throws Exception {
+        //input
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{
+                "milicamatic@gmail.com"
+        });
+        checkForEnoughTokens.setPricePerPassenger(55);
+
+        //Act
+
+        String json = TestUtil.json(checkForEnoughTokens);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/invited-has-money").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("You don't have enough tokens!", result.getResolvedException().getMessage());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void invitedHasTokensTestFailureNotExistingEmail() throws Exception {
+        //input
+        CheckForEnoughTokens checkForEnoughTokens = new CheckForEnoughTokens();
+        checkForEnoughTokens.setInitiatorEmail("sasalukic@gmail.com");
+        checkForEnoughTokens.setPeopleEmails(new String[]{
+                "milicamatic333@gmail.com"
+        });
+        checkForEnoughTokens.setPricePerPassenger(4);
+
+        //Act
+
+        String json = TestUtil.json(checkForEnoughTokens);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/invited-has-money").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("User has not been found!", result.getResolvedException().getMessage());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void changeDriveInvitationStatusTestSuccessAccepted() throws Exception {
+        //input
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setInvitationId(1L);
+        invitationStatusDto.setAccepted(true);
+
+        //act
+        String json = TestUtil.json(invitationStatusDto);
+        mockMvc.perform(put(URL_PREFIX + "/change-drive-invitation-status").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accepted").value(invitationStatusDto.isAccepted()));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void changeDriveInvitationStatusTestSuccessRejected() throws Exception {
+        //input
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setInvitationId(1L);
+        invitationStatusDto.setAccepted(false);
+
+        //act
+        String json = TestUtil.json(invitationStatusDto);
+        mockMvc.perform(put(URL_PREFIX + "/change-drive-invitation-status").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accepted").value(invitationStatusDto.isAccepted()));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void changeDriveInvitationStatusTestFailureNoId() throws Exception {
+        //input
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setAccepted(false);
+
+        //act
+        String json = TestUtil.json(invitationStatusDto);
+        mockMvc.perform(put(URL_PREFIX + "/change-drive-invitation-status").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.[0].defaultMessage").value("Invitation id does not exist!"));;
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void changeDriveInvitationStatusTestRideInviteNotFound() throws Exception
+    {
+        //input
+        InvitationStatusDto invitationStatusDto = new InvitationStatusDto();
+        invitationStatusDto.setInvitationId(150L);
+        invitationStatusDto.setAccepted(false);
+
+        //act
+        String json = TestUtil.json(invitationStatusDto);
+        MvcResult result = mockMvc.perform(put(URL_PREFIX + "/change-drive-invitation-status").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("Ride invite has not been found!", result.getResolvedException().getMessage());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void refundTokensTestSuccessNoInvitedPeople() throws Exception {
+        //input
+        Long requestId = 2L;
+        String json = TestUtil.json(requestId);
+        mockMvc.perform(post(URL_PREFIX + "/refund-tokens").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success!"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void refundTokensTestSuccessInvitedPeople() throws Exception {
+        //input
+        Long requestId = 1L;
+        String json = TestUtil.json(requestId);
+        mockMvc.perform(post(URL_PREFIX + "/refund-tokens").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success!"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void refundTokensTestDriveRequestNotFound() throws Exception {
+        //input
+        Long requestId = 155L;
+        String json = TestUtil.json(requestId);
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/refund-tokens").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("Drive request has not been found!", result.getResolvedException().getMessage());
+    }
 }

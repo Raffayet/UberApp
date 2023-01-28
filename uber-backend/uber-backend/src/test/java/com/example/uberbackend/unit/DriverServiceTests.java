@@ -492,7 +492,7 @@ public class DriverServiceTests {
         double longitude = 19.23;
 
         Mockito.when(driverRepository.findById(anyLong())).thenReturn(Optional.empty());
-        Assertions.assertThrows(EmptyStackException.class,
+        Assertions.assertThrows(DriverNotFoundException.class,
                 () -> driverService.updateDriverLocation(id, latitude, longitude));
     }
 }

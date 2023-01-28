@@ -38,7 +38,7 @@ public class ClientService {
 
     public double getTokensByEmail(String email){
         if(email.equals(""))
-            throw new EmptyStringException();
+            throw new EmptyStringException("Empty string!");
         return clientRepository.getTokensByEmail(email);
     }
 
@@ -141,6 +141,7 @@ public class ClientService {
 
     private void invitedNotHaveTokens(CheckForEnoughTokens checkForEnoughTokens, Optional<Client> invitedClient) {
         invitedClient.ifPresent(client -> simpMessagingTemplate.convertAndSendToUser(checkForEnoughTokens.getInitiatorEmail(), "/invited-person-not-have-tokens", new ResponseToIniciatorDto("error", "Invited person " + client.getEmail() + " doesn't have enough tokens for ride")));
+        throw new NotEnoughTokensException("You don't have enough tokens!");
     }
 
     private boolean drivingCharge(DriveRequest request) {
