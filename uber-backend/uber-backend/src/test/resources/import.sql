@@ -111,10 +111,15 @@ insert into driver_ratings_from_clients(driver_id, ratings_from_clients_id) valu
 insert into driver_ratings_from_clients(driver_id, ratings_from_clients_id) values (6, 4);
 
 insert into drive_request(is_reserved, price, client_id, price_per_passenger) values(false, 90.00, 1, 90.00);
+insert into drive_request(is_reserved, price, client_id, price_per_passenger) values(false, 90.00, 1, 90.00);
 
 insert into drive_request_locations(drive_request_id, locations_id) values (1, 3);
 insert into drive_request_locations(drive_request_id, locations_id) values (1, 4);
 
+insert into drive_request_locations(drive_request_id, locations_id) values (2, 3);
+insert into drive_request_locations(drive_request_id, locations_id) values (2, 4);
+
 insert into drive_request_people(drive_request_id, people_id) values(1, 5);
 
 insert into drive_request_drivers_that_rejected(drive_request_id, drivers_that_rejected_id) values(1, 2);
+insert into drive_request_drivers_that_rejected(drive_request_id, drivers_that_rejected_id) values(2, 2);
