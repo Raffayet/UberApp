@@ -1,9 +1,6 @@
 package com.example.uberbackend.controller;
 
-import com.example.uberbackend.dto.AuthResponseDto;
-import com.example.uberbackend.dto.LoginDto;
-import com.example.uberbackend.dto.MapDriverDto;
-import com.example.uberbackend.dto.RegisterDto;
+import com.example.uberbackend.dto.*;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.User;
 import com.example.uberbackend.model.enums.DrivingStatus;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -57,8 +55,13 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+    public ResponseEntity<?> login(@RequestBody @Valid LoginDto loginDto){
+        Authentication authentication = null;
+        try{
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+        }catch(Exception ex){
+            return new ResponseEntity<>(new ResponseMessageDto("Credentials are wrong!"), HttpStatus.BAD_REQUEST);
+        }
 
         User loggedUser = (User) authentication.getPrincipal();
         loggedUser.setDrivingStatus(DrivingStatus.ONLINE);
