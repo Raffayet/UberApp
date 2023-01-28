@@ -257,10 +257,8 @@ public class DriverService {
     }
 
     public Driver updateDriverLocation(long id, double latitude, double longitude) {
-        Optional<Driver> optDriver = this.driverRepository.findById(id);
-        if(optDriver.isEmpty())
-            throw new EmptyStackException();
-        Driver driver = optDriver.get();
+        Driver driver = this.driverRepository.findById(id).orElseThrow(DriverNotFoundException::new);
+
         Point newPoint = new Point();
         newPoint.setLat(latitude);
         newPoint.setLng(longitude);
