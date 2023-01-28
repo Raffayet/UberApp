@@ -414,9 +414,7 @@ public class ClientServiceTests {
         milica.setTokens(1);
         Mockito.when(clientRepository.findByEmail(checkForEnoughTokens.getPeopleEmails()[0])).thenReturn(Optional.of(milica));
 
-        String expectedValue = "false";
-        String actualValue = clientService.invitedHasTokens(checkForEnoughTokens);
-        Assertions.assertEquals(expectedValue, actualValue);
+        Assertions.assertThrows(NotEnoughTokensException.class, () -> clientService.invitedHasTokens(checkForEnoughTokens));
         verify(clientRepository, times(1)).findByEmail(any(String.class));
     }
 
@@ -490,6 +488,7 @@ public class ClientServiceTests {
 
         Client initiator = new Client();
         initiator.setTokens(15);
+        double expectedValue = initiator.getTokens();
 
         request.setInitiator(initiator);
         request.setPricePerPassenger(5);
@@ -497,6 +496,8 @@ public class ClientServiceTests {
         request.setPeople(new ArrayList<>());
 
         Mockito.when(driveRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+        clientService.refundTokens(requestId);
+        Assertions.assertNotEquals(expectedValue, initiator.getTokens());
     }
 
     @Test
@@ -508,6 +509,7 @@ public class ClientServiceTests {
 
         Client initiator = new Client();
         initiator.setTokens(15);
+        double expectedValueInitiator = initiator.getTokens();
 
         request.setInitiator(initiator);
         request.setPricePerPassenger(5);
@@ -516,6 +518,7 @@ public class ClientServiceTests {
         client1.setTokens(10);
         Client client2 = new Client();
         client1.setTokens(8);
+        double expectedValueInvited = client2.getTokens();
 
         List<Client> clients = new ArrayList<>();
         clients.add(client1);
@@ -523,6 +526,9 @@ public class ClientServiceTests {
         request.setPeople(clients);
 
         Mockito.when(driveRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+        clientService.refundTokens(requestId);
+        Assertions.assertNotEquals(expectedValueInitiator, initiator.getTokens());
+        Assertions.assertNotEquals(expectedValueInvited, client2.getTokens());
     }
 
     @Test
