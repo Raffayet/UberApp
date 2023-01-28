@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String profileImage;
     private DrivingStatus drivingStatus;
     private AccountStatus accountStatus;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Role role;
 
     @Enumerated(EnumType.STRING)
