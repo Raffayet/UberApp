@@ -30,7 +30,7 @@ public class PathInfoDto {
             if(!this.atomicPoints.get(i).equals(that.atomicPoints.get(i)))
                 return false;
         }
-        return this.distance == that.getDistance();
+        return true;
     }
 
     @Override
