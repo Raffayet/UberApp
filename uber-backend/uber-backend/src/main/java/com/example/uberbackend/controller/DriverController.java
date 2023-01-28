@@ -92,13 +92,12 @@ public class DriverController {
     }
 
     @PostMapping("reject-drive")
-    public ResponseEntity<?> rejectDrive(@RequestBody DriverRejectionDto driverRejectionDto){
-        try{
-            this.driverService.rejectDrive(driverRejectionDto);
-            return ResponseEntity.ok("Success!");
-        }catch (Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> rejectDrive(@RequestBody @Valid DriverRejectionDto driverRejectionDto, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        this.driverService.rejectDrive(driverRejectionDto);
+        return ResponseEntity.ok("Success!");
     }
 
     @PostMapping("reject-drive-after-accepting")

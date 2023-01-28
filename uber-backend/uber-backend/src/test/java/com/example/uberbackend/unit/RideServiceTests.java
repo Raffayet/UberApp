@@ -284,8 +284,6 @@ public class RideServiceTests {
 
         Mockito.when(vehicleTypeRepository.findByType(vehicleTypeString)).thenReturn(Optional.of(vehicleType));
         Assertions.assertEquals( 1.38, rideService.calculatePrice(vehicleTypeString, totalDistance));
-
-
     }
 
     @Test
@@ -314,6 +312,10 @@ public class RideServiceTests {
                 new LocationDto(45.18, 19.33)
         );
         mapRideDto.setAtomicPoints(atomicPoints);
+        mapRideDto.setDriver(new MapDriverDto(1, 45.23, 19.45));
+        int expectedDuration = 3;
+        rideService.aproxDuration(mapRideDto);
+        Assertions.assertNotEquals(expectedDuration, mapRideDto.getDuration());
     }
 
     @Test
@@ -333,6 +335,10 @@ public class RideServiceTests {
                 new LocationDto(45.18, 19.33)
         );
         mapRideDto.setAtomicPoints(atomicPoints);
+        mapRideDto.setDriver(new MapDriverDto(1, 45.23, 19.45));
+        int expectedDuration = 3;
+        rideService.aproxDuration(mapRideDto);
+        Assertions.assertNotEquals(expectedDuration, mapRideDto.getDuration());
     }
 
     @Test
@@ -346,6 +352,10 @@ public class RideServiceTests {
 
         List<LocationDto> atomicPoints = new ArrayList<>();
         mapRideDto.setAtomicPoints(atomicPoints);
+        int expectedDuration = 3;
+        rideService.aproxDuration(mapRideDto);
+        Assertions.assertNotEquals(expectedDuration, mapRideDto.getDuration());
+        Assertions.assertEquals(mapRideDto.getDuration(), 0);
     }
 
     @Test

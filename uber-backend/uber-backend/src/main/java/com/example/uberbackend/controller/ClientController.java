@@ -83,12 +83,12 @@ public class ClientController {
     }
 
     @PutMapping("change-drive-invitation-status")
-    public ResponseEntity<?> changeDriveInvitationStatus(@RequestBody InvitationStatusDto invitationStatusDto){
-        try{
-            this.clientService.changeDriveInvitationStatus(invitationStatusDto);
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> changeDriveInvitationStatus(@RequestBody @Valid InvitationStatusDto invitationStatusDto, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        this.clientService.changeDriveInvitationStatus(invitationStatusDto);
+
         return ResponseEntity.ok(invitationStatusDto);
     }
 
@@ -118,24 +118,20 @@ public class ClientController {
     }
 
     @PostMapping("invited-has-money")
-    public ResponseEntity<?> invitedHasTokens(@RequestBody CheckForEnoughTokens checkForEnoughTokens){
-        try{
-            String hasEnoughTokens = this.clientService.invitedHasTokens(checkForEnoughTokens);
-            return ResponseEntity.ok(hasEnoughTokens);
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> invitedHasTokens(@RequestBody @Valid CheckForEnoughTokens checkForEnoughTokens, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+
+        String hasEnoughTokens = this.clientService.invitedHasTokens(checkForEnoughTokens);
+        return ResponseEntity.ok(hasEnoughTokens);
     }
 
     @PostMapping("refund-tokens")
     public ResponseEntity<?> refundTokens(@RequestBody Long requestId)
     {
-        try{
-            this.clientService.refundTokens(requestId);
-            return ResponseEntity.ok("Success!");
-        }catch (Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        this.clientService.refundTokens(requestId);
+        return ResponseEntity.ok("Success!");
     }
 
     @PostMapping("refund-tokens-after-accepting")
