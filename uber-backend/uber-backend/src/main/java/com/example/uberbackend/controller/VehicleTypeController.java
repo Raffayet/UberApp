@@ -19,11 +19,7 @@ public class VehicleTypeController {
 
     @GetMapping("/")
     public ResponseEntity<?> getVehicleTypes(){
-        try{
-            ArrayList<String> vehicleTypes = (ArrayList<String>) vehicleTypeService.getVehicleTypes();
-            return ResponseEntity.ok(vehicleTypes);
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        ArrayList<String> vehicleTypes = (ArrayList<String>) vehicleTypeService.getVehicleTypes();
+        return ResponseEntity.ok(vehicleTypes);
     }
 }

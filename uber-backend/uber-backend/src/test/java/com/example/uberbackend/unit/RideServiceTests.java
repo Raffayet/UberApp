@@ -4,16 +4,15 @@ import com.example.uberbackend.dto.LocationDto;
 import com.example.uberbackend.dto.MapDriverDto;
 import com.example.uberbackend.dto.MapRideDto;
 import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.NoVehicleTypesException;
 import com.example.uberbackend.exception.NotEnoughPointsForRouteException;
 import com.example.uberbackend.exception.RideNotFoundException;
-import com.example.uberbackend.model.DriveRequest;
-import com.example.uberbackend.model.Driver;
-import com.example.uberbackend.model.Point;
-import com.example.uberbackend.model.Ride;
+import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.repositories.VehicleTypeRepository;
 import com.example.uberbackend.service.RideService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +45,9 @@ public class RideServiceTests {
 
     @Mock
     SimpMessagingTemplate simpMessagingTemplate;
+
+    @Mock
+    VehicleTypeRepository vehicleTypeRepository;
 
 
     // EndRide - SW-1-2019
@@ -265,5 +268,83 @@ public class RideServiceTests {
         Ride actual = rideService.updateRideStatus(dto);
         Assertions.assertEquals(RideStatus.WAITING, actual.getRideStatus());
         verify(rideRepository, times(0)).save(any(Ride.class));
+    }
+
+
+
+    @Test
+    void calculatePriceSuccessTest(){
+        String vehicleTypeString = "Standard";
+        double totalDistance = 11;
+
+        VehicleType vehicleType = new VehicleType();
+        vehicleType.setId(1L);
+        vehicleType.setType("Standard");
+        vehicleType.setCoefficient(1D);
+
+        Mockito.when(vehicleTypeRepository.findByType(vehicleTypeString)).thenReturn(Optional.of(vehicleType));
+        Assertions.assertEquals( 1.38, rideService.calculatePrice(vehicleTypeString, totalDistance));
+
+
+    }
+
+    @Test
+    void calculatePriceNoVehicleTypeExTest(){
+        String vehicleTypeString = "Standard";
+        double totalDistance = 11;
+
+        Mockito.when(vehicleTypeRepository.findByType(vehicleTypeString)).thenReturn(Optional.empty());
+        Assertions.assertThrows(NoVehicleTypesException.class, ()->rideService.calculatePrice(vehicleTypeString, totalDistance));
+    }
+
+    @Test
+    void aproxDurationTestSuccessWaitingStatus()
+    {
+        MapRideDto mapRideDto = new MapRideDto();
+        mapRideDto.setStatus(RideStatus.WAITING);
+
+        List<LocationDto> atomicPointsBeforeRide = Arrays.asList(
+                new LocationDto(45.18, 19.23),
+                new LocationDto(45.18, 19.23)
+        );
+        mapRideDto.setAtomicPointsBeforeRide(atomicPointsBeforeRide);
+
+        List<LocationDto> atomicPoints = Arrays.asList(
+                new LocationDto(45.28, 19.23),
+                new LocationDto(45.18, 19.33)
+        );
+        mapRideDto.setAtomicPoints(atomicPoints);
+    }
+
+    @Test
+    void aproxDurationTestSuccessNotWaitingStatus()
+    {
+        MapRideDto mapRideDto = new MapRideDto();
+        mapRideDto.setStatus(RideStatus.STARTED);
+
+        List<LocationDto> atomicPointsBeforeRide = Arrays.asList(
+                new LocationDto(45.18, 19.23),
+                new LocationDto(45.18, 19.23)
+        );
+        mapRideDto.setAtomicPointsBeforeRide(atomicPointsBeforeRide);
+
+        List<LocationDto> atomicPoints = Arrays.asList(
+                new LocationDto(45.28, 19.23),
+                new LocationDto(45.18, 19.33)
+        );
+        mapRideDto.setAtomicPoints(atomicPoints);
+    }
+
+    @Test
+    void aproxDurationTestSuccessZeroDistance()
+    {
+        MapRideDto mapRideDto = new MapRideDto();
+        mapRideDto.setStatus(RideStatus.STARTED);
+
+        List<LocationDto> atomicPointsBeforeRide = new ArrayList<>();
+        mapRideDto.setAtomicPointsBeforeRide(atomicPointsBeforeRide);
+
+        List<LocationDto> atomicPoints = new ArrayList<>();
+        mapRideDto.setAtomicPoints(atomicPoints);
     }
 }

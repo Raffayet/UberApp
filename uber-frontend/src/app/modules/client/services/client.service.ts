@@ -9,6 +9,7 @@ import { User } from 'src/app/model/User';
 import { over, Client, Message as StompMessage} from 'stompjs';
 import { RideRequestStateService } from './ride-request-state.service';
 import { CheckForEnoughTokens } from 'src/app/model/CheckForEnoughTokens';
+import { InvitationStatus } from 'src/app/model/InvitationStatus';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,12 @@ export class ClientService {
   }
 
   changeDriveInvitationStatus(id: number, isAccepted: boolean): Observable<String>{
-    return this.http.put<String>(environment.apiURL + "/client/change-drive-invitation-status", {id: id, isAccepted: isAccepted});
+    let headers = new HttpHeaders();
+    let invitationStatus: InvitationStatus = {
+      invitationId: id,
+      accepted: isAccepted
+    }
+    return this.http.put<String>(environment.apiURL + "/client/change-drive-invitation-status", invitationStatus, { headers, responseType: 'text' as 'json' });
   }
 
   findAllRideInvitesForUser(userEmail: string) : Observable<RideInvite[]>{
