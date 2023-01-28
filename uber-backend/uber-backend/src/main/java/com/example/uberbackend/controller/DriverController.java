@@ -70,13 +70,12 @@ public class DriverController {
     }
 
     @PostMapping("assign-drive-to-driver")
-    public ResponseEntity<?> assignDriveToDriver(@RequestBody DriveAssignatureDto driveAssignatureDto){
-        try{
-            this.driverService.assignDriveToDriver(driveAssignatureDto);
-            return ResponseEntity.ok("Success!");
-        }catch (Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> assignDriveToDriver(@RequestBody @Valid DriveAssignatureDto driveAssignatureDto, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        this.driverService.assignDriveToDriver(driveAssignatureDto);
+        return ResponseEntity.ok("Success!");
     }
 
     @PostMapping
