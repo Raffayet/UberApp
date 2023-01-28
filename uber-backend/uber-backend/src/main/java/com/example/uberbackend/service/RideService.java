@@ -1,6 +1,7 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.NoVehicleTypesException;
 import com.example.uberbackend.exception.RideNotFoundException;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.model.Point;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,9 +107,13 @@ public class RideService {
         return ride;
     }
 
-    public Double calculatePrice(String vehicleType, double totalDistance) {
-        VehicleType vehicleType1 = vehicleTypeRepository.findByType(vehicleType).orElse(null);
-        double coefficient = vehicleType1.getCoefficient();
+    public double calculatePrice(String vehicleTypeString, double totalDistance) {
+        Optional<VehicleType> vehicleTypeOpt = vehicleTypeRepository.findByType(vehicleTypeString);
+        if(vehicleTypeOpt.isEmpty())
+            throw new NoVehicleTypesException();
+
+        VehicleType vehicleType = vehicleTypeOpt.get();
+        double coefficient = vehicleType.getCoefficient();
 
         double price = (coefficient*150 + (totalDistance / 1000) * 120) / 109.94;
         return Math.round(price * 100.0) / 100.0;

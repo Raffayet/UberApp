@@ -92,22 +92,6 @@ public class ClientServiceTests {
     void createDriveRequestUsernameNotFoundExTest(){
         DriveRequestDto driveRequestDto = new DriveRequestDto();
 
-        List<MapSearchResultDto> locations = Arrays.asList(
-                new MapSearchResultDto(1L,"Rumenacka", "45.11", "19.00"),
-                new MapSearchResultDto(2L,"Futoska", "45.11", "19.00")
-        );
-
-        driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
-        driveRequestDto.setPeople(new ArrayList<>());
-        driveRequestDto.setPrice(250);
-        driveRequestDto.setPricePerPassenger(250);
-        driveRequestDto.setVehicleType("Standard");
-        driveRequestDto.setRouteType("Custom");
-        driveRequestDto.setIsReserved(false);
-        driveRequestDto.setTimeOfReservation(LocalDateTime.now());
-        driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.now());
-        driveRequestDto.setLocations(locations);
-
         Mockito.when(clientRepository.findByEmail(driveRequestDto.getInitiatorEmail())).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class,()->clientService.createDriveRequest(driveRequestDto));

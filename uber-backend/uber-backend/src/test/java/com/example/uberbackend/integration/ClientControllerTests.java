@@ -5,18 +5,22 @@ import com.example.uberbackend.dto.LoginDto;
 import com.example.uberbackend.dto.MapSearchResultDto;
 import com.example.uberbackend.dto.UserDrivingStatus;
 import com.example.uberbackend.util.TestUtil;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.transaction.Transactional;
 import java.nio.charset.Charset;
@@ -180,7 +184,8 @@ public class ClientControllerTests {
 
         String json = TestUtil.json(driveRequestDto);
         mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.[*].defaultMessage").value(contains("Price can't be negative")));
+
     }
 
 }
