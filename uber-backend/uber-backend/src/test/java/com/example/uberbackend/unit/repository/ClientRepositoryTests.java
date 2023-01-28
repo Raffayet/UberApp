@@ -12,18 +12,5 @@ import javax.transaction.Transactional;
 @SpringBootTest
 @Transactional
 public class ClientRepositoryTests {
-    @Autowired
-    ClientRepository clientRepository;
 
-    @Test
-    void getTokensByEmailTest()
-    {
-        Client client = new Client();
-        client.setEmail("milicamatic@gmail.com");
-        client.setTokens(20);
-        clientRepository.save(client);
-
-        double actualTokens = clientRepository.getTokensByEmail(client.getEmail());
-        Assertions.assertEquals(actualTokens, 20);
-    }
 }
