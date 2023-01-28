@@ -317,7 +317,7 @@ public class ClientServiceTests {
     void refundTokensAfterAcceptingSuccessTest(){
         Client initiator = new Client();
         initiator.setEmail("sasalukic@gmail.com");
-        initiator.setTokens(15);
+        initiator.setTokens(20);
 
         Client passenger1 = new Client();
         passenger1.setEmail("milicamatic@gmail.com");
