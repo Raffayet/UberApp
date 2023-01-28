@@ -14,15 +14,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -78,4 +84,33 @@ public class RideControllerTests {
 
         Assertions.assertEquals("Ride needs to be started!", result.getResolvedException().getMessage());
     }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void calculatePriceSuccessTest() throws Exception {
+       mockMvc.perform(get(MAP_URL_PREFIX + "/calculate-price").contentType(contentType).param("vehicleType", "Standard").param("totalDistance", "10"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$").value(1.38));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void calculatePriceNoVehicleTypeExTest() throws Exception {
+       mockMvc.perform(get(MAP_URL_PREFIX + "/calculate-price").contentType(contentType).param("vehicleType", "unknown").param("totalDistance", "10"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void calculatePriceBadRequestExTest() throws Exception {
+       mockMvc.perform(get(MAP_URL_PREFIX + "/calculate-price").contentType(contentType).param("vehicleType", "unknown").param("totalDistance", "ten"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void getActiveRidesSuccessTest() throws Exception {
+       mockMvc.perform(get(MAP_URL_PREFIX + "/active-rides").contentType(contentType)).andDo(print())
+                .andExpect(status().isOk()).andExpect(jsonPath("$").value(hasSize(1)));
+    }
+
 }

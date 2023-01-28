@@ -1,12 +1,7 @@
 package com.example.uberbackend.unit;
 
 import com.example.uberbackend.exception.NoVehicleTypesException;
-import com.example.uberbackend.exception.PaymentFailedException;
-import com.example.uberbackend.model.DriveRequest;
-import com.example.uberbackend.model.VehicleType;
-import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.repositories.VehicleTypeRepository;
-import com.example.uberbackend.service.DriverService;
 import com.example.uberbackend.service.VehicleTypeService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,9 +14,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 public class VehicleTypeServiceTests {

@@ -18,10 +18,7 @@ public class VehicleTypeService {
     private final VehicleTypeRepository vehicleTypeRepository;
 
     public List<String> getVehicleTypes() {
-        Optional<List<String>> vehicleTypesopt = vehicleTypeRepository.getAllVehicleTypes();
-        if(vehicleTypesopt.isEmpty()){
-            throw new NoVehicleTypesException();
-        }
-        return vehicleTypesopt.get();
+        List<String> vehicleTypes = vehicleTypeRepository.getAllVehicleTypes().orElseThrow(NoVehicleTypesException::new);
+        return vehicleTypes;
     }
 }
