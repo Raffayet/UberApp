@@ -5,18 +5,22 @@ import com.example.uberbackend.dto.LoginDto;
 import com.example.uberbackend.dto.MapSearchResultDto;
 import com.example.uberbackend.dto.UserDrivingStatus;
 import com.example.uberbackend.util.TestUtil;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.transaction.Transactional;
 import java.nio.charset.Charset;
@@ -27,8 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -131,7 +134,6 @@ public class ClientControllerTests {
                 new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
                 new MapSearchResultDto("Futoska", "45.11", "19.00")
         );
-
         driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
         driveRequestDto.setPeople(new ArrayList<>());
         driveRequestDto.setPrice(250);
@@ -151,7 +153,39 @@ public class ClientControllerTests {
 
         String json = TestUtil.json(driveRequestDto);
         mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isPaymentRequired());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void createDriveRequestBadRequestTest() throws Exception {
+        DriveRequestDto driveRequestDto = new DriveRequestDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        driveRequestDto.setInitiatorEmail("sasalukic@gmail.com");
+        driveRequestDto.setPeople(new ArrayList<>());
+        driveRequestDto.setPrice(-50);
+        driveRequestDto.setPricePerPassenger(250);
+        driveRequestDto.setVehicleType("Standard");
+        driveRequestDto.setRouteType("Custom");
+        driveRequestDto.setIsReserved(false);
+        driveRequestDto.setTimeOfReservation(LocalDateTime.now());
+        driveRequestDto.setTimeOfRequestForReservation(LocalDateTime.now());
+        driveRequestDto.setLocations(locations);
+
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("dejanmatic@gmail.com");
+        loginDto.setPassword("sasa123");
+        String loginJson = TestUtil.json(loginDto);
+        mockMvc.perform(post(AUTH_URL_PREFIX+"/login").contentType(contentType).content(loginJson));
+
+        String json = TestUtil.json(driveRequestDto);
+        mockMvc.perform(post(URL_PREFIX + "/create-drive-request").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.[*].defaultMessage").value(contains("Price can't be negative")));
+
     }
 
 }

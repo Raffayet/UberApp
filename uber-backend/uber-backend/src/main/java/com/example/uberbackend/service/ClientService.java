@@ -83,8 +83,16 @@ public class ClientService {
             if(invited.isEmpty())
                 throw new UsernameNotFoundException("Initiator not found");
             clients.add(invited.get());
-
         }
+        if (dto.getPrice() < dto.getPricePerPassenger())
+            throw new PriceNotValidException("Price is lower than Price per passenger");
+
+        if(dto.getLocations().size() < 2)
+            throw new NotEnoughLocationsException("Not enought locations");
+
+        if(dto.getTimeOfReservation().isBefore(dto.getTimeOfRequestForReservation()))
+            throw new NotValidDateTime("Not valid date time");
+
         request.setPeople(clients);
 
         request.setPrice(dto.getPrice());
@@ -103,7 +111,6 @@ public class ClientService {
             if (!this.drivingCharge(request)){
                 throw new PaymentFailedException("Payment failed!");
             }
-
             this.sendRequestToDriver(request, driverFoundDto);
         }
     }
@@ -136,7 +143,7 @@ public class ClientService {
         invitedClient.ifPresent(client -> simpMessagingTemplate.convertAndSendToUser(checkForEnoughTokens.getInitiatorEmail(), "/invited-person-not-have-tokens", new ResponseToIniciatorDto("error", "Invited person " + client.getEmail() + " doesn't have enough tokens for ride")));
     }
 
-    public boolean drivingCharge(DriveRequest request) {
+    private boolean drivingCharge(DriveRequest request) {
         Client initiator = request.getInitiator();
 
         if(request.getPricePerPassenger() == 0)     //situacija kada inicijator casti sve za placanje voznje
@@ -195,6 +202,8 @@ public class ClientService {
                 }
             }
         }
+        else
+            throw new RideNotFoundException();
     }
 
     private void refundTokensToClient(Client client, double priceToRefund) {

@@ -4,16 +4,15 @@ import com.example.uberbackend.dto.LocationDto;
 import com.example.uberbackend.dto.MapDriverDto;
 import com.example.uberbackend.dto.MapRideDto;
 import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.NoVehicleTypesException;
 import com.example.uberbackend.exception.NotEnoughPointsForRouteException;
 import com.example.uberbackend.exception.RideNotFoundException;
-import com.example.uberbackend.model.DriveRequest;
-import com.example.uberbackend.model.Driver;
-import com.example.uberbackend.model.Point;
-import com.example.uberbackend.model.Ride;
+import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.DrivingStatus;
 import com.example.uberbackend.model.enums.RideStatus;
 import com.example.uberbackend.repositories.DriverRepository;
 import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.repositories.VehicleTypeRepository;
 import com.example.uberbackend.service.RideService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,6 +45,9 @@ public class RideServiceTests {
 
     @Mock
     SimpMessagingTemplate simpMessagingTemplate;
+
+    @Mock
+    VehicleTypeRepository vehicleTypeRepository;
 
 
     // EndRide - SW-1-2019
@@ -266,6 +268,33 @@ public class RideServiceTests {
         Ride actual = rideService.updateRideStatus(dto);
         Assertions.assertEquals(RideStatus.WAITING, actual.getRideStatus());
         verify(rideRepository, times(0)).save(any(Ride.class));
+    }
+
+
+
+    @Test
+    void calculatePriceSuccessTest(){
+        String vehicleTypeString = "Standard";
+        double totalDistance = 11;
+
+        VehicleType vehicleType = new VehicleType();
+        vehicleType.setId(1L);
+        vehicleType.setType("Standard");
+        vehicleType.setCoefficient(1D);
+
+        Mockito.when(vehicleTypeRepository.findByType(vehicleTypeString)).thenReturn(Optional.of(vehicleType));
+        Assertions.assertEquals( 1.38, rideService.calculatePrice(vehicleTypeString, totalDistance));
+
+
+    }
+
+    @Test
+    void calculatePriceNoVehicleTypeExTest(){
+        String vehicleTypeString = "Standard";
+        double totalDistance = 11;
+
+        Mockito.when(vehicleTypeRepository.findByType(vehicleTypeString)).thenReturn(Optional.empty());
+        Assertions.assertThrows(NoVehicleTypesException.class, ()->rideService.calculatePrice(vehicleTypeString, totalDistance));
     }
 
     @Test

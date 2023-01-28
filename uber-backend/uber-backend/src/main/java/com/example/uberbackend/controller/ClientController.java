@@ -10,13 +10,19 @@ import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.task.NotificationScheduler;
 import com.example.uberbackend.task.ReservationScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -24,6 +30,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/client")
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ClientController {
 
     private ClientService clientService;
@@ -72,11 +79,7 @@ public class ClientController {
 
     @PostMapping("create-drive-invitation")
     public ResponseEntity<?> createDriveInvitation(@RequestBody DriveInvitationDto driveInvitationDTO){
-        try{
-            this.clientService.createDriveInvitation(driveInvitationDTO);
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        this.clientService.createDriveInvitation(driveInvitationDTO);
         return ResponseEntity.ok(driveInvitationDTO);
     }
 
@@ -91,13 +94,12 @@ public class ClientController {
     }
 
     @PostMapping("create-drive-request")
-    public ResponseEntity<?> createDriveRequest(@RequestBody DriveRequestDto driveRequestDto){
-        try{
-            this.clientService.createDriveRequest(driveRequestDto);
-            return ResponseEntity.ok("Success!");
-        }catch(Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createDriveRequest(@RequestBody @Valid DriveRequestDto driveRequestDto, BindingResult result) throws IOException {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        this.clientService.createDriveRequest(driveRequestDto);
+        return ResponseEntity.ok("Success!");
     }
 
     @PostMapping("create-reservation-drive-request")
