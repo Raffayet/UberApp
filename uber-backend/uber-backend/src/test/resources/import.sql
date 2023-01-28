@@ -116,8 +116,8 @@ insert into drive_request(is_reserved, price, client_id, price_per_passenger) va
 insert into drive_request_locations(drive_request_id, locations_id) values (1, 3);
 insert into drive_request_locations(drive_request_id, locations_id) values (1, 4);
 
-insert into drive_request_locations(drive_request_id, locations_id) values (2, 3);
-insert into drive_request_locations(drive_request_id, locations_id) values (2, 4);
+insert into drive_request_locations(drive_request_id, locations_id) values (2, 1);
+insert into drive_request_locations(drive_request_id, locations_id) values (2, 2);
 
 insert into drive_request_people(drive_request_id, people_id) values(1, 5);
 
