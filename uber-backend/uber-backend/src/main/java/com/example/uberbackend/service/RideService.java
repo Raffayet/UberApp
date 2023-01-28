@@ -1,6 +1,7 @@
 package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriverNotFoundException;
+import com.example.uberbackend.exception.MapRouteException;
 import com.example.uberbackend.exception.NoVehicleTypesException;
 import com.example.uberbackend.exception.RideCouldNotBeEndedException;
 import com.example.uberbackend.exception.RideNotFoundException;
@@ -59,21 +60,21 @@ public class RideService {
                 try {
                     pathInfoDto = mapService.getCustomRoute(points);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new MapRouteException("Finding Custom Route Failed");
                 }
             }
             else if(ride.getRouteType().equals("Alternative")){
                 try {
                     pathInfoDto = mapService.getAlternativeRoute(points);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new MapRouteException("Finding Alternative Route Failed");
                 }
             }
             else{
                 try {
                     pathInfoDto = mapService.getOptimalRoute(points);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new MapRouteException("Finding Optimal Route Failed");
                 }
             }
             MapRideDto mapRideDto = new MapRideDto(ride);
@@ -113,11 +114,8 @@ public class RideService {
     }
 
     public double calculatePrice(String vehicleTypeString, double totalDistance) {
-        Optional<VehicleType> vehicleTypeOpt = vehicleTypeRepository.findByType(vehicleTypeString);
-        if(vehicleTypeOpt.isEmpty())
-            throw new NoVehicleTypesException();
+        VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleTypeString).orElseThrow(NoVehicleTypesException::new);
 
-        VehicleType vehicleType = vehicleTypeOpt.get();
         double coefficient = vehicleType.getCoefficient();
 
         double price = (coefficient*150 + (totalDistance / 1000) * 120) / 109.94;

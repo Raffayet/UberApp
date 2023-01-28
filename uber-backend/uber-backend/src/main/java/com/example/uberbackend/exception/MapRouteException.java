@@ -1,12 +1,17 @@
 package com.example.uberbackend.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-public class RideNotFoundException extends RuntimeException{
-    public RideNotFoundException() {
-        super("Ride has not been found!");
+public class MapRouteException extends RuntimeException {
+
+    public MapRouteException(){
+        super();
     }
+
+    public MapRouteException(String message){
+        super(message);
+    }
+
 }

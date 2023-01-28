@@ -77,13 +77,8 @@ public class RideController {
 
     @GetMapping("calculate-price")
     public ResponseEntity<?> calculatePrice(@RequestParam("vehicleType") String vehicleType, @RequestParam("totalDistance") double totalDistance) {
-        try {
-            double calculatedPrice = this.rideService.calculatePrice(vehicleType, totalDistance);
-            return ResponseEntity.ok(calculatedPrice);
-        }
-        catch (RuntimeException ex){
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        double calculatedPrice = this.rideService.calculatePrice(vehicleType, totalDistance);
+        return ResponseEntity.ok(calculatedPrice);
     }
 
     @GetMapping("get-all-drivers-rides")
