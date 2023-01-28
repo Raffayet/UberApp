@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import static io.opentelemetry.sdk.logs.data.Body.string;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -156,6 +159,97 @@ public class DriverControllerTests {
 
         mockMvc.perform(post(URL_PREFIX + "/reject-drive").contentType(contentType).content(json))
                 .andExpect(status().isOk());
+    }
 
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void rejectDriveAfterAcceptingSuccessTest() throws Exception {
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("dejanmatic@gmail.com");
+        dto.setInitiatorEmail("sasalukic@gmail.com");
+        dto.setReasonForRejection("Not applicable.");
+        dto.setRequestId(1L);
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/reject-drive-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success!"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void rejectDriveAfterAcceptingBadEmailExTest() throws Exception {
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("notemail");
+        dto.setInitiatorEmail("sasalukic@gmail.com");
+        dto.setReasonForRejection("Not applicable.");
+        dto.setRequestId(1L);
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/reject-drive-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.[*].defaultMessage").value(contains("Driver email is not of a correct type")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void rejectDriveAfterAcceptingNullValueExTest() throws Exception {
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("dejanmatic@gmail.com");
+        dto.setInitiatorEmail("sasalukic@gmail.com");
+        dto.setReasonForRejection("Not applicable.");
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/reject-drive-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.[*].defaultMessage").value(contains("Request Id can't be null!")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void rejectDriveAfterAcceptingNoDriverExTest() throws Exception {
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("notadriver@gmail.com");
+        dto.setInitiatorEmail("sasalukic@gmail.com");
+        dto.setReasonForRejection("Not applicable.");
+        dto.setRequestId(1L);
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/reject-drive-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void rejectDriveAfterAcceptingNoDriveFoundExTest() throws Exception {
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("dejanmatic@gmail.com");
+        dto.setInitiatorEmail("notaclient@gmail.com");
+        dto.setReasonForRejection("Not applicable.");
+        dto.setRequestId(-1L);
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/reject-drive-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DRIVER"})
+    public void rejectDriveAfterAcceptingNullExTest() throws Exception {
+        DriverRejectionDto dto = new DriverRejectionDto();
+        dto.setDriverEmail("dejanmatic@gmail.com");
+        dto.setInitiatorEmail("notaclient@gmail.com");
+        dto.setReasonForRejection("Not applicable.");
+        dto.setRequestId(-1L);
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/reject-drive-after-accepting").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable());
     }
 }

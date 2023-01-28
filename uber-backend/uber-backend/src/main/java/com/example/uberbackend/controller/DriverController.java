@@ -101,13 +101,12 @@ public class DriverController {
     }
 
     @PostMapping("reject-drive-after-accepting")
-    public ResponseEntity<?> rejectDriveAfterAccepting(@RequestBody DriverRejectionDto driverRejectionDto){
-        try{
-            this.driverService.rejectDriveAfterAccepting(driverRejectionDto);
-            return ResponseEntity.ok("Success!");
-        }catch (Exception ex){
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> rejectDriveAfterAccepting(@RequestBody @Valid DriverRejectionDto driverRejectionDto, BindingResult result){
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+        this.driverService.rejectDriveAfterAccepting(driverRejectionDto);
+        return ResponseEntity.ok("Success!");
     }
 
     @GetMapping("get-rides")

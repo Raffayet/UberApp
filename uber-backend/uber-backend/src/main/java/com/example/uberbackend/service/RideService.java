@@ -114,11 +114,8 @@ public class RideService {
     }
 
     public double calculatePrice(String vehicleTypeString, double totalDistance) {
-        Optional<VehicleType> vehicleTypeOpt = vehicleTypeRepository.findByType(vehicleTypeString);
-        if(vehicleTypeOpt.isEmpty())
-            throw new NoVehicleTypesException();
+        VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleTypeString).orElseThrow(NoVehicleTypesException::new);
 
-        VehicleType vehicleType = vehicleTypeOpt.get();
         double coefficient = vehicleType.getCoefficient();
 
         double price = (coefficient*150 + (totalDistance / 1000) * 120) / 109.94;
