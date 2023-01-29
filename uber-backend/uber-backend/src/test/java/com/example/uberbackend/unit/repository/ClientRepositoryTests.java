@@ -28,7 +28,7 @@ public class ClientRepositoryTests {
 
     // SW-1-2019
     @Test
-    public void getTokensByEmailSuccessTest(){
+    public void whenGetTokensByEmail_thenReturnNoOfTokens(){
         String email = "sasalukic@gmail.com";
         Double tokens = clientRepository.getTokensByEmail(email);
 
@@ -36,7 +36,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void getTokensByEmailNoEmailTest(){
+    public void givenNonexistentEmail_whenGetTokensByEmail_thenReturnNull(){
         String email = "client@gmail.com";
         Double tokens = clientRepository.getTokensByEmail(email);
 
@@ -44,7 +44,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void getTokensByEmailNoTokensAssignedTest(){
+    public void givenEmailWithNoAssignedTokens_whenGetTokensByEmail_thenReturnNull(){
         String email = "milanpetrovic@gmail.com";
         Double tokens = clientRepository.getTokensByEmail(email);
 
@@ -52,7 +52,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void findAllRideInvitesHasInvitesTest(){
+    public void givenExistentEmail_whenFindAllRideInvites_thenReturnNonEmptyList(){
         String email = "sasalukic@gmail.com";
         List<RideInvite> invites = clientRepository.findAllRideInvites(email);
 
@@ -63,7 +63,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void findAllRideInvitesNoInvitesTest(){
+    public void givenExistentEmail_whenFindAllRideInvites_thenReturnEmptyList(){
         String email = "aleksandarmitrovic@gmail.com";
         List<RideInvite> invites = clientRepository.findAllRideInvites(email);
 
@@ -71,7 +71,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void findAllRideInvitesNoEmailTest(){
+    public void givenNonexistentEmail_whenFindAllRideInvites_thenReturnEmptyList(){
         String email = "client@gmail.com";
         List<RideInvite> invites = clientRepository.findAllRideInvites(email);
 
@@ -79,7 +79,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void findByEmailSuccessTest(){
+    public void givenExistentClientEmail_whenFindByEmail_thenReturnSuccess(){
         String email = "sasalukic@gmail.com";
         Optional<Client> client = clientRepository.findByEmail(email);
 
@@ -89,7 +89,7 @@ public class ClientRepositoryTests {
     }
 
     @Test
-    public void findByEmailFailTest(){
+    public void givenNonexistentClientEmail_whenFindByEmail_thenDontFind(){
         String email = "client@gmail.com";
         Optional<Client> client = clientRepository.findByEmail(email);
 

@@ -27,7 +27,7 @@ public class DriverRepositoryTests {
 
     // SW-1-2019
     @Test
-    public void findAvailableDriversTest(){
+    public void whenFindAvailableDrivers_thenReturnListOfTwoElements(){
         List<Driver> drivers = driverRepository.findAvailableDrivers();
 
         Assertions.assertEquals(2, drivers.size());
@@ -39,21 +39,21 @@ public class DriverRepositoryTests {
     }
 
     @Test
-    public void findAllOnlineTest(){
+    public void whenFindAllOnline_thenReturnEmptyList(){
         List<Driver> drivers = driverRepository.findAllOnline();
 
         Assertions.assertEquals(0, drivers.size());
     }
 
     @Test
-    public void findByDrivingStatusEqualsOnlineTest(){
+    public void givenOnlineStatus_whenFindByDrivingStatus_thenReturnEmptyList(){
         List<Driver> drivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE);
 
         Assertions.assertEquals(0, drivers.size());
     }
 
     @Test
-    public void findByDrivingStatusEqualsOfflineTest(){
+    public void givenOfflineStatus_whenFindByDrivingStatus_thenReturnListOfTwoElements(){
         List<Driver> drivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.OFFLINE);
 
         Assertions.assertEquals(2, drivers.size());
@@ -65,14 +65,14 @@ public class DriverRepositoryTests {
     }
 
     @Test
-    public void findByDrivingStatusEqualsOnlineBusyTest(){
+    public void givenOnlineBusyStatus_whenFindByDrivingStatus_thenReturnEmptyList(){
         List<Driver> drivers = driverRepository.findByDrivingStatusEquals(DrivingStatus.ONLINE_BUSY);
 
         Assertions.assertEquals(0, drivers.size());
     }
 
     @Test
-    public void findByEmailSuccessTest(){
+    public void givenExistentDriverEmail_whenFindByEmail_returnDriver(){
         String email = "aleksandarmitrovic@gmail.com";
         Optional<Driver> driver = driverRepository.findByEmail(email);
 
@@ -80,7 +80,7 @@ public class DriverRepositoryTests {
     }
 
     @Test
-    public void findByEmailNoEmailTest(){
+    public void givenNonExistentDriverEmail_whenFindByEmail_returnEmpty(){
         String email = "aleksandar@gmail.com";
         Optional<Driver> driver = driverRepository.findByEmail(email);
 
@@ -88,7 +88,7 @@ public class DriverRepositoryTests {
     }
 
     @Test
-    public void findByEmailEmptyStringTest(){
+    public void givenEmptyString_whenFindByEmail_returnEmpty(){
         String email = "";
         Optional<Driver> driver = driverRepository.findByEmail(email);
 

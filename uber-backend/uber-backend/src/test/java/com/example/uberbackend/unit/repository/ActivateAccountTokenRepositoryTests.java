@@ -20,7 +20,7 @@ public class ActivateAccountTokenRepositoryTests {
 
     // SW-1-2019
     @Test
-    public void findByTokenSuccessTest(){
+    public void whenFindByToken_thenReturnSuccess(){
         Optional<ActivateAccountToken> token = activateAccountTokenRepository.findByToken("random_token");
 
         Assertions.assertTrue(token.isPresent());
@@ -28,7 +28,7 @@ public class ActivateAccountTokenRepositoryTests {
     }
 
     @Test
-    public void findByTokenNotFoundTest(){
+    public void whenFindByToken_thenDontFind(){
         Optional<ActivateAccountToken> token = activateAccountTokenRepository.findByToken("unknown_token");
         Assertions.assertTrue(token.isEmpty());
     }
