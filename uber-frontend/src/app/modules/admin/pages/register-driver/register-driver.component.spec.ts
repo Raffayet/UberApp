@@ -227,8 +227,8 @@ describe('RegisterDriverComponent', () => {
     });
 
     component.secondFormGroup.patchValue({
-      model:'skoda octavia',
-      vehicleType: ''
+      model:'',
+      vehicleType: 'Standard'
     })
     
     fixture.detectChanges();
@@ -236,7 +236,7 @@ describe('RegisterDriverComponent', () => {
     expect(button.nativeElement.disabled).toBeTruthy();
   });
   
-  it("should disable next button when model in second Form is empty", () => {
+  it("should disable next button when vehicle type in second Form is empty", () => {
     fixture.detectChanges();
     
     component.firstFormGroup.patchValue({

@@ -18,6 +18,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { SharedModule } from '../shared/shared.module';
 import { ToastrModule } from 'ngx-toastr';
 import { RegistrationPageComponent } from './pages/registration-page/registration-page.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,8 @@ import { RegistrationPageComponent } from './pages/registration-page/registratio
       positionClass: 'toast-bottom-right',
     }),
     SharedModule,
+    CommonModule,
+    AuthRoutingModule
   ],
   exports:[
     SocialLoginComponent

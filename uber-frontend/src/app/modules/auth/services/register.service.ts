@@ -13,7 +13,7 @@ export class RegisterService {
 
   constructor(private http: HttpClient) { }
 
-  register(registrationForm:Register):Observable<String>{
+  register(registrationForm: Register):Observable<String>{
     console.log(registrationForm);
 
     return this.http.post<String>(environment.apiURL+"/user/",registrationForm)
