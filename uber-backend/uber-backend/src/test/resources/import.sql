@@ -8,7 +8,9 @@ insert into my_user(account_status, active_account, blocked, city, driving_statu
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, false, 'Kragujevac', 1, 'marinapantic@gmail.com', 'Marina', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '064445512', 'https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_3.jpg', 'LOCAL', 'Pantic', 3);
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, false, 'Beograd', 1, 'strahinjapavlovic@gmail.com', 'Strahinja', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '063154890', 'https://buffer.com/library/content/images/2022/03/amina.png', 'LOCAL', 'Pavlovic', 1);
 insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, true, 'Nis', 1, 'aleksandarmitrovic@gmail.com', 'Aleksandar', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '063389012', '/dejanProfile.jpg', 'LOCAL', 'Mitrovic', 2);
+insert into my_user(account_status, active_account, blocked, city, driving_status, email, name, password, phone_number, profile_image, provider, surname, role_id) values (0, true, true, 'Nis', 1, 'milanpetrovic@gmail.com', 'Milan', '$2y$10$7eQE2MA0KNr/cSX9Inueeedn8BKki/8spU.nRidPgJCHT3FLt8ZGW', '063389012', '/dejanProfile.jpg', 'LOCAL', 'Petrovic', 1);
 
+insert into activate_account_token(token, user_id) values ('random_token', 7);
 
 insert into point(lat,lng) values ( 45.258057892843766, 19.823989494446415);
 insert into point(lat, lng) values( 45.34, 19.78);
