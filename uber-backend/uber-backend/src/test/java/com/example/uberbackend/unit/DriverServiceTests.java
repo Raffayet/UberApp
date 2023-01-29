@@ -385,7 +385,7 @@ public class DriverServiceTests {
 
     // RejectDrive - SW-1-2019
     @Test
-    public void shouldThrowDriverNotFoundExceptionInRejectDriveTest(){
+    public void givenNonexistentDriver_whenRejectDrive_thenThrowDriverNotFoundException(){
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("jovancevic@gmail.com");
 
@@ -396,7 +396,7 @@ public class DriverServiceTests {
     }
 
     @Test
-    public void shouldThrowDriveRequestNotFoundExceptionInRejectDriveTest(){
+    public void givenNonexistentDriveRequest_whenRejectDrive_thenThrowDriveRequestNotFoundException(){
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("jovancevic@gmail.com");
         dto.setRequestId(1L);
@@ -409,7 +409,7 @@ public class DriverServiceTests {
     }
 
     @Test
-    public void shouldRejectDriveSuccessfullyTest(){
+    public void whenRejectDrive_thenReturnSuccess(){
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("jovancevic@gmail.com");
         dto.setRequestId(1L);
@@ -433,7 +433,7 @@ public class DriverServiceTests {
     }
 
     @Test
-    public void shouldRejectDriveWithPeopleSuccessfullyTest(){
+    public void givenMoreThanOnePassenger_whenRejectDrive_thenReturnSuccess(){
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("jovancevic@gmail.com");
         dto.setRequestId(1L);

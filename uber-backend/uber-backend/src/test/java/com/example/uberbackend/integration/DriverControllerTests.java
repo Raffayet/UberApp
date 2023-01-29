@@ -47,7 +47,7 @@ public class DriverControllerTests {
     // RejectDrive - SW-1-2019
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenRejectDrive_thenReturnNotAcceptable_DueToDriver() throws Exception {
+    public void givenNonexistentDriverEmail_whenRejectDrive_thenReturnNotAcceptable() throws Exception {
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("nepostojeci@gmail.com");
         dto.setInitiatorEmail("sasalukic@gmail.com");
@@ -64,7 +64,7 @@ public class DriverControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenRejectDrive_thenReturnNotAcceptable_DueToDriveRequest() throws Exception {
+    public void givenNonexistentDriveRequestId_whenRejectDrive_thenReturnNotAcceptable() throws Exception {
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("dejanmatic@gmail.com");
         dto.setInitiatorEmail("sasalukic@gmail.com");
@@ -81,7 +81,7 @@ public class DriverControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenRejectDrive_thenReturnBadRequest_DueToDriverEmail() throws Exception {
+    public void givenNoDriver_whenRejectDrive_thenReturnBadRequest() throws Exception {
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setInitiatorEmail("sasalukic@gmail.com");
         dto.setReasonForRejection("Not applicable.");
@@ -96,7 +96,7 @@ public class DriverControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenRejectDrive_thenReturnBadRequest_DueToInitiatorEmail() throws Exception {
+    public void givenNoInitiatorEmail_whenRejectDrive_thenReturnBadRequest() throws Exception {
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("dejanmatic@gmail.com");
         dto.setReasonForRejection("Not applicable.");
@@ -111,7 +111,7 @@ public class DriverControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenRejectDrive_thenReturnBadRequest_DueToReason() throws Exception {
+    public void givenNoRejectionReason_whenRejectDrive_thenReturnBadRequest() throws Exception {
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("dejanmatic@gmail.com");
         dto.setInitiatorEmail("sasalukic@gmail.com");
@@ -126,7 +126,7 @@ public class DriverControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenRejectDrive_thenReturnBadRequest_DueToRequestId() throws Exception {
+    public void givenNoRequestId_whenRejectDrive_thenReturnBadRequest() throws Exception {
         DriverRejectionDto dto = new DriverRejectionDto();
         dto.setDriverEmail("dejanmatic@gmail.com");
         dto.setInitiatorEmail("sasalukic@gmail.com");
