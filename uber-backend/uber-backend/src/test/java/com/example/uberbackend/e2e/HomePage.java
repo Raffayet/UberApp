@@ -1,4 +1,4 @@
-package com.example.uberbackend.login.e2e;
+package com.example.uberbackend.e2e;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
