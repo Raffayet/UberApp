@@ -52,7 +52,7 @@ public class RideServiceTests {
 
     // EndRide - SW-1-2019
     @Test
-    public void shouldEndRideSuccessfullyTest(){
+    public void whenEndRide_thenReturnSuccess(){
         Driver driver = new Driver();
         driver.setId(1L);
         driver.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
@@ -74,7 +74,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldThrowRideNotFoundExceptionInEndRideTest(){
+    public void givenNonexistentRideId_whenEndRide_thenThrowRideNotFoundException(){
         Driver driver = new Driver();
         driver.setId(1L);
         driver.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
@@ -96,7 +96,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldThrowDriverNotFoundExceptionInEndRideTest(){
+    public void givenNonexistentDriverId_whenEndRide_thenThrowDriverNotFoundException(){
         Driver driver = new Driver();
         driver.setId(1L);
         driver.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
@@ -118,7 +118,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldHaveNextRideForDriverInEndRideTest(){
+    public void givenDriverWithNextRide_whenEndRide_thenReturnSuccess(){
         Driver driver = new Driver();
         driver.setId(1L);
         driver.setDrivingStatus(DrivingStatus.ONLINE_BUSY);
@@ -143,7 +143,7 @@ public class RideServiceTests {
 
     // CheckIfRideIsCancelled - SW-1-2019
     @Test
-    public void shouldReturnRideIsNotCancelledTest(){
+    public void givenNoncancelledRide_whenCheckIfRideIsCancelled_thenReturnFalse(){
         MapRideDto dto = new MapRideDto();
         dto.setId(123L);
 
@@ -158,7 +158,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldReturnRideIsCancelledTest(){
+    public void givenCancelledRide_whenCheckIfRideIsCancelled_thenReturnTrue(){
         MapRideDto dto = new MapRideDto();
         dto.setId(123L);
 
@@ -178,7 +178,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldThrowRideNotFoundExceptionWhenCheckingIsCancelledTest(){
+    public void givenNonexistentRideId_whenCheckIfRideIsCancelled_thenThrowRideNotFoundException(){
         MapRideDto dto = new MapRideDto();
         dto.setId(123L);
 
@@ -193,7 +193,7 @@ public class RideServiceTests {
     // UpdateRideStatus - SW-1-2019
 
     @Test
-    public void shouldThrowIndexOutOfBoundsExceptionForAtomicPointsInUpdateRideStatusTest(){
+    public void givenNoAtomicPoints_whenUpdateRideStatus_thenThrowIndexOutOfBoundsException(){
         MapRideDto dto = new MapRideDto();
         dto.setId(1L);
         dto.setAtomicPoints(new ArrayList<>());
@@ -205,7 +205,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldThrowRideNotFoundExceptionInUpdateRideStatusTest(){
+    public void givenNonExistentRideId_whenUpdateRideStatus_thenThrowRideNotFoundException(){
         MapDriverDto driver = new MapDriverDto();
         driver.setId(1L);
         driver.setLatitude(45.99);
@@ -225,7 +225,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldUpdateRideStatusSuccessfullyTest(){
+    public void whenUpdateRideStatus_thenReturnSuccess(){
         MapDriverDto driver = new MapDriverDto();
         driver.setId(1L);
         driver.setLatitude(45.99);
@@ -246,7 +246,7 @@ public class RideServiceTests {
     }
 
     @Test
-    public void shouldNotUpdateRideStatusSuccessfullyTest(){
+    public void whenUpdateRideStatus_thenReturnNonupdatedRide(){
         MapDriverDto driver = new MapDriverDto();
         driver.setId(1L);
         driver.setLatitude(45.99);

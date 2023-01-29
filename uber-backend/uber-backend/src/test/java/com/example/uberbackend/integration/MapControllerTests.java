@@ -70,7 +70,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetOptimalRoute_thenReturnNotAcceptable_DueToInsufficientPoints() throws Exception {
+    public void givenInsufficientPoints_whenGetOptimalRoute_thenReturnNotAcceptable() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
 
@@ -82,7 +82,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetOptimalRoute_thenReturnNotAcceptable_DueToTooManyPoints() throws Exception {
+    public void givenTooManyPoints_whenGetOptimalRoute_thenReturnNotAcceptable() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -99,7 +99,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetOptimalRoute_thenReturnBadRequest_DueToInvalidLongitude() throws Exception {
+    public void givenInvalidLongitude_whenGetOptimalRoute_thenReturnBadRequest() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(41.2530233, 19333.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -114,7 +114,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetOptimalRoute_thenReturnBadRequest_DueToInvalidLatitude() throws Exception {
+    public void givenInvalidLatitude_whenGetOptimalRoute_thenReturnBadRequest() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(441.2530233, 19.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -142,7 +142,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetCustomRoute_thenReturnNotAcceptable_DueToInsufficientPoints() throws Exception {
+    public void givenInsufficientPoints_whenGetCustomRoute_thenReturnNotAcceptable() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
 
@@ -154,7 +154,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetCustomRoute_thenReturnNotAcceptable_DueToTooManyPoints() throws Exception {
+    public void givenTooManyPoints_whenGetCustomRoute_thenReturnNotAcceptable() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -171,7 +171,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetCustomRoute_thenReturnBadRequest_DueToInvalidLongitude() throws Exception {
+    public void givenInvalidLongitude_whenGetCustomRoute_thenReturnBadRequest() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(41.2530233, 19333.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -186,7 +186,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetCustomRoute_thenReturnBadRequest_DueToInvalidLatitude() throws Exception {
+    public void givenInvalidLatitude_whenGetCustomRoute_thenReturnBadRequest() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(441.2530233, 19.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -202,7 +202,7 @@ public class MapControllerTests {
 
     // GetAlternativeRoute SW-1-2019
     @Test
-    public void whenGetAlternativeoute_thenReturnOK() throws Exception {
+    public void whenGetAlternativeRoute_thenReturnOK() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
         input.add(new Point(45.2550643, 19.7938139));
@@ -214,7 +214,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetAlternativeRoute_thenReturnNotAcceptable_DueToInsufficientPoints() throws Exception {
+    public void givenInsufficientPoints_whenGetAlternativeRoute_thenReturnNotAcceptable() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
 
@@ -227,7 +227,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetAlternativeRoute_thenReturnNotAcceptable_DueToTooManyPoints() throws Exception {
+    public void givenTooManyPoints_whenGetAlternativeRoute_thenReturnNotAcceptable() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -244,7 +244,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetAlternativeRoute_thenReturnBadRequest_DueToInvalidLongitude() throws Exception {
+    public void givenInvalidLongitude_whenGetAlternativeRoute_thenReturnBadRequest() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(41.2530233, 19333.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -259,7 +259,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenGetAlternativeRoute_thenReturnBadRequest_DueToInvalidLatitude() throws Exception {
+    public void givenInvalidLatitude_whenGetAlternativeRoute_thenReturnBadRequest() throws Exception {
         List<Point> input = new ArrayList<>();
         input.add(new Point(441.2530233, 19.7916443));
         input.add(new Point(45.2530233, 19.7916443));
@@ -275,7 +275,7 @@ public class MapControllerTests {
 
     // UpdateDriverOnMap SW-1-2019
     @Test
-    public void whenUpdateDriverOnMap_thenReturnNotAcceptable_DueToDriver() throws Exception {
+    public void givenNonexistentDriver_whenUpdateDriverOnMap_thenReturnNotAcceptable() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
 
@@ -311,7 +311,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnNotAcceptable_DueToRide() throws Exception {
+    public void givenNonexistentRide_whenUpdateDriverOnMap_thenReturnNotAcceptable() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
 
@@ -382,7 +382,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnBadRequest_DueToRideId() throws Exception {
+    public void givenNoRideId_whenUpdateDriverOnMap_thenReturnBadRequest() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
 
@@ -415,7 +415,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnBadRequest_DueToLocations() throws Exception {
+    public void givenNoLocations_whenUpdateDriverOnMap_thenReturnBadRequest() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
         dto.setId(22L);
@@ -444,7 +444,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnBadRequest_DueToBeforeLocations() throws Exception {
+    public void givenNoBeforeLocations_whenUpdateDriverOnMap_thenReturnBadRequest() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
         dto.setId(22L);
@@ -471,7 +471,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnBadRequest_DueToDriver() throws Exception {
+    public void givenNoDriver_whenUpdateDriverOnMap_thenReturnBadRequest() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
         dto.setId(22L);
@@ -500,7 +500,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnBadRequest_DueToRideStatus() throws Exception {
+    public void givenNoRideStatus_whenUpdateDriverOnMap_thenReturnBadRequest() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
         dto.setId(22L);
@@ -533,7 +533,7 @@ public class MapControllerTests {
     }
 
     @Test
-    public void whenUpdateDriverOnMap_thenReturnBadRequest_DueToClientEmails() throws Exception {
+    public void givenNoClientEmails_whenUpdateDriverOnMap_thenReturnBadRequest() throws Exception {
         MapRideDto dto = new MapRideDto();
         MapDriverDto driver = new MapDriverDto();
         dto.setId(22L);

@@ -45,7 +45,7 @@ public class UserControllerTests {
 
     // CheckIfUserIsBlocked - SW-1-2019
     @Test
-    public void whenIsUserBlocked_thenReturnOk_False() throws Exception {
+    public void givenNonblockedUser_whenIsUserBlocked_thenReturnOk() throws Exception {
         String email = "sasalukic@gmail.com";
 
         mockMvc.perform(get(USER_URL_PREFIX + "/is-blocked?email=" + email))
@@ -54,7 +54,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void whenIsUserBlocked_thenReturnOk_True() throws Exception {
+    public void givenBlockedUser_whenIsUserBlocked_thenReturnOk() throws Exception {
         String email = "aleksandarmitrovic@gmail.com";
 
         mockMvc.perform(get(USER_URL_PREFIX + "/is-blocked?email=" + email))
@@ -63,7 +63,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void whenIsUserBlocked_thenReturnNotAcceptable() throws Exception {
+    public void givenNonexistentUser_whenIsUserBlocked_thenReturnNotAcceptable() throws Exception {
         String email = "nepostojeci@gmail.com";
 
         mockMvc.perform(get(USER_URL_PREFIX + "/is-blocked?email=" + email))

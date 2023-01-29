@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -7,6 +8,7 @@ import { DriverRegister } from 'src/app/model/DriverRegister';
 import { identityRevealedValidator } from 'src/app/modules/auth/pages/registration-page/registration-page.component';
 import { RegisterService } from 'src/app/modules/auth/services/register.service';
 import { DriverService } from '../../services/driver.service';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-register-driver',
@@ -19,7 +21,7 @@ export class RegisterDriverComponent {
   vehicleTypeOptions:string[] = []
   
   
-  constructor(private registerService: RegisterService, private driverService:DriverService, private router:Router){
+  constructor(private registerService: RegisterService, private driverService:DriverService, private router:Router, private toastr:ToastrService){
   }
   
  
@@ -96,10 +98,12 @@ export class RegisterDriverComponent {
       .subscribe({
         next: () => {
           console.log("Uspeh")
+          this.toastr.success("","Successfully Registered Driver")
           this.router.navigateByUrl("/admin");
         },
         error: (err) => {
           console.log("Greskaa");
+          this.toastr.error("","Error while Registering Driver")
           console.log(err);
         }
       });

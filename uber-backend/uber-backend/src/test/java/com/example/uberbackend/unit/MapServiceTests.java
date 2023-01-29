@@ -33,7 +33,7 @@ public class MapServiceTests {
 
     // GetOptimalRoute - SW-1-2019
     @Test
-    public void shouldReturnOptimalRouteTest() throws IOException {
+    public void whenGetOptimalRoute_thenReturnSuccess() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -57,7 +57,7 @@ public class MapServiceTests {
     }
 
     @Test
-    public void shouldThrowNotEnoughPointsForOptimalRouteExceptionTest() throws IOException {
+    public void givenInsufficientPoints_whenGetOptimalRoute_thenThrowNotEnoughPointsForRouteException() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -67,7 +67,7 @@ public class MapServiceTests {
     }
 
     @Test
-    public void shouldThrowNotTooManyPointsForOptimalRouteExceptionTest() throws IOException {
+    public void givenTooManyPoints_whenGetOptimalRoute_thenThrowNotTooManyPointsForRouteException() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -83,7 +83,7 @@ public class MapServiceTests {
 
     // GetAlternativeRoute - SW-1-2019
     @Test
-    public void shouldReturnAlternativeRouteTest() throws IOException {
+    public void whenGetAlternativeRoute_thenReturnSuccess() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -106,7 +106,7 @@ public class MapServiceTests {
     }
 
     @Test
-    public void shouldThrowNotEnoughPointsForAlternativeRouteExceptionTest() throws IOException {
+    public void givenInsufficientPoints_whenGetAlternativeRoute_thenThrowNotEnoughPointsForRouteException() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -116,7 +116,7 @@ public class MapServiceTests {
     }
 
     @Test
-    public void shouldThrowNotTooManyPointsForAlternativeRouteExceptionTest() throws IOException {
+    public void givenTooManyPoints_whenGetAlternativeRoute_thenThrowTooManyPointsForRouteException() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -132,7 +132,7 @@ public class MapServiceTests {
 
     // GetCustomRoute - SW-1-2019
     @Test
-    public void shouldReturnCustomRouteTest() throws IOException {
+    public void whenGetCustomRoute_thenReturnSuccess() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -156,7 +156,7 @@ public class MapServiceTests {
     }
 
     @Test
-    public void shouldThrowNotEnoughPointsForCustomRouteExceptionTest() throws IOException {
+    public void givenInsufficientPoints_whenGetCustomRoute_thenThrowNotEnoughPointsForRouteException() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));
@@ -166,7 +166,7 @@ public class MapServiceTests {
     }
 
     @Test
-    public void shouldThrowNotTooManyPointsForCustomRouteExceptionTest() throws IOException {
+    public void givenTooManyPoints_whenGetCustomRoute_thenThrowNotTooManyPointsForRouteException() throws IOException {
         //input
         List<Point> input = new ArrayList<>();
         input.add(new Point(45.2530233, 19.7916443));

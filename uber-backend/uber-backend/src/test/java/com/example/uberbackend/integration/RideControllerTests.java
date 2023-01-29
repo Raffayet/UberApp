@@ -67,7 +67,7 @@ public class RideControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenEndRide_thenReturnNotAcceptable_DueToRide() throws Exception {
+    public void givenNonexistentRide_whenEndRide_thenReturnNotAcceptable() throws Exception {
 
         MvcResult result = mockMvc.perform(put(MAP_URL_PREFIX + "/11232").contentType(contentType))
                 .andExpect(status().isNotAcceptable()).andReturn();
@@ -77,7 +77,7 @@ public class RideControllerTests {
 
     @Test
     @WithMockUser(authorities = {"DRIVER"})
-    public void whenEndRide_thenReturnNotAcceptable_DueToRideNotStarted() throws Exception {
+    public void givenRideWithWrongStatus_whenEndRide_thenReturnNotAcceptable() throws Exception {
 
         MvcResult result = mockMvc.perform(put(MAP_URL_PREFIX + "/1").contentType(contentType))
                 .andExpect(status().isNotAcceptable()).andReturn();

@@ -25,7 +25,7 @@ public class UserServiceTests {
 
     // CheckIfUserIsBlocked - SW-1-2019
     @Test
-    public void shouldReturnTrueCheckUserIsBlockedTest() {
+    public void whenIsUserBlocked_thenReturnTrue() {
         String email = "jovancevic@gmail.com";
 
         User u = new User();
@@ -37,7 +37,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void shouldReturnFalseCheckUserIsBlockedTest(){
+    public void whenIsUserBlocked_thenReturnFalse(){
         String email = "jovancevic@gmail.com";
 
         User u = new User();
@@ -49,7 +49,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void shouldThrowUserNotFoundExceptionCheckUserIsBlockedTest(){
+    public void givenNonexistentUser_whenIsUserBlocked_thenThrowUserNotFoundException(){
         String email = "jovancevic@gmail.com";
 
         User u = new User();
