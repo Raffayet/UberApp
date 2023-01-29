@@ -1,6 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { badDriverRegisterData, goodDriverRegisterData } from '../mocks/register';
+import { badUserRegisterData, goodUserRegisterData } from '../mocks/registerUser';
 
 import { RegisterService } from './register.service';
 
@@ -56,5 +57,34 @@ describe('RegisterService', () => {
 
   });
 
+  it('should register user and return the appropriate string', () => {
+
+    service.register(goodUserRegisterData).subscribe((res) => {
+      expect(res).toEqual("Success");
+    });
+
+    const req = httpTestingController.expectOne({
+      method: 'POST',
+      url: `${url}/user/`,
+    });
+
+    req.flush("Success");
+
+  });
+
+  it('should fail register driver and return error', () => {
+
+    service.register(badUserRegisterData).subscribe((res) => {
+      expect("Error").toEqual(res);
+    });
+
+    const req = httpTestingController.expectOne({
+      method: 'POST',
+      url: `${url}/user/`,
+    });
+
+    req.flush("Error");
+
+  });
 
 });

@@ -10,6 +10,7 @@
     "logintest": "ng test --include=**/login.component.spec.ts",
     "loginservicetest": "ng test --include=**/login.service.spec.ts",
     "registerdrivertest": "ng test --include=**/register-driver.component.spec.ts",
+    "registertest": "ng test --include=**/registration-page.component.spec.ts",
     "registerservicetest": "ng test --include=**/register.service.spec.ts",
     "driverservicetest": "ng test --include=**/admin/**/driver.service.spec.ts"
   },
