@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT c.tokens FROM Client c WHERE c.email = ?1")
-    double getTokensByEmail(String email);
+    Double getTokensByEmail(String email);
 
     @Query("SELECT rI FROM RideInvite rI WHERE rI.emailTo = ?1 AND rI.rideInviteStatus = com.example.uberbackend.model.enums.RideInviteStatus.PENDING")
     List<RideInvite> findAllRideInvites(String userEmail);
