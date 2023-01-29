@@ -1,4 +1,4 @@
-package com.example.uberbackend.login.e2e;
+package com.example.uberbackend.e2e;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
