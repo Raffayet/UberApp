@@ -1,3 +1,4 @@
+import { SharedGuard } from './guard/shared.guard';
 import { ReportPageComponent } from './pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -9,12 +10,12 @@ export const routes: Routes = [
     path: "history",
     pathMatch: "full",
     component: HistoryComponent,
-    canActivate: [],
+    canActivate: [SharedGuard],
   },
   { path: 'user-profile',
     pathMatch: "full",
     component: UserProfilePageComponent,
-    canActivate: [],
+    canActivate: [SharedGuard],
   },
 ];
 
