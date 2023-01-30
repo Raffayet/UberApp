@@ -10,7 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 public class RequestRideTests extends TestBase{
 
-    private String 
+
 
     @Test
     public void requestRideSuccessWithoutInvites()

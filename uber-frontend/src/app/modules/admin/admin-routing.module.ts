@@ -58,7 +58,7 @@ const routes: Routes = [
     path: 'homepage',
     component: HomepageComponent,
     outlet: 'AdminRouter',
-    canActivate: [],
+    canActivate: [AdminGuard],
   },
   {
     path: 'profile',
