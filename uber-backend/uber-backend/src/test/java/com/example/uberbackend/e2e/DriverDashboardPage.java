@@ -21,6 +21,15 @@ public class DriverDashboardPage {
     @FindBy(xpath = "//*[@id=\"mat-mdc-dialog-0\"]/div/div/app-ride-to-take-dialog/div/div[2]/button[1]")
     private WebElement acceptButton;
 
+    @FindBy(xpath = "//*[@id=\"mat-mdc-dialog-0\"]/div/div/app-ride-to-take-dialog/div/div[2]/button[2]")
+    private WebElement rejectButton;
+
+    @FindBy(xpath = "//textarea")
+    private WebElement textArea;
+
+    @FindBy(xpath = "//button[contains(@class, 'confirm-button')]")
+    private WebElement confirmRejection;
+
     @FindBy(xpath = "//label[contains(@id, 'toggle')]")
     private WebElement busyLabel;
 
@@ -51,5 +60,27 @@ public class DriverDashboardPage {
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
                 .until(ExpectedConditions.textToBePresentInElement(busyLabel, "BUSY"));
         return busyLabel.getText();
+    }
+
+    public void rejectRideRequest() {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(rejectButton));
+        rejectButton.click();
+    }
+
+    public void rejectExplanation(String text) {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(textArea));
+        textArea.sendKeys(text);
+
+    }
+
+    public void confirmRejection() {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(confirmRejection));
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.elementToBeClickable(confirmRejection));
+        confirmRejection.click();
+
     }
 }

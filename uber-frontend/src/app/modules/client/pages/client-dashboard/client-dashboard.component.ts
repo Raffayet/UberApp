@@ -180,10 +180,13 @@ export class ClientDashboardComponent {
       });
 
       dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        console.log(confirmed);
         if (confirmed) {
+            console.log('ulazi u accept')
             this.onAcceptRideInvite(rideInvite, index);
         }
         else{
+            console.log('ulazi u reject');
             this.onRejectRideInvite(rideInvite, index);
         }
       });

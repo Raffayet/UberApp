@@ -88,8 +88,12 @@ public class RideRequestPage {
     @FindBy(xpath = "//button[contains(@class, 'split-fare-button')]")
     private WebElement splitFareButton;
 
+
     @FindBy(xpath = "//a[contains(text(),'History')]")
     private WebElement rideHistoryLink;
+
+    @FindBy(xpath = "//label[contains(@class, 'failure-label')]")
+    private WebElement notEnoughTokensLabel;
 
     public void fillOutFirstLocationField(String text){
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
@@ -225,5 +229,12 @@ public class RideRequestPage {
                 .until(ExpectedConditions.elementToBeClickable(rideHistoryLink));
 
         this.actions.moveToElement(rideHistoryLink).click().perform();
+    }
+
+    public String getTokensLabelText()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(notEnoughTokensLabel));
+        return notEnoughTokensLabel.getText();
     }
 }
