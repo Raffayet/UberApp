@@ -45,6 +45,8 @@ public class MapService {
     private PathInfoDto getPathInfoGraphhoperResponse(Response response, int index) throws IOException {
         JSONObject obj = new JSONObject(response.body().string());
         JSONArray paths = (JSONArray) obj.get("paths");
+        if(index == 1 && paths.length()<2)
+            index = 0;
         double distance = paths.getJSONObject(index).getDouble("distance");
         JSONArray coordinates = paths.getJSONObject(index).getJSONObject("points").getJSONArray("coordinates");
         List<Point> retList = new ArrayList<>();
