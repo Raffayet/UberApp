@@ -227,7 +227,7 @@ public class UserService implements UserDetailsService {
         String uniqueTime = LocalDateTime.now().toString().split("T")[0];
         String photoName = "//" +uniqueTime + generateRandomString() + "profilePicture.jpg";
 
-        File currDir = new File("uber-backend//src//main//resources//data//");
+        File currDir = new File("src//main//resources//data//");
         String path = currDir.getAbsolutePath();
 
         return new Pair<String, String>(Paths.get(path + photoName).toString(), photoName.substring(1));
@@ -237,7 +237,7 @@ public class UserService implements UserDetailsService {
         Optional<User> u = userRepository.findByEmail(email);
         if(u.isPresent()){
 
-            File currDir = new File("uber-backend//src//main//resources//data//");
+            File currDir = new File("src//main//resources//data//");
             String path = currDir.getAbsolutePath();
             String photoName = u.get().getProfileImage();
 
