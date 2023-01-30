@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestBase {
@@ -12,7 +14,11 @@ public class TestBase {
     @BeforeAll
     public void setup(){
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-        this.driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("test-type");
+        options.addArguments("--disable-web-security");
+        options.addArguments("--allow-running-insecure-content");
+        this.driver = new ChromeDriver(options);
         this.driver.manage().window().maximize();
     }
 

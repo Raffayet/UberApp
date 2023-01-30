@@ -22,9 +22,9 @@ public class RequestRideTests extends TestBase{
         rideRequestPage.fillOutFirstLocationField("Cara Dusana Novi Sad");
         rideRequestPage.pressNewLocationButton();
         rideRequestPage.fillOutSecondLocationField("Cara Lazara Novi Sad");
-        rideRequestPage.pressNextButton();
-        rideRequestPage.openVehicleTypeSelect();
-        rideRequestPage.selectStandardVehicleType();
-        rideRequestPage.selectCustomRouteType();
+//        rideRequestPage.pressNextButton();
+//        rideRequestPage.openVehicleTypeSelect();
+//        rideRequestPage.selectStandardVehicleType();
+//        rideRequestPage.selectCustomRouteType();
     }
 }

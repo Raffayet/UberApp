@@ -6,12 +6,15 @@ import { Router } from "@angular/router";
 import { ClientService } from '../../services/client.service';
 import { RideRequestStateService } from '../../services/ride-request-state.service';
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
-import { Component, OnInit, ViewChild, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, ViewChild, Output, EventEmitter, ElementRef } from "@angular/core";
 import { Observable, of, Subject } from "rxjs";
 import { environment } from "src/app/environments/environment";
 import { MapComponent } from 'src/app/modules/shared/components/map/map.component';
 import { Point } from 'src/app/model/Point';
 import { PaypalService } from 'src/app/modules/shared/services/paypal.service';
+import { debounceTime, filter, tap, distinctUntilChanged } from "rxjs/operators";
+import {fromEvent } from 'rxjs';
+import * as _ from 'underscore';
 
 @Component({
   selector: 'app-location-picker',
@@ -23,6 +26,8 @@ export class LocationPickerComponent implements OnInit{
   @Output()
   pageNum = new EventEmitter<number>();
 
+  @ViewChild('input', {static: true}) input: ElementRef;
+
   destinations: MapSearchResult[] = [];
 
   price: number;
@@ -32,9 +37,12 @@ export class LocationPickerComponent implements OnInit{
   options: Observable<MapSearchResult[]>[] = [];
 
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router,  private paypalService: PaypalService,
-    private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {}
+    private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {
+      this.searchOptions = _.debounce(this.searchOptions, 1000);
+    }
 
   ngOnInit(): void {
+  
   }
   
   changePageNumber(){
@@ -60,7 +68,7 @@ export class LocationPickerComponent implements OnInit{
     this.automaticallyFindPath("Custom");
   }
 
-  searchOptions(index: number) : void {  
+  searchOptions(index: number) : void {      
     let results : MapSearchResult[];
 
     this.mapService.search(this.stateManagement.inputValues[index])
