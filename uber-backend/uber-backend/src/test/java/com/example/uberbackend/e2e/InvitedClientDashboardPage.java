@@ -21,6 +21,9 @@ public class InvitedClientDashboardPage {
     @FindBy(xpath = "//*[@id=\"mat-mdc-dialog-0\"]/div/div/app-ride-invite-dialog/div/div[2]/button[1]")
     private WebElement acceptButton;
 
+    @FindBy(xpath = "//button[contains(@class, 'logout-button')]")
+    private WebElement logoutButton;
+
     public InvitedClientDashboardPage(WebDriver driver)
     {
         this.driver = driver;
@@ -41,5 +44,12 @@ public class InvitedClientDashboardPage {
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
                 .until(ExpectedConditions.visibilityOf(acceptButton));
         acceptButton.click();
+    }
+
+    public void logout()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(logoutButton));
+        logoutButton.click();
     }
 }

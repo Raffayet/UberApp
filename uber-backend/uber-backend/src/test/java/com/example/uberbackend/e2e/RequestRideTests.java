@@ -9,7 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class RequestRideTests extends TestBase{
-    
+
     private String initiatorEmail = "sasalukic@gmail.com";
     private String invitedClientEmail = "milicamatic@gmail.com";
     private String driverEmail = "dejanmatic@gmail.com";
@@ -122,10 +122,10 @@ public class RequestRideTests extends TestBase{
         homePageInvitedClient.fillOutUsernameField(invitedClientEmail);
         homePageInvitedClient.fillOutPasswordField(password);
         homePageInvitedClient.pressLoginButton();
-        String actualLoginStatusDriver = homePageInvitedClient.getTextFromToastMessage();
-        String expectedLoginStatusDriver = "Successfully logged in!";
+        String actualLoginStatusInvitedClient = homePageInvitedClient.getTextFromToastMessage();
+        String expectedLoginStatusInvitedClient = "Successfully logged in!";
 
-        Assertions.assertEquals(expectedLoginStatusDriver, actualLoginStatusDriver);
+        Assertions.assertEquals(expectedLoginStatusInvitedClient, actualLoginStatusInvitedClient);
 
         //accepting ride invite
         InvitedClientDashboardPage invitedClientDashboardPage = new InvitedClientDashboardPage(driver2);
@@ -136,22 +136,34 @@ public class RequestRideTests extends TestBase{
         String actualRideInviteResponse = rideRequestPage.getRideInviteResponse();
         Assertions.assertEquals(expectedRideInviteResponse, actualRideInviteResponse);
 
-//        //Initializing driver dashboard
-//        DriverDashboardPage driverDashboardPage = new DriverDashboardPage(driver2);
-//
-//        //submit previous filled form when driver signs in
-//        rideRequestPage.submitRequest();
-//
-//        driverDashboardPage.clickDriveRequestIcon();
-//        driverDashboardPage.acceptRideRequest();
-//        String actualDriverStatus = driverDashboardPage.getBusyLabelText();
-//
-//        Assertions.assertEquals("BUSY", actualDriverStatus);
-//        Assertions.assertEquals("Driver has accepted. Enjoy your ride!", rideRequestPage.getNotificationText());
-//
-//        rideRequestPage.driveSimulation();
-//        rideRequestPage.insertComment("Good ride!");
-//        rideRequestPage.clickSubmitCommentButton();
+        invitedClientDashboardPage.logout();
+
+        HomePage homePageDriver = new HomePage(driver2);
+        homePageDriver.gotoLoginPage();
+        homePageDriver.fillOutUsernameField(driverEmail);
+        homePageDriver.fillOutPasswordField(password);
+        homePageDriver.pressLoginButton();
+        String actualLoginStatusDriver = homePageDriver.getTextFromToastMessage();
+        String expectedLoginStatusDriver = "Successfully logged in!";
+
+        Assertions.assertEquals(expectedLoginStatusDriver, actualLoginStatusDriver);
+
+        //Initializing driver dashboard
+        DriverDashboardPage driverDashboardPage = new DriverDashboardPage(driver2);
+
+        //submit previous filled form when driver signs in
+        rideRequestPage.submitRequest();
+
+        driverDashboardPage.clickDriveRequestIcon();
+        driverDashboardPage.acceptRideRequest();
+        String actualDriverStatus = driverDashboardPage.getBusyLabelText();
+
+        Assertions.assertEquals("BUSY", actualDriverStatus);
+        Assertions.assertEquals("Driver has accepted. Enjoy your ride!", rideRequestPage.getNotificationText());
+
+        rideRequestPage.driveSimulation();
+        rideRequestPage.insertComment("Good ride!");
+        rideRequestPage.clickSubmitCommentButton();
 
         driver2.quit();
     }
