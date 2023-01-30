@@ -28,8 +28,8 @@ export class ClientService {
       priceToPay: priceToPay,
       rideInviteStatus: 2
     }
-
-    stompClient.send('/app/ride-invite', {}, JSON.stringify(params));
+    
+    
     return this.http.post<String>(environment.apiURL + "/client/create-drive-invitation", params);
   }
 
@@ -60,6 +60,8 @@ export class ClientService {
   }
 
   submitReservation(request: RideRequest): Observable<String> {
+    request.timeOfRequestForReservation = new Date();
+
     let headers = new HttpHeaders();
     return this.http.post<String>(environment.apiURL + "/client/create-reservation-drive-request", request, { headers, responseType: 'text' as 'json' });
   }

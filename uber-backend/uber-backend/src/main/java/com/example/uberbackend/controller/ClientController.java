@@ -79,6 +79,9 @@ public class ClientController {
             return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
         this.clientService.createDriveInvitation(driveInvitationDTO);
+        for (String email :driveInvitationDTO.getEmailsTo()) {
+            this.simpMessagingTemplate.convertAndSendToUser(email, "/ride-invites", driveInvitationDTO);
+        }
         return ResponseEntity.ok(driveInvitationDTO);
     }
 
