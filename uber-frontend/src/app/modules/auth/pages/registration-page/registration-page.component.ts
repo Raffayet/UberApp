@@ -1,6 +1,6 @@
 
 import { Router } from '@angular/router';
-import { Component, OnInit} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators, AbstractControl, ValidatorFn, ValidationErrors} from '@angular/forms';
 import { Register } from 'src/app/model/Register';
 import { RegisterService } from 'src/app/modules/auth/services/register.service';
@@ -26,7 +26,7 @@ export const identityRevealedValidator: ValidatorFn = (control: AbstractControl)
 })
 export class RegistrationPageComponent implements OnInit {
 
-  form:FormGroup 
+  form:FormGroup;
 
   constructor(private registerService: RegisterService, private router:Router){
   }

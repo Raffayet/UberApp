@@ -9,6 +9,7 @@ import { User } from 'src/app/model/User';
 import { over, Client, Message as StompMessage} from 'stompjs';
 import { RideRequestStateService } from './ride-request-state.service';
 import { CheckForEnoughTokens } from 'src/app/model/CheckForEnoughTokens';
+import { InvitationStatus } from 'src/app/model/InvitationStatus';
 import { FavoriteRouteDto } from 'src/app/model/FavoriteRouteDto';
 
 @Injectable({
@@ -28,13 +29,18 @@ export class ClientService {
       priceToPay: priceToPay,
       rideInviteStatus: 2
     }
-
-    stompClient.send('/app/ride-invite', {}, JSON.stringify(params));
+    
+    
     return this.http.post<String>(environment.apiURL + "/client/create-drive-invitation", params);
   }
 
   changeDriveInvitationStatus(id: number, isAccepted: boolean): Observable<String>{
-    return this.http.put<String>(environment.apiURL + "/client/change-drive-invitation-status", {id: id, isAccepted: isAccepted});
+    let headers = new HttpHeaders();
+    let invitationStatus: InvitationStatus = {
+      invitationId: id,
+      accepted: isAccepted
+    }
+    return this.http.put<String>(environment.apiURL + "/client/change-drive-invitation-status", invitationStatus, { headers, responseType: 'text' as 'json' });
   }
 
   findAllRideInvitesForUser(userEmail: string) : Observable<RideInvite[]>{
@@ -47,17 +53,19 @@ export class ClientService {
   }
 
   submitRequest(request: RideRequest): Observable<String> {
+      request.timeOfRequestForReservation = new Date();
+      request.timeOfReservation = new Date();
+
       let headers = new HttpHeaders();
       return this.http.post<String>(environment.apiURL + "/client/create-drive-request", request, { headers, responseType: 'text' as 'json' });
   }
 
   submitReservation(request: RideRequest): Observable<String> {
-    request.isReserved = true;
     request.timeOfRequestForReservation = new Date();
 
     let headers = new HttpHeaders();
     return this.http.post<String>(environment.apiURL + "/client/create-reservation-drive-request", request, { headers, responseType: 'text' as 'json' });
-}
+  }
 
   invitedHasTokens(initiatorEmail: string, peopleEmails: string[], pricePerPassenger: number): Observable<String> {
     let checkForEnoughTokens: CheckForEnoughTokens = {

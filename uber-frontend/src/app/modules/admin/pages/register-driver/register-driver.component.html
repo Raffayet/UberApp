@@ -69,7 +69,7 @@
                 </mat-error>
             </mat-form-field>
             <div class="buttonDiv">
-                <button mat-raised-button class="button" matStepperNext color="accent">Next</button>
+                <button mat-raised-button class="button" id="firstNext" matStepperNext color="accent" [disabled]="!firstFormGroup.valid">Next</button>
             </div>
           </form>
         </mat-step>
@@ -83,13 +83,13 @@
             </mat-form-field>
             <mat-form-field appearance="fill" class="formField">
                 <mat-label>Select an option</mat-label>
-                <mat-select formControlName="vehicleType" [value]="vehicleType?.value">
+                <mat-select formControlName="vehicleType" [value]="vehicleType?.value" ngDefaultControl>
                     <mat-option *ngFor="let option of vehicleTypeOptions" [value]="option">{{option}}</mat-option>
                 </mat-select>
             </mat-form-field>
             <div class="buttonDiv">
               <button mat-raised-button matStepperPrevious class="button">Back</button>
-              <button mat-raised-button matStepperNext color="accent" class="button">Next</button>
+              <button mat-raised-button matStepperNext color="accent" class="button" id="secondNext" [disabled]="!secondFormGroup.valid">Next</button>
             </div>
           </form>
         </mat-step>
@@ -98,8 +98,8 @@
           <p>You are now done.</p>
           <div>
             <button mat-button matStepperPrevious class="button">Back</button>
-            <button mat-button (click)="stepper.reset()" class="button" color="primary">Reset</button>
-            <button mat-raised-button matStepperNext (click)="registerDriver()" class="button" color="accent">Register Driver</button>
+            <button mat-button (click)="stepper.reset()" class="button" color="primary" id="resetButton">Reset</button>
+            <button mat-raised-button matStepperNext (click)="registerDriver()" class="button" color="accent" id="registerButton">Register Driver</button>
           </div>
         </mat-step>
     </mat-stepper>

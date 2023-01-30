@@ -15,6 +15,10 @@ export class HomepageComponent {
       icon: 'person_add',
       router: 'register-driver'
     },{
+      label:'Info Change Request',
+      icon: 'data_usage',
+      router: 'driver-info-request'
+    },{
       label:'Report',
       icon: 'bar_chart',
       router: 'report'
@@ -30,11 +34,6 @@ export class HomepageComponent {
       label:'Ride History',
       icon: 'history',
       router: 'history'
-    },
-    {
-      label:'Logout',
-      icon: 'exit_to_app',
-      router: 'logout'
     },
   ];
 

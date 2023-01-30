@@ -1,3 +1,4 @@
+import { ClientGuard } from './guard/client.guard';
 import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -5,38 +6,31 @@ import { RideRequestPageComponent } from 'src/app/modules/client/pages/ride-requ
 import { HistoryComponent } from '../shared/components/history/history.component';
 import { UserProfilePageComponent } from '../shared/pages/user-profile-page/user-profile-page.component';
 import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
-import { RideInvitesPageComponent } from './pages/ride-invites-page/ride-invites-page.component';
 
 const routes: Routes = [  
   {
     path: 'request-ride-page',
     component: RideRequestPageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'profile-page',
     component: UserProfilePageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
-  },
-  {
-    path: 'ride-invites',
-    component: RideInvitesPageComponent,
-    outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'history',
     component: HistoryComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'report',
     component: ReportPageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   
 ];

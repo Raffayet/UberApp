@@ -20,4 +20,10 @@ public class MapSearchResultDto {
     private String displayName;
     private String lat;
     private String lon;
+
+    public MapSearchResultDto(String displayName, String lat, String lon){
+        this.displayName = displayName;
+        this.lat = lat;
+        this.lon = lon;
+    }
 }

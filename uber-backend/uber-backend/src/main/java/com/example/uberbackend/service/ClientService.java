@@ -1,7 +1,7 @@
 package com.example.uberbackend.service;
 
 import com.example.uberbackend.dto.*;
-import com.example.uberbackend.exception.PaymentFailedException;
+import com.example.uberbackend.exception.*;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.repositories.*;
@@ -39,6 +39,8 @@ public class ClientService {
     private final FavoriteRouteRepository favoriteRouteRepository;
 
     public double getTokensByEmail(String email){
+        if(email.equals(""))
+            throw new EmptyStringException("Empty string!");
         return clientRepository.getTokensByEmail(email);
     }
 
@@ -60,9 +62,11 @@ public class ClientService {
         }
     }
 
-    public void changeDriveInvitationStatus(HashMap<String, String> dto) {
-        Optional<RideInvite> editedRideInvite = this.rideInviteRepository.findById(Long.parseLong(dto.get("id")));
-        boolean isAccepted = Boolean.parseBoolean(dto.get("isAccepted"));
+    public void changeDriveInvitationStatus(InvitationStatusDto invitationStatusDto) {
+        Optional<RideInvite> editedRideInvite = this.rideInviteRepository.findById(invitationStatusDto.getInvitationId());
+        if(editedRideInvite.isEmpty())
+            throw new RideInviteNotFoundException();
+        boolean isAccepted = invitationStatusDto.isAccepted();
         editedRideInvite.ifPresent(invite -> invite.setRideInviteStatus(isAccepted ? RideInviteStatus.ACCEPTED : RideInviteStatus.REJECTED));
         editedRideInvite.ifPresent(this.rideInviteRepository::save);
     }
@@ -70,13 +74,27 @@ public class ClientService {
     public void createDriveRequest(DriveRequestDto dto) throws IOException {
         DriveRequest request = new DriveRequest();
         Optional<Client> initiator = clientRepository.findByEmail(dto.getInitiatorEmail());
-        initiator.ifPresent(request::setInitiator);
+        if(initiator.isEmpty())
+            throw new UsernameNotFoundException("Initiator not found");
+
+        request.setInitiator(initiator.get());
 
         List<Client> clients = new ArrayList<>();
         for(String email : dto.getPeople()){
             Optional<Client> invited = clientRepository.findByEmail(email);
-            invited.ifPresent(clients::add);
+            if(invited.isEmpty())
+                throw new UsernameNotFoundException("Initiator not found");
+            clients.add(invited.get());
         }
+        if (dto.getPrice() < dto.getPricePerPassenger())
+            throw new PriceNotValidException("Price is lower than Price per passenger");
+
+        if(dto.getLocations().size() < 2)
+            throw new NotEnoughLocationsException("Not enought locations");
+
+        if(dto.getTimeOfReservation().isBefore(dto.getTimeOfRequestForReservation()))
+            throw new NotValidDateTime("Not valid date time");
+
         request.setPeople(clients);
 
         request.setPrice(dto.getPrice());
@@ -95,23 +113,28 @@ public class ClientService {
             if (!this.drivingCharge(request)){
                 throw new PaymentFailedException("Payment failed!");
             }
-
-            this.driverService.sendRequestToDriver(request, driverFoundDto);
+            this.sendRequestToDriver(request, driverFoundDto);
         }
     }
+
+    private void sendRequestToDriver(DriveRequest request, DriverFoundDto driverFoundDto) {
+        RideToTakeDto rideToTakeDto = new RideToTakeDto(request.getId(), request.getLocations().get(0).getDisplayName(), request.getLocations().get(1).getDisplayName(), request.getInitiator().getEmail(), request.getIsReserved(), request.getTimeOfReservation());
+        simpMessagingTemplate.convertAndSendToUser(driverFoundDto.getDriverEmail(), "/driver-notification", rideToTakeDto);
+    }
+
 
     public String invitedHasTokens(CheckForEnoughTokens checkForEnoughTokens) {
         boolean allHaveTokens = true;
         for (String email: checkForEnoughTokens.getPeopleEmails())
         {
             Optional<Client> client = this.clientRepository.findByEmail(email);
-            if (client.isPresent()){
-                if (client.get().getTokens() < checkForEnoughTokens.getPricePerPassenger())
-                {
-                    allHaveTokens = false;
-                    this.invitedNotHaveTokens(checkForEnoughTokens, client);
-                    break;
-                }
+            if(client.isEmpty())
+                throw new UserNotFoundException();
+            if (client.get().getTokens() < checkForEnoughTokens.getPricePerPassenger())
+            {
+                allHaveTokens = false;
+                this.invitedNotHaveTokens(checkForEnoughTokens, client);
+                break;
             }
         }
 
@@ -120,9 +143,10 @@ public class ClientService {
 
     private void invitedNotHaveTokens(CheckForEnoughTokens checkForEnoughTokens, Optional<Client> invitedClient) {
         invitedClient.ifPresent(client -> simpMessagingTemplate.convertAndSendToUser(checkForEnoughTokens.getInitiatorEmail(), "/invited-person-not-have-tokens", new ResponseToIniciatorDto("error", "Invited person " + client.getEmail() + " doesn't have enough tokens for ride")));
+        throw new NotEnoughTokensException("You don't have enough tokens!");
     }
 
-    public boolean drivingCharge(DriveRequest request) {
+    private boolean drivingCharge(DriveRequest request) {
         Client initiator = request.getInitiator();
 
         if(request.getPricePerPassenger() == 0)     //situacija kada inicijator casti sve za placanje voznje
@@ -156,30 +180,27 @@ public class ClientService {
 
     public void refundTokens(Long requestId) {
         Optional<DriveRequest> request = this.driveRequestRepository.findById(requestId);
-        if(request.isPresent())
+        if(request.isEmpty())
+            throw new DriveRequestNotFoundException();
+        refundTokensToClient(request.get().getInitiator(), request.get().getPricePerPassenger());
+        if(request.get().getPrice() != request.get().getPricePerPassenger())
         {
-            refundTokensToClient(request.get().getInitiator(), request.get().getPricePerPassenger());
-            if(request.get().getPrice() != request.get().getPricePerPassenger())
+            for(Client client: request.get().getPeople())
             {
-                for(Client client: request.get().getPeople())
-                {
-                    refundTokensToClient(client, request.get().getPricePerPassenger());
-                }
+                refundTokensToClient(client, request.get().getPricePerPassenger());
             }
         }
     }
 
     public void refundTokensAfterAccepting(Long requestId) {
-        Optional<Ride> ride = this.rideRepository.findById(requestId);
-        if(ride.isPresent())
+        Ride ride = this.rideRepository.findById(requestId).orElseThrow(RideNotFoundException::new);
+
+        refundTokensToClient(ride.getInitiator(), ride.getPricePerPassenger());
+        if(ride.getPrice() != ride.getPricePerPassenger())
         {
-            refundTokensToClient(ride.get().getInitiator(), ride.get().getPricePerPassenger());
-            if(ride.get().getPrice() != ride.get().getPricePerPassenger())
+            for(Client client: ride.getClients())
             {
-                for(Client client: ride.get().getClients())
-                {
-                    refundTokensToClient(client, ride.get().getPricePerPassenger());
-                }
+                refundTokensToClient(client, ride.getPricePerPassenger());
             }
         }
     }

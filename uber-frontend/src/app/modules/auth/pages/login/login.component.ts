@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
   user: SocialUser;
   loggedIn: boolean;
 
-  constructor(private loginService: LoginService, private router: Router, private tokenUtilsService: TokenUtilsService) {}
+  constructor(private loginService: LoginService, private router: Router, private tokenUtilsService: TokenUtilsService, private toastService: ToastrService) {}
   
   ngOnInit() {
       this.success = false;
@@ -37,7 +38,7 @@ export class LoginComponent implements OnInit {
       this.submitted = true;
 
         this.loginService.logIn(this.loginForm, this.success)
-        .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
+        // .pipe(catchError(err => {return throwError(() => {new Error('greska')} )}))
         .subscribe({
           next: (res) => {
             let token = res.accessToken;
@@ -45,6 +46,7 @@ export class LoginComponent implements OnInit {
             this.success = true;
             
             let role:string | null = this.tokenUtilsService.getRoleFromToken();
+            this.toastService.success("Successfully logged in!");  
             switch(role){
               case 'CLIENT':
                 this.router.navigate(['/client', {outlets: {'ClientRouter': ['request-ride-page']}}]);
@@ -59,7 +61,12 @@ export class LoginComponent implements OnInit {
                 this.router.navigateByUrl('/login');
             }
           },
-          error: (err) => {            
+          error: (err) => {                    
+            if(err === "OK"){
+              this.toastService.warning("Credentials are poorly formatted!");  
+            }else{
+              this.toastService.warning(err);  
+            }
             this.success = false;
           },
         });

@@ -13,6 +13,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RideRequestPageComponent } from 'src/app/modules/client/pages/ride-request-page/ride-request-page.component';
+import { ToastrService } from 'ngx-toastr';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -21,6 +22,7 @@ describe('LoginComponent', () => {
 
   const loginServiceSpy = jasmine.createSpyObj<LoginService>(['logIn']);
   let routerSpy = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
+  let toastSpy = jasmine.createSpyObj<ToastrService>(['success', 'warning']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,7 +36,8 @@ describe('LoginComponent', () => {
       ],
       providers: [
         { provide: LoginService, useValue: loginServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ToastrService, useValue: toastSpy }
       ],
       declarations: [LoginComponent],
       schemas: [NO_ERRORS_SCHEMA]

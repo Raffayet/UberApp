@@ -13,11 +13,15 @@ export class AdminDashboardComponent {
     {
       label:'Dashboard',
       icon: 'dashboard',
-      router: '#'
+      router: 'homepage'
     },{
       label:'Register Driver',
       icon: 'person_add',
       router: 'register-driver'
+    },{
+      label:'Info Change Request',
+      icon: 'data_usage',
+      router: 'driver-info-request'
     },{
       label:'Report',
       icon: 'bar_chart',
@@ -25,7 +29,7 @@ export class AdminDashboardComponent {
     },{
       label:'Live Chat',
       icon: 'chat',
-      router: 'adminChat'
+      router: 'livechat'
     },{
       label:'Block Users ',
       icon: 'block',
@@ -35,8 +39,7 @@ export class AdminDashboardComponent {
       icon: 'history',
       router: 'history'
     },
-
-];
+  ];
 
   constructor(private router: Router, private userService:UserService){}
 

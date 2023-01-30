@@ -1,3 +1,4 @@
+import { DriverChangeRequest } from './../../../model/DriverInfoChangeRequest';
 import { MapDriver } from './../../../model/MapRide';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
@@ -135,4 +136,14 @@ export class DriverService {
 
     return this.http.post<String>(environment.apiURL + "/driver/set-rating-expiration", rideId, { headers, responseType: 'text' as 'json' });
   }
+
+
+  getDriverInfoRequests() {
+    return this.http.get<DriverChangeRequest[]>(environment.apiURL + "/driver/get-info-requests");
+  }
+
+  sendResponseToInfoChangeRequest(driverInfo: DriverChangeRequest) {
+    return this.http.put<DriverChangeRequest>(environment.apiURL + "/driver/respond-to-info-request", driverInfo);
+  }
+
 }

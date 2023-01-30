@@ -3,6 +3,7 @@ package com.example.uberbackend.service;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.CustomValidationException;
 import com.example.uberbackend.exception.EmailAlreadyTakenException;
+import com.example.uberbackend.exception.UserNotFoundException;
 import com.example.uberbackend.exceptions.InvalidPasswordException;
 import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.AccountStatus;
@@ -226,7 +227,7 @@ public class UserService implements UserDetailsService {
         String uniqueTime = LocalDateTime.now().toString().split("T")[0];
         String photoName = "//" +uniqueTime + generateRandomString() + "profilePicture.jpg";
 
-        File currDir = new File("uber-backend//src//main//resources//data//");
+        File currDir = new File("src//main//resources//data//");
         String path = currDir.getAbsolutePath();
 
         return new Pair<String, String>(Paths.get(path + photoName).toString(), photoName.substring(1));
@@ -236,7 +237,7 @@ public class UserService implements UserDetailsService {
         Optional<User> u = userRepository.findByEmail(email);
         if(u.isPresent()){
 
-            File currDir = new File("uber-backend//src//main//resources//data//");
+            File currDir = new File("src//main//resources//data//");
             String path = currDir.getAbsolutePath();
             String photoName = u.get().getProfileImage();
 
@@ -345,7 +346,7 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean checkIfUserIsBlocked(String email) {
-        Optional<User> user = this.userRepository.findByEmail(email);
+        Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new));
         if(user.isPresent())
             return user.get().getBlocked();
         return false;
