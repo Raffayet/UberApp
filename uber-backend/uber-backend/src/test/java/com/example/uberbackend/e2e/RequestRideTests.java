@@ -9,7 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class RequestRideTests extends TestBase{
-
+    
     private String initiatorEmail = "sasalukic@gmail.com";
     private String invitedClientEmail = "milicamatic@gmail.com";
     private String driverEmail = "dejanmatic@gmail.com";

@@ -1,35 +1,7 @@
 import requests
 import json
-
 from locust import HttpUser, task, between, events, run_single_user
 from gevent.lock import Semaphore
-
-start_and_end_points = [
-    (45.235866, 19.807387),  # Djordja Mikeša 2
-    (45.247309, 19.796717),  # Andje Rankovic 2
-    (45.259711, 19.809787),  # Veselina Maslese 62
-    (45.261421, 19.823026),  # Jovana Hranilovica 2
-    (45.265435, 19.847805),  # Bele njive 24
-    (45.255521, 19.845071),  # Njegoseva 2
-    (45.249241, 19.852152),  # Stevana Musica 20
-    (45.242509, 19.844632),  # Boska Buhe 10A
-    (45.254366, 19.861088),  # Strosmajerova 2
-    (45.223481, 19.847990)  # Gajeva 2
-]
-
-taxi_stops = [
-    (45.238548, 19.848225),  # Stajaliste na keju
-    (45.243097, 19.836284),  # Stajaliste kod limanske pijace
-    (45.256863, 19.844129),  # Stajaliste kod trifkovicevog trga
-    (45.255055, 19.810161),  # Stajaliste na telepu
-    (45.246540, 19.849282)  # Stajaliste kod velike menze
-]
-
-license_plates = [
-    'NS-001-AA',
-    'NS-001-AB',
-    'NS-001-AC'
-]
 
 ride_ids = []
 active_users = 0
@@ -59,9 +31,6 @@ class QuickstartUser(HttpUser):
             if len(self.active_rides) == 0 or not self.active_rides:
                 return
 
-            print("USAO U ACTIVE RIDES++++++++++++++++++++++++++++++++++++++++++++++")
-            print("User: ", active_users)
-            print("ride ids: ", ride_ids)
             active_users += 1
             lock.wait()
             lock.acquire()

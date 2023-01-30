@@ -216,13 +216,13 @@ export class RideInvitationComponent implements OnInit{
       .subscribe({
         next: data => {
           console.log(data);
+          this.stateManagement.reset();
         },
         error: error => {
           console.error(error);
         }
       });
       
-    this.stateManagement.reset();
   }
 
   submitReservation(): void {    
@@ -233,13 +233,13 @@ export class RideInvitationComponent implements OnInit{
       .subscribe({
         next: data => {
           console.log(data);
+          this.stateManagement.reset();
         },
         error: error => {
           console.error(error);
         }
       });
       
-    this.stateManagement.reset();
   }
 
   openTimer() {
