@@ -52,17 +52,17 @@ export class ClientService {
   }
 
   submitRequest(request: RideRequest): Observable<String> {
+      request.timeOfRequestForReservation = new Date();
+      request.timeOfReservation = new Date();
+
       let headers = new HttpHeaders();
       return this.http.post<String>(environment.apiURL + "/client/create-drive-request", request, { headers, responseType: 'text' as 'json' });
   }
 
   submitReservation(request: RideRequest): Observable<String> {
-    request.isReserved = true;
-    request.timeOfRequestForReservation = new Date();
-
     let headers = new HttpHeaders();
     return this.http.post<String>(environment.apiURL + "/client/create-reservation-drive-request", request, { headers, responseType: 'text' as 'json' });
-}
+  }
 
   invitedHasTokens(initiatorEmail: string, peopleEmails: string[], pricePerPassenger: number): Observable<String> {
     let checkForEnoughTokens: CheckForEnoughTokens = {
