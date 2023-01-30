@@ -10,7 +10,10 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 public class RequestRideTests extends TestBase{
 
-    private String 
+    private String initiatorEmail = "sasalukic@gmail.com";
+    private String invitedClientEmail = "milicamatic@gmail.com";
+    private String driverEmail = "dejanmatic@gmail.com";
+    private String password = "sasa123";
 
     @Test
     public void requestRideSuccessWithoutInvites()
@@ -18,8 +21,8 @@ public class RequestRideTests extends TestBase{
         //login section - client
         HomePage homePageClient = new HomePage(driver);
         homePageClient.gotoLoginPage();
-        homePageClient.fillOutUsernameField("sasalukic@gmail.com");
-        homePageClient.fillOutPasswordField("sasa123");
+        homePageClient.fillOutUsernameField(initiatorEmail);
+        homePageClient.fillOutPasswordField(password);
         homePageClient.pressLoginButton();
         String actualLoginStatusClient = homePageClient.getTextFromToastMessage();
         String expectedLoginStatusClient = "Successfully logged in!";
@@ -49,8 +52,8 @@ public class RequestRideTests extends TestBase{
 
         HomePage homePageDriver = new HomePage(driver2);
         homePageDriver.gotoLoginPage();
-        homePageDriver.fillOutUsernameField("dejanmatic@gmail.com");
-        homePageDriver.fillOutPasswordField("sasa123");
+        homePageDriver.fillOutUsernameField(driverEmail);
+        homePageDriver.fillOutPasswordField(password);
         homePageDriver.pressLoginButton();
         String actualLoginStatusDriver = homePageDriver.getTextFromToastMessage();
         String expectedLoginStatusDriver = "Successfully logged in!";
@@ -83,8 +86,8 @@ public class RequestRideTests extends TestBase{
         //login section - client
         HomePage homePageClient = new HomePage(driver);
         homePageClient.gotoLoginPage();
-        homePageClient.fillOutUsernameField("sasalukic@gmail.com");
-        homePageClient.fillOutPasswordField("sasa123");
+        homePageClient.fillOutUsernameField(initiatorEmail);
+        homePageClient.fillOutPasswordField(password);
         homePageClient.pressLoginButton();
         String actualLoginStatusClient = homePageClient.getTextFromToastMessage();
         String expectedLoginStatusClient = "Successfully logged in!";
@@ -102,7 +105,7 @@ public class RequestRideTests extends TestBase{
         rideRequestPage.selectStandardVehicleType();
         rideRequestPage.selectCustomRouteType();
         rideRequestPage.pressSecondNextButton();
-        rideRequestPage.invitePerson("milicamatic@gmail.com");
+        rideRequestPage.invitePerson(invitedClientEmail);
         rideRequestPage.pressSplitFareButton();
 
         //login section - invited client
@@ -116,8 +119,8 @@ public class RequestRideTests extends TestBase{
 
         HomePage homePageInvitedClient = new HomePage(driver2);
         homePageInvitedClient.gotoLoginPage();
-        homePageInvitedClient.fillOutUsernameField("milicamatic@gmail.com");
-        homePageInvitedClient.fillOutPasswordField("sasa123");
+        homePageInvitedClient.fillOutUsernameField(invitedClientEmail);
+        homePageInvitedClient.fillOutPasswordField(password);
         homePageInvitedClient.pressLoginButton();
         String actualLoginStatusDriver = homePageInvitedClient.getTextFromToastMessage();
         String expectedLoginStatusDriver = "Successfully logged in!";
@@ -129,7 +132,7 @@ public class RequestRideTests extends TestBase{
         invitedClientDashboardPage.clickOnRideInviteIcon();
         invitedClientDashboardPage.acceptRideInvite();
 
-        String expectedRideInviteResponse = "milicamatic@gmail.com has accepted your ride invite";
+        String expectedRideInviteResponse = invitedClientEmail + " has accepted your ride invite";
         String actualRideInviteResponse = rideRequestPage.getRideInviteResponse();
         Assertions.assertEquals(expectedRideInviteResponse, actualRideInviteResponse);
 
