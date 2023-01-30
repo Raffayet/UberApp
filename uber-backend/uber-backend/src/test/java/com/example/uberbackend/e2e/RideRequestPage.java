@@ -33,11 +33,20 @@ public class RideRequestPage {
     @FindBy(xpath = "//input[contains(@id, 'mat-input-2')]")
     private WebElement secondLocationInput;
 
-    @FindBy(xpath = "//*[@id=\"mat-option-0\"]")
+//    @FindBy(xpath = "//*[@id=\"mat-option-0\"]")
+//    private WebElement firstLocationOption;
+
+    @FindBy(xpath = "//mat-option[1]")
     private WebElement firstLocationOption;
 
-    @FindBy(xpath = "//*[@id=\"mat-option-8\"]")
+//    @FindBy(xpath = "//*[@id=\"mat-option-8\"]")
+//    private WebElement secondLocationOption;
+//
+    @FindBy(xpath = "//mat-option[1]")
     private WebElement secondLocationOption;
+
+    @FindBy(xpath = "//*[@id=\"mat-option-3\"]")
+    private WebElement thirdLocationOption;
 
     @FindBy(xpath = "//*[@id=\"cdk-drop-list-0\"]/div[1]/button")
     private WebElement addLocationButton;
@@ -48,7 +57,7 @@ public class RideRequestPage {
     @FindBy(xpath = "//*[contains(@class, 'mat-select')]")
     private WebElement vehicleTypesSelect;
 
-    @FindBy(xpath = "//mat-option[contains(@ng-reflect-value, 'Standard')]")
+    @FindBy(xpath = "//mat-option[1]")
     private WebElement standardVehicleType;
 
     @FindBy(xpath = "//*[@id=\"mat-radio-2\"]")
@@ -69,7 +78,8 @@ public class RideRequestPage {
     @FindBy(xpath = "//textarea[contains(@id, 'mat-input')]")
     private WebElement commentTextArea;
 
-    @FindBy(xpath = "//button[contains(@ng-reflect-dialog-result, '[object Object]')]")
+//    @FindBy(xpath = "//button[contains(@ng-reflect-dialog-result, '[object Object]')]")
+    @FindBy(xpath = "//button[contains(@id,'submit')]")
     private WebElement submitCommentButton;
 
     @FindBy(xpath = "//input[@placeholder='New person...']")
@@ -78,9 +88,12 @@ public class RideRequestPage {
     @FindBy(xpath = "//button[contains(@class, 'split-fare-button')]")
     private WebElement splitFareButton;
 
+
+    @FindBy(xpath = "//a[contains(text(),'History')]")
+    private WebElement rideHistoryLink;
+
     @FindBy(xpath = "//label[contains(@class, 'failure-label')]")
     private WebElement notEnoughTokensLabel;
-
 
     public void fillOutFirstLocationField(String text){
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
@@ -179,9 +192,12 @@ public class RideRequestPage {
 
     public void clickSubmitCommentButton()
     {
-        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+        (new WebDriverWait(this.driver, Duration.ofSeconds(100)))
                 .until(ExpectedConditions.visibilityOf(submitCommentButton));
-        submitCommentButton.click();
+        (new WebDriverWait(this.driver, Duration.ofSeconds(100)))
+                .until(ExpectedConditions.elementToBeClickable(submitCommentButton));
+
+        this.actions.moveToElement(submitCommentButton).click().perform();
     }
 
     public void invitePerson(String clientEmail)
@@ -204,6 +220,15 @@ public class RideRequestPage {
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
                 .until(ExpectedConditions.visibilityOf(toastDiv));
         return toastDiv.getText();
+    }
+
+    public void goToRideHistory() {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(rideHistoryLink));
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.elementToBeClickable(rideHistoryLink));
+
+        this.actions.moveToElement(rideHistoryLink).click().perform();
     }
 
     public String getTokensLabelText()

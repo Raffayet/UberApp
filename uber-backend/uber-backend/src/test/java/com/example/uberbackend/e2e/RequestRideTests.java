@@ -1,6 +1,5 @@
 package com.example.uberbackend.e2e;
 
-import com.example.uberbackend.model.Driver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Dimension;
@@ -286,5 +285,151 @@ public class RequestRideTests extends TestBase{
         String actualLabelText = rideRequestPage.getTokensLabelText();
         Assertions.assertEquals(expectedLabelText, actualLabelText);
         driver.quit();
+    }
+
+    @Test
+    public void endRideSuccessWithoutInvitesWithReview()
+    {
+        //login section - client
+        HomePage homePageClient = new HomePage(driver);
+        homePageClient.gotoLoginPage();
+        homePageClient.fillOutUsernameField(initiatorEmail);
+        homePageClient.fillOutPasswordField(password);
+        homePageClient.pressLoginButton();
+        String actualLoginStatusClient = homePageClient.getTextFromToastMessage();
+        String expectedLoginStatusClient = "Successfully logged in!";
+
+        Assertions.assertEquals(expectedLoginStatusClient, actualLoginStatusClient);
+
+        //filling ride request form
+
+        RideRequestPage rideRequestPage = new RideRequestPage(driver);
+
+        rideRequestPage.goToRideHistory();
+        RideHistoryPage rideHistoryPage = new RideHistoryPage(driver);
+        int endedRides = rideHistoryPage.countEndedRides();
+        rideHistoryPage.goToRideRequest();
+
+        rideRequestPage.fillOutFirstLocationField("Cara Dusana Novi Sad");
+        rideRequestPage.pressNewLocationButton();
+        rideRequestPage.fillOutSecondLocationField("Cara Lazara Novi Sad");
+        rideRequestPage.pressNextButton();
+        rideRequestPage.openVehicleTypeSelect();
+
+        rideRequestPage.selectStandardVehicleType();
+        rideRequestPage.selectCustomRouteType();
+        rideRequestPage.pressSecondNextButton();
+
+        //login section - driver
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("test-type");
+        options.addArguments("--disable-web-security");
+        options.addArguments("--allow-running-insecure-content");
+        ChromeDriver driver2 = new ChromeDriver(options);
+        driver2.manage().window().setPosition(new Point(1000, 0));
+        driver2.manage().window().setSize(new Dimension(1000, 1050));
+
+        HomePage homePageDriver = new HomePage(driver2);
+        homePageDriver.gotoLoginPage();
+        homePageDriver.fillOutUsernameField(driverEmail);
+        homePageDriver.fillOutPasswordField(password);
+        homePageDriver.pressLoginButton();
+        String actualLoginStatusDriver = homePageDriver.getTextFromToastMessage();
+        String expectedLoginStatusDriver = "Successfully logged in!";
+
+        Assertions.assertEquals(expectedLoginStatusDriver, actualLoginStatusDriver);
+
+        //Initializing driver dashboard
+        DriverDashboardPage driverDashboardPage = new DriverDashboardPage(driver2);
+
+        //submit previous filled form when driver signs in
+        rideRequestPage.submitRequest();
+
+        driverDashboardPage.clickDriveRequestIcon();
+        driverDashboardPage.acceptRideRequest();
+        String actualDriverStatus = driverDashboardPage.getBusyLabelText();
+
+        Assertions.assertEquals("BUSY", actualDriverStatus);
+        Assertions.assertEquals("Driver has accepted. Enjoy your ride!", rideRequestPage.getNotificationText());
+
+        rideRequestPage.driveSimulation();
+        rideRequestPage.insertComment("Good ride!");
+        rideRequestPage.clickSubmitCommentButton();
+        rideRequestPage.goToRideHistory();
+
+        RideHistoryPage rideHistoryPage1 = new RideHistoryPage(driver);
+        int updatedEndedRides = rideHistoryPage1.countEndedRides();
+        Assertions.assertTrue(updatedEndedRides > endedRides);
+
+        driver2.quit();
+    }
+
+    @Test
+    public void rideCanceledByDriver()
+    {
+        //login section - client
+        HomePage homePageClient = new HomePage(driver);
+        homePageClient.gotoLoginPage();
+        homePageClient.fillOutUsernameField(initiatorEmail);
+        homePageClient.fillOutPasswordField(password);
+        homePageClient.pressLoginButton();
+        String actualLoginStatusClient = homePageClient.getTextFromToastMessage();
+        String expectedLoginStatusClient = "Successfully logged in!";
+
+        Assertions.assertEquals(expectedLoginStatusClient, actualLoginStatusClient);
+
+        //filling ride request form
+
+        RideRequestPage rideRequestPage = new RideRequestPage(driver);
+
+        rideRequestPage.goToRideHistory();
+        RideHistoryPage rideHistoryPage = new RideHistoryPage(driver);
+        int endedRides = rideHistoryPage.countEndedRides();
+        rideHistoryPage.goToRideRequest();
+
+        rideRequestPage.fillOutFirstLocationField("Cara Dusana Novi Sad");
+        rideRequestPage.pressNewLocationButton();
+        rideRequestPage.fillOutSecondLocationField("Cara Lazara Novi Sad");
+        rideRequestPage.pressNextButton();
+        rideRequestPage.openVehicleTypeSelect();
+
+        rideRequestPage.selectStandardVehicleType();
+        rideRequestPage.selectCustomRouteType();
+        rideRequestPage.pressSecondNextButton();
+
+        //login section - driver
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("test-type");
+        options.addArguments("--disable-web-security");
+        options.addArguments("--allow-running-insecure-content");
+        ChromeDriver driver2 = new ChromeDriver(options);
+        driver2.manage().window().setPosition(new Point(1000, 0));
+        driver2.manage().window().setSize(new Dimension(1000, 1050));
+
+        HomePage homePageDriver = new HomePage(driver2);
+        homePageDriver.gotoLoginPage();
+        homePageDriver.fillOutUsernameField(driverEmail);
+        homePageDriver.fillOutPasswordField(password);
+        homePageDriver.pressLoginButton();
+        String actualLoginStatusDriver = homePageDriver.getTextFromToastMessage();
+        String expectedLoginStatusDriver = "Successfully logged in!";
+
+        Assertions.assertEquals(expectedLoginStatusDriver, actualLoginStatusDriver);
+
+        //Initializing driver dashboard
+        DriverDashboardPage driverDashboardPage = new DriverDashboardPage(driver2);
+
+        //submit previous filled form when driver signs in
+        rideRequestPage.submitRequest();
+
+        driverDashboardPage.clickDriveRequestIcon();
+        driverDashboardPage.rejectRideRequest();
+        driverDashboardPage.rejectExplanation("Can't drive");
+        driverDashboardPage.confirmRejection();
+
+        Assertions.assertEquals("Driver dejanmatic@gmail.com has rejected this drive request. Reason: Can't drive", rideRequestPage.getNotificationText());
+
+        driver.quit();
+        driver2.quit();
     }
 }
