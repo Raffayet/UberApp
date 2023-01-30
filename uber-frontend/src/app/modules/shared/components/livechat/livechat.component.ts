@@ -62,13 +62,14 @@ export class LivechatComponent {
         this.stompClient.subscribe("/user/" + this.loggedUser?.email  + "/private", this.onPrivateMessageReceived);
 
         let msgs:Observable<Message[]> = this.livechatService.findAllMessagesForUser(this.loggedUser?.email as string);
-        msgs.subscribe(val => this.userChat = val);        
+        msgs.subscribe(val => {this.userChat = val; console.log(val)});        
       }    
           
   }
 
   onPublicMessageReceived = (payload: StompMessage) => {
       let payloadData = JSON.parse(payload.body);
+      console.log(payload);
       this.adminChat.get(this.userEmailToSend)?.push(payloadData);      
   }
 
@@ -93,7 +94,7 @@ export class LivechatComponent {
           receiverEmail: LIVECHAT_SUPPORT,
           receiverFirstName: "Admin",
           receiverLastName: "Support",
-          receiverImage: null,
+          receiverImage: environment.customerSupportProfileImage,
           content : this.messageToSend,
           date: new Date(),
           status: 1

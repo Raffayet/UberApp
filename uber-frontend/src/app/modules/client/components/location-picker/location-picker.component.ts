@@ -15,6 +15,7 @@ import { PaypalService } from 'src/app/modules/shared/services/paypal.service';
 import { debounceTime, filter, tap, distinctUntilChanged } from "rxjs/operators";
 import {fromEvent } from 'rxjs';
 import * as _ from 'underscore';
+import { User } from 'src/app/model/User';
 
 @Component({
   selector: 'app-location-picker',
@@ -36,13 +37,15 @@ export class LocationPickerComponent implements OnInit{
 
   options: Observable<MapSearchResult[]>[] = [];
 
+  loggedUser: User | null;
+
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router,  private paypalService: PaypalService,
     private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {
       this.searchOptions = _.debounce(this.searchOptions, 1000);
     }
 
   ngOnInit(): void {
-  
+    this.loggedUser = this.tokenUtilsService.getUserFromToken();  
   }
   
   changePageNumber(){
@@ -119,6 +122,27 @@ export class LocationPickerComponent implements OnInit{
       },
       error: error => {
           console.error('There was an error!', error);
+      }
+    });
+  }
+
+  createFavoriteRoute(): void
+  {
+    this.clientService.addFavoriteRoute(this.stateManagement.rideRequest.locations, this.loggedUser?.email as string)
+    .subscribe({
+      next: data => {
+        console.log(data);
+        if(String(data) === 'true')
+        {
+          this.toastr.success("Successfully added to favorite routes");
+        }
+
+        else{
+          this.toastr.warning("Already added to favorites");
+        }
+      },
+      error: error => {
+        console.error(error);
       }
     });
   }

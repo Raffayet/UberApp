@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialComponentsModule } from '../material-components/material-components.module';
 import { ClientRoutingModule } from './client-routing.module';
-import { RideInvitesPageComponent } from './pages/ride-invites-page/ride-invites-page.component';
 import { LocationPickerComponent } from './components/location-picker/location-picker.component';
 import { RideRequestPageComponent } from './pages/ride-request-page/ride-request-page.component';
 import { SharedModule } from '../shared/shared.module';
@@ -18,7 +17,6 @@ import { RideReviewComponent } from './components/ride-review/ride-review.compon
 
 @NgModule({
   declarations: [
-    RideInvitesPageComponent,
     RideRequestPageComponent,
     LocationPickerComponent,
     RideInvitationComponent,

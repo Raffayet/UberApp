@@ -7,7 +7,7 @@
     <app-ride-type *ngIf="currentPage == 2" (pageNum)="changePage($event)"></app-ride-type>
     <app-ride-invitation *ngIf="currentPage == 3"></app-ride-invitation>
   </div>
-  <div id="map1">
-    <app-map [containerId]="'map1'"></app-map>
+  <div [attr.id]="loggedUser ? 'map1' : 'map3'">
+    <app-map [containerId]="loggedUser ? 'map1' : 'map3'"></app-map>
   </div>
 </div>

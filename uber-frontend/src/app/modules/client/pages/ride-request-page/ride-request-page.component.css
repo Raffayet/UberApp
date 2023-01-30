@@ -26,6 +26,14 @@
     border: 3px solid white;
 }
 
+#map3{
+    width: 35%;
+    height: 70%;
+    margin-top: 10%;
+    background-color: #F9F9F9;
+    border: 3px solid white;
+}
+
 .back-button{
     margin-left: -1.5rem;
     margin-top: -1.5rem;
