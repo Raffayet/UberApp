@@ -66,7 +66,7 @@ export class RideTypeComponent implements OnInit{
       error: error => {
           console.error('There was an error!', error);
       }
-    });;
+    });
 
   }
 

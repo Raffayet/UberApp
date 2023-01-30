@@ -36,6 +36,8 @@ public class ClientService {
 
     private final RatingRepository ratingRepository;
 
+    private final FavoriteRouteRepository favoriteRouteRepository;
+
     public double getTokensByEmail(String email){
         if(email.equals(""))
             throw new EmptyStringException("Empty string!");
@@ -207,5 +209,25 @@ public class ClientService {
         double currentBalance = client.getTokens();
         client.setTokens(currentBalance + priceToRefund);
         this.clientRepository.save(client);
+    }
+
+    public boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
+        FavoriteRoute favoriteRoute = new FavoriteRoute();
+        favoriteRoute.setLocations(favoriteRouteDto.getLocations());
+        Optional<Client> client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail());
+        client.ifPresent(favoriteRoute::setClient);
+        if(client.isPresent()) {
+            for (FavoriteRoute clientsFavoriteRoute : client.get().getFavoriteRoutes()) {
+                if (favoriteRoute.equals(clientsFavoriteRoute)) {
+                    return false;
+                }
+            }
+
+            this.favoriteRouteRepository.save(favoriteRoute);
+            client.get().getFavoriteRoutes().add(favoriteRoute);
+            this.clientRepository.save(favoriteRoute.getClient());
+            return true;
+        }
+        throw new UsernameNotFoundException("User not found");
     }
 }

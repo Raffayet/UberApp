@@ -28,6 +28,7 @@ import * as SockJS from 'sockjs-client';
 import { environment } from 'src/app/environments/environment';
 import { Client, over,  Message as StompMessage, Frame } from 'stompjs';
 import { RatingExpiration } from 'src/app/model/RatingExpiration';
+import { ToastrService } from 'ngx-toastr';
 
 
 export interface Request {
@@ -48,7 +49,7 @@ export class HistoryComponent implements OnInit{
   totalElements: number = 0;
 
   displayedColumns: string[];
-  displayedColumnsClients = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2', 'rating'];
+  displayedColumnsClients = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'buttonsColumn', 'buttonsColumn2', 'rating', 'addToFavorite'];
   displayedColumnsDrivers = ['id', 'price', 'firstLocation', 'destination', 'startTime', 'endTime', 'clientsInfo'];
   isLoadingResults = true;
   isRateLimitReached = false;
@@ -72,7 +73,7 @@ export class HistoryComponent implements OnInit{
 
   ratingExpirationMap = new Map<number, boolean>();
 
-  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog, private userService: UserService, private ratingDialog: MatDialog){}
+  constructor(private rideService: RideService, private tokenUtilsService: TokenUtilsService, private dialog: MatDialog, private driverService: DriverService, private orderDialog: MatDialog, private paypalService: PaypalService, private clientsDialog: MatDialog, private userService: UserService, private ratingDialog: MatDialog, private toastrService: ToastrService, private clientService: ClientService){}
 
   ngOnInit() {
     if(this.tokenUtilsService.getRoleFromToken() == "CLIENT"){   
@@ -146,6 +147,24 @@ export class HistoryComponent implements OnInit{
       this.displayedColumns = this.displayedColumnsDrivers;
       this.getHistoryOfDriversRides({ page: 0, size: 10 });
     }
+  }
+
+  checkIfUserIsBlocked(locations: MapSearchResult[], ride: Ride)
+  {
+    this.userService.checkIfUserIsBlocked(this.loggedUser?.email).subscribe({
+      next: (data:boolean) => {
+          if(data){
+            this.toastrService.warning("You can't request a new ride because you are blocked!", "Blocked");
+          }
+          else{
+            this.openOrderDialog(locations, ride);
+          }
+  
+      },
+      error: error => {
+          console.error('There was an error!', error);
+      }
+    });
   }
 
   getUserTypeByEmail()
@@ -364,6 +383,27 @@ export class HistoryComponent implements OnInit{
         this.getHistoryOfRides({ page: 0, size: 10 });
       },
       error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  addToFavorites(selectedRide: Ride)
+  {
+    this.clientService.addFavoriteRoute(selectedRide.locations, this.loggedUser?.email as string)
+    .subscribe({
+      next: data => {
+        console.log(data);
+        if(String(data) === 'true')
+        {
+          this.toastrService.success("Successfully added to favorite routes");
+        }
+
+        else{
+          this.toastrService.warning("Already added to favorites");
+        }
+      },
+      error: error => {
         console.error(error);
       }
     });
