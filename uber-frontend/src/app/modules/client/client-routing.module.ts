@@ -1,3 +1,4 @@
+import { ClientGuard } from './guard/client.guard';
 import { ReportPageComponent } from './../shared/pages/report-page/report-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -12,31 +13,31 @@ const routes: Routes = [
     path: 'request-ride-page',
     component: RideRequestPageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'profile-page',
     component: UserProfilePageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'ride-invites',
     component: RideInvitesPageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'history',
     component: HistoryComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   {
     path: 'report',
     component: ReportPageComponent,
     outlet: 'ClientRouter',
-    canActivate: [],
+    canActivate: [ClientGuard],
   },
   
 ];
