@@ -1,6 +1,7 @@
 package com.example.uberbackend.e2e;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -26,32 +27,56 @@ public class RideRequestPage {
         PageFactory.initElements(this.driver, this);
     }
 
-    @FindBy(xpath = "/html/body/app-root/app-client-dashboard/ride-request-page/div/div[1]/app-location-picker/div/div/div[1]/mat-form-field/div[1]/div[2]/div/input")
+    @FindBy(xpath = "//input[contains(@id, 'mat-input-0')]")
     private WebElement firstLocationInput;
 
-    @FindBy(xpath = "/html/body/app-root/app-client-dashboard/ride-request-page/div/div[1]/app-location-picker/div/div/div[2]/mat-form-field/div[1]/div[2]/div/input")
+    @FindBy(xpath = "//input[contains(@id, 'mat-input-2')]")
     private WebElement secondLocationInput;
 
-    @FindBy(xpath = "/html/body/div/div/div/div/mat-option[1]")
+    @FindBy(xpath = "//*[@id=\"mat-option-0\"]")
     private WebElement firstLocationOption;
 
-    @FindBy(xpath = "/html/body/div/div/div/div/mat-option[2]")
+    @FindBy(xpath = "//*[@id=\"mat-option-8\"]")
     private WebElement secondLocationOption;
 
-    @FindBy(xpath = "/html/body/app-root/app-client-dashboard/ride-request-page/div/div[1]/app-location-picker/div/div/div[1]/button")
+    @FindBy(xpath = "//*[@id=\"cdk-drop-list-0\"]/div[1]/button")
     private WebElement addLocationButton;
 
-    @FindBy(xpath = "/html/body/app-root/app-client-dashboard/ride-request-page/div/div[1]/app-location-picker/div/div/div[3]")
+    @FindBy(xpath = "//button[@class='next-button mdc-button mdc-button--raised mat-mdc-raised-button mat-unthemed mat-mdc-button-base']")
     private WebElement nextButton;
 
-    @FindBy(xpath = "/html/body/app-root/app-client-dashboard/ride-request-page/div/div[1]/app-ride-type/div/div/mat-form-field/div[1]/div[2]/div/mat-select/div/div[1]")
+    @FindBy(xpath = "//*[contains(@class, 'mat-select')]")
     private WebElement vehicleTypesSelect;
 
-    @FindBy(xpath = "/html/body/div[1]/div[2]/div/div/mat-option[1]")
+    @FindBy(xpath = "//*[@id=\"mat-option-28\"]")
     private WebElement standardVehicleType;
 
-    @FindBy(xpath = "/html/body/app-root/app-client-dashboard/ride-request-page/div/div[1]/app-ride-type/div/div/mat-expansion-panel/div/div/mat-radio-group/mat-radio-button[1]")
+    @FindBy(xpath = "//*[@id=\"mat-radio-2\"]")
     private WebElement customRouteType;
+
+    @FindBy(xpath = "//button[@class='next-button mdc-button mdc-button--raised mat-mdc-raised-button mat-unthemed mat-mdc-button-base ng-star-inserted']")
+    private WebElement secondNextButton;
+
+    @FindBy(xpath = "//button[(contains(@class, 'submit-button'))]")
+    private WebElement submitButton;
+
+    @FindBy(xpath = "//div[@role='alert']")
+    private WebElement toastDiv;
+
+    @FindBy(xpath = "//img[contains(@class, 'leaflet-marker-icon')]")
+    private WebElement carIcon;
+
+    @FindBy(xpath = "//textarea[contains(@id, 'mat-input')]")
+    private WebElement commentTextArea;
+
+    @FindBy(xpath = "//button[contains(@ng-reflect-dialog-result, '[object Object]')]")
+    private WebElement submitCommentButton;
+
+    @FindBy(xpath = "//input[@placeholder='New person...']")
+    private WebElement inviteAutocomplete;
+
+    @FindBy(xpath = "//button[contains(@class, 'split-fare-button')]")
+    private WebElement splitFareButton;
 
     public void fillOutFirstLocationField(String text){
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
@@ -109,5 +134,71 @@ public class RideRequestPage {
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
                 .until(ExpectedConditions.visibilityOf(customRouteType));
         customRouteType.click();
+    }
+
+    public void pressSecondNextButton()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(secondNextButton));
+        secondNextButton.click();
+    }
+
+    public void submitRequest()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(this.driver.findElement(By.xpath("//*[(contains(@class, 'chip__text'))]"))));
+
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(submitButton));
+        submitButton.click();
+    }
+
+    public String getNotificationText()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(toastDiv));
+        return toastDiv.getText();
+    }
+
+    public void driveSimulation()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(200)))
+                .until(ExpectedConditions.visibilityOf(carIcon));
+    }
+
+    public void insertComment(String comment)
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(200)))
+                .until(ExpectedConditions.visibilityOf(commentTextArea));
+        commentTextArea.sendKeys(comment);
+    }
+
+    public void clickSubmitCommentButton()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(submitCommentButton));
+        submitCommentButton.click();
+    }
+
+    public void invitePerson(String clientEmail)
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(inviteAutocomplete));
+        inviteAutocomplete.sendKeys(clientEmail);
+        actions.sendKeys(Keys.RETURN).build().perform();
+    }
+
+    public void pressSplitFareButton()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(splitFareButton));
+        splitFareButton.click();
+    }
+
+    public String getRideInviteResponse()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(toastDiv));
+        return toastDiv.getText();
     }
 }
