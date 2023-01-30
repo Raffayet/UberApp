@@ -48,7 +48,7 @@ public class RideRequestPage {
     @FindBy(xpath = "//*[contains(@class, 'mat-select')]")
     private WebElement vehicleTypesSelect;
 
-    @FindBy(xpath = "//*[@id=\"mat-option-28\"]")
+    @FindBy(xpath = "//mat-option[contains(@ng-reflect-value, 'Standard')]")
     private WebElement standardVehicleType;
 
     @FindBy(xpath = "//*[@id=\"mat-radio-2\"]")
@@ -77,6 +77,10 @@ public class RideRequestPage {
 
     @FindBy(xpath = "//button[contains(@class, 'split-fare-button')]")
     private WebElement splitFareButton;
+
+    @FindBy(xpath = "//label[contains(@class, 'failure-label')]")
+    private WebElement notEnoughTokensLabel;
+
 
     public void fillOutFirstLocationField(String text){
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
@@ -200,5 +204,12 @@ public class RideRequestPage {
         (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
                 .until(ExpectedConditions.visibilityOf(toastDiv));
         return toastDiv.getText();
+    }
+
+    public String getTokensLabelText()
+    {
+        (new WebDriverWait(this.driver, Duration.ofSeconds(5)))
+                .until(ExpectedConditions.visibilityOf(notEnoughTokensLabel));
+        return notEnoughTokensLabel.getText();
     }
 }
