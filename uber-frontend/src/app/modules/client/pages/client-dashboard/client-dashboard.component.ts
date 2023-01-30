@@ -23,8 +23,8 @@ import { BlockUserRequest } from 'src/app/model/BlockUserRequest';
 export class ClientDashboardComponent {
 
     chatHidden:boolean = false;
-    navbarLabels: string[] = ["Home", "Profile", "Ride Invites", "History", "Report"];
-    navbarPaths: string[] = ["request-ride-page", "profile-page", "ride-invites", "history", "report"];
+    navbarLabels: string[] = ["Home", "Profile", "History", "Report"];
+    navbarPaths: string[] = ["request-ride-page", "profile-page", "history", "report"];
     option: string = this.navbarPaths[0];
 
     rideInvites: RideInvite[];
