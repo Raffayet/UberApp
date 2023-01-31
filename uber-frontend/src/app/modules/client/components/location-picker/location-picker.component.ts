@@ -1,3 +1,4 @@
+import { FavoriteRouteDto } from 'src/app/model/FavoriteRouteDto';
 import { MapSearchResult } from '../../services/map.service';
 import { MapService } from '../../services/map.service';
 import { TokenUtilsService } from 'src/app/modules/shared/services/token-utils.service';
@@ -39,6 +40,8 @@ export class LocationPickerComponent implements OnInit{
 
   loggedUser: User | null;
 
+  favoriteRoutes: FavoriteRouteDto[] = [];
+
   constructor(private mapService: MapService, private toastr: ToastrService, private router: Router,  private paypalService: PaypalService,
     private tokenUtilsService: TokenUtilsService, private clientService: ClientService, protected stateManagement: RideRequestStateService) {
       this.searchOptions = _.debounce(this.searchOptions, 1000);
@@ -46,6 +49,15 @@ export class LocationPickerComponent implements OnInit{
 
   ngOnInit(): void {
     this.loggedUser = this.tokenUtilsService.getUserFromToken();  
+    this.clientService.getFavoriteRoutes(this.loggedUser?.email as string).subscribe({
+      next: data => {
+          this.favoriteRoutes = data;
+      },
+      error: error => {
+        console.log(error);
+          
+      }
+    });
   }
   
   changePageNumber(){
@@ -145,5 +157,17 @@ export class LocationPickerComponent implements OnInit{
         console.error(error);
       }
     });
+  }
+
+  onSelectedRoute(route: FavoriteRouteDto): void{
+    
+      for(let i in route.locations){
+        this.stateManagement.inputValues[i] = route.locations[i].displayName;
+        this.stateManagement.rideRequest.locations[i] = route.locations[i];
+        this.pinLocation(route.locations[i], parseInt(i)); 
+        this.addLocation(parseInt(i));
+      }
+
+      this.automaticallyFindPath("Custom");
   }
 }

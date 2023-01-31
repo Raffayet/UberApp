@@ -38,6 +38,8 @@ public class ClientService {
 
     private final FavoriteRouteRepository favoriteRouteRepository;
 
+    private final MapSearchResultRepository mapSearchResultRepository;
+
     public double getTokensByEmail(String email){
         if(email.equals(""))
             throw new EmptyStringException("Empty string!");
@@ -213,6 +215,13 @@ public class ClientService {
 
     public Boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
         FavoriteRoute favoriteRoute = new FavoriteRoute();
+
+        for(MapSearchResultDto res : favoriteRouteDto.getLocations()){
+            if(res.getId() == null){
+                this.mapSearchResultRepository.save(res);
+            }
+        }
+
         favoriteRoute.setLocations(favoriteRouteDto.getLocations());
         Client client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail()).orElseThrow(ClientNotFoundException::new);
 
