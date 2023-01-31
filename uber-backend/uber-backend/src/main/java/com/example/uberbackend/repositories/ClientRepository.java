@@ -1,5 +1,6 @@
 package com.example.uberbackend.repositories;
 import com.example.uberbackend.model.Client;
+import com.example.uberbackend.model.FavoriteRoute;
 import com.example.uberbackend.model.Message;
 import com.example.uberbackend.model.RideInvite;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE c.email = ?1")
     Optional<Client> findByEmail(String email);
+
+    @Query("SELECT fr FROM FavoriteRoute fr WHERE fr.client.email = ?1")
+    List<FavoriteRoute> getFavoriteRoutesByEmail(String clientEmail);
 }

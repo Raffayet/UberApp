@@ -393,18 +393,15 @@ export class HistoryComponent implements OnInit{
     this.clientService.addFavoriteRoute(selectedRide.locations, this.loggedUser?.email as string)
     .subscribe({
       next: data => {
-        console.log(data);
-        if(String(data) === 'true')
-        {
-          this.toastrService.success("Successfully added to favorite routes");
-        }
-
-        else{
-          this.toastrService.warning("Already added to favorites");
-        }
+          if(String(data) === 'true'){
+            this.toastrService.success("Successfully added to favorite routes!");
+          }
+          else{
+            this.toastrService.warning("Route is already in favorites!");
+          }
       },
       error: error => {
-        console.error(error);
+        this.toastrService.warning("Something went wrong!");
       }
     });
   }

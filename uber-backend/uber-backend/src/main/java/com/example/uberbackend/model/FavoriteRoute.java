@@ -20,7 +20,7 @@ public class FavoriteRoute {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})//ovde je problem kod omlijenih ruta
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private List<MapSearchResultDto> locations;
 
     @ManyToOne
@@ -31,17 +31,17 @@ public class FavoriteRoute {
     public boolean equals(FavoriteRoute favoriteRoute) {
         if(favoriteRoute.getLocations().size() != this.getLocations().size())
         {
-            return true;
+            return false;
         }
 
         for(int i = 0; i < favoriteRoute.getLocations().size(); i++)
         {
-            if(favoriteRoute.getLocations().get(i).getDisplayName().equals(this.getLocations().get(i).getDisplayName()))
+            if(!favoriteRoute.getLocations().get(i).getDisplayName().equals(this.getLocations().get(i).getDisplayName()))
             {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     @Override

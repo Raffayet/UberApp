@@ -211,23 +211,33 @@ public class ClientService {
         this.clientRepository.save(client);
     }
 
-    public boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
+    public Boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
         FavoriteRoute favoriteRoute = new FavoriteRoute();
         favoriteRoute.setLocations(favoriteRouteDto.getLocations());
-        Optional<Client> client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail());
-        client.ifPresent(favoriteRoute::setClient);
-        if(client.isPresent()) {
-            for (FavoriteRoute clientsFavoriteRoute : client.get().getFavoriteRoutes()) {
-                if (favoriteRoute.equals(clientsFavoriteRoute)) {
-                    return false;
-                }
-            }
+        Client client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail()).orElseThrow(ClientNotFoundException::new);
 
-            this.favoriteRouteRepository.save(favoriteRoute);
-            client.get().getFavoriteRoutes().add(favoriteRoute);
-            this.clientRepository.save(favoriteRoute.getClient());
-            return true;
+        favoriteRoute.setClient(client);
+
+        for (FavoriteRoute clientsFavoriteRoute : client.getFavoriteRoutes()) {
+            if (favoriteRoute.equals(clientsFavoriteRoute)) {
+                return false;
+            }
         }
-        throw new UsernameNotFoundException("User not found");
+
+        this.favoriteRouteRepository.save(favoriteRoute);
+        client.getFavoriteRoutes().add(favoriteRoute);
+        this.clientRepository.save(favoriteRoute.getClient());
+        return true;
+    }
+
+    public List<FavoriteRouteDto> getFavoriteRoutes(String clientEmail) {
+        List<FavoriteRoute> routes = this.clientRepository.getFavoriteRoutesByEmail(clientEmail);
+        List<FavoriteRouteDto> retVal = new ArrayList<>();
+
+        for(FavoriteRoute fr : routes){
+            retVal.add(new FavoriteRouteDto(fr));
+        }
+
+        return retVal;
     }
 }
