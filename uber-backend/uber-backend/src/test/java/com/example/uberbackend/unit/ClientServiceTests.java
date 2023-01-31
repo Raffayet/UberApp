@@ -4,15 +4,9 @@ import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.dto.DriverFoundDto;
 import com.example.uberbackend.dto.MapSearchResultDto;
 import com.example.uberbackend.exception.*;
-import com.example.uberbackend.model.Client;
-import com.example.uberbackend.model.DriveRequest;
-import com.example.uberbackend.model.Ride;
-import com.example.uberbackend.model.RideInvite;
+import com.example.uberbackend.model.*;
 import com.example.uberbackend.model.enums.RideInviteStatus;
-import com.example.uberbackend.repositories.ClientRepository;
-import com.example.uberbackend.repositories.DriveRequestRepository;
-import com.example.uberbackend.repositories.RideInviteRepository;
-import com.example.uberbackend.repositories.RideRepository;
+import com.example.uberbackend.repositories.*;
 import com.example.uberbackend.dto.*;
 import com.example.uberbackend.exception.DriveRequestNotFoundException;
 import com.example.uberbackend.exception.EmptyStringException;
@@ -35,9 +29,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -59,6 +52,10 @@ public class ClientServiceTests {
     RideRepository rideRepository;
     @Mock
     SimpMessagingTemplate simpMessagingTemplate;
+    @Mock
+    FavoriteRouteRepository favoriteRouteRepository;
+    @Mock
+    MapSearchResultRepository mapSearchResultRepository;
 
     @Test
     void createDriveRequestSuccessTest() throws IOException {
@@ -540,5 +537,123 @@ public class ClientServiceTests {
 
         Mockito.when(driveRequestRepository.findById(requestId)).thenReturn(Optional.empty());
         Assertions.assertThrows(DriveRequestNotFoundException.class, () -> clientService.refundTokens(requestId));
+    }
+
+    // GetFavoriteRoutes - SW-1-2019
+    @Test
+    public void givenEmptyString_whenGetFavoriteRoutesByEmail_returnEmptyList(){
+        String email = "";
+        Mockito.when(clientRepository.getFavoriteRoutesByEmail(email)).thenReturn(new ArrayList<>());
+
+        List<FavoriteRouteDto> routes = clientService.getFavoriteRoutes(email);
+        assertEquals(0, routes.size());
+    }
+
+    @Test
+    public void givenNonexistentClientEmail_whenGetFavoriteRoutesByEmail_returnEmptyList(){
+        String email = "client@gmail.com";
+        Mockito.when(clientRepository.getFavoriteRoutesByEmail(email)).thenReturn(new ArrayList<>());
+
+        List<FavoriteRouteDto> routes = clientService.getFavoriteRoutes(email);
+
+        assertEquals(0, routes.size());
+    }
+
+    @Test
+    public void givenExistentClientEmail_whenGetFavoriteRoutesByEmail_returnListOfSizeOne(){
+        String email = "sasalukic@gmail.com";
+        List<FavoriteRoute> retVal = new ArrayList<>();
+        FavoriteRoute fr = new FavoriteRoute();
+        Client c = new Client();
+        c.setEmail("client@gmail.com");
+        fr.setClient(c);
+
+        retVal.add(fr);
+
+        Mockito.when(clientRepository.getFavoriteRoutesByEmail(email)).thenReturn(retVal);
+
+        List<FavoriteRouteDto> routes = clientService.getFavoriteRoutes(email);
+
+        assertEquals(1, routes.size());
+    }
+
+    // AddFavoriteRoute - SW-1-2019
+    @Test
+    public void givenNonexistentClientEmail_whenAddFavoriteRoute_throwClientNotFoundException(){
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        dto.setLocations(new ArrayList<>());
+        dto.setClientEmail("");
+
+        Mockito.when(clientRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ClientNotFoundException.class, () -> clientService.addFavoriteRoute(dto));
+    }
+
+    @Test
+    public void givenExistentClientEmail_whenAddFavoriteRoute_returnFalse(){
+        // Locations
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+
+        // dto
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        dto.setLocations(locations);
+        dto.setClientEmail("milan@gmail.com");
+
+        // inner object
+        List<FavoriteRoute> favoriteRoutes = new ArrayList<>();
+        FavoriteRoute fr = new FavoriteRoute();
+        Client c = new Client();
+        c.setEmail("milan@gmail.com");
+        fr.setClient(c);
+        fr.setLocations(locations);
+        favoriteRoutes.add(fr);
+        c.setFavoriteRoutes(favoriteRoutes);
+
+        Mockito.when(clientRepository.findByEmail(anyString())).thenReturn(Optional.of(c));
+
+        boolean result = clientService.addFavoriteRoute(dto);
+        assertFalse(result);
+        verify(favoriteRouteRepository, times(0)).save(any(FavoriteRoute.class));
+        verify(clientRepository, times(0)).save(any(Client.class));
+    }
+
+    @Test
+    public void givenExistentClientEmail_whenAddFavoriteRoute_returnTrue(){
+        // Locations
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+
+        List<MapSearchResultDto> locations1 = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00"),
+                new MapSearchResultDto("Kisacka", "45.21", "19.20")
+        );
+
+        // dto
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        dto.setLocations(locations);
+        dto.setClientEmail("milan@gmail.com");
+
+        // inner object
+        List<FavoriteRoute> favoriteRoutes = new ArrayList<>();
+        FavoriteRoute fr = new FavoriteRoute();
+        Client c = new Client();
+        c.setEmail("milan@gmail.com");
+        fr.setClient(c);
+        fr.setLocations(locations1);
+        favoriteRoutes.add(fr);
+        c.setFavoriteRoutes(favoriteRoutes);
+
+        Mockito.when(clientRepository.findByEmail(anyString())).thenReturn(Optional.of(c));
+
+        boolean result = clientService.addFavoriteRoute(dto);
+        assertTrue(result);
+        verify(favoriteRouteRepository, times(1)).save(any(FavoriteRoute.class));
+        verify(clientRepository, times(1)).save(any(Client.class));
     }
 }

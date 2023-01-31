@@ -4,8 +4,10 @@ import com.example.uberbackend.dto.CheckForEnoughTokens;
 import com.example.uberbackend.dto.DriveInvitationDto;
 import com.example.uberbackend.dto.DriveRequestDto;
 import com.example.uberbackend.dto.InvitationStatusDto;
+import com.example.uberbackend.model.Client;
 import com.example.uberbackend.model.Driver;
 import com.example.uberbackend.dto.FavoriteRouteDto;
+import com.example.uberbackend.model.FavoriteRoute;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.service.ClientService;
 import com.example.uberbackend.task.NotificationScheduler;
@@ -69,7 +71,7 @@ public class ClientController {
 }
 
     @GetMapping("get-ride-invites")
-    public ResponseEntity<?> getRideInvites( @RequestParam("email")  String userEmail){
+    public ResponseEntity<?> getRideInvites(@RequestParam("email")  String userEmail){
         List<RideInvite> rideInvites = clientService.findAllRideInvites(userEmail);
         return ResponseEntity.ok(rideInvites);
     }
@@ -146,13 +148,20 @@ public class ClientController {
     }
 
     @PostMapping("add-favorite-route")
-    public ResponseEntity<Boolean> addFavoriteRoute(@RequestBody FavoriteRouteDto favoriteRouteDto)
+    public ResponseEntity<?> addFavoriteRoute(@RequestBody @Valid FavoriteRouteDto favoriteRouteDto, BindingResult result)
     {
-        try{
-            boolean success = this.clientService.addFavoriteRoute(favoriteRouteDto);
-            return ResponseEntity.ok(success);
-        }catch (Exception ex){
-            return new ResponseEntity<Boolean>(Boolean.valueOf(ex.getMessage()), HttpStatus.BAD_REQUEST);
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getFieldErrors(), HttpStatus.BAD_REQUEST);
         }
+
+        Boolean res = this.clientService.addFavoriteRoute(favoriteRouteDto);
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("get-favorite-routes")
+    public ResponseEntity<?> getFavoriteRoutes(@RequestParam("email")  String clientEmail)
+    {
+        List<FavoriteRouteDto> routes = this.clientService.getFavoriteRoutes(clientEmail);
+        return ResponseEntity.ok(routes);
     }
 }

@@ -99,4 +99,12 @@ export class ClientService {
 
     return this.http.post<Boolean>(environment.apiURL + "/client/add-favorite-route", favoriteRouteDto, { headers, responseType: 'text' as 'json' });
   }
+
+  getFavoriteRoutes(email: string): Observable<FavoriteRouteDto[]>{
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("email", email);
+    queryParams = queryParams.append("format", "json");
+    
+    return this.http.get<FavoriteRouteDto[]>(environment.apiURL + "/client/get-favorite-routes", { params: queryParams});
+  }
 }

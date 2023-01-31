@@ -125,3 +125,11 @@ insert into drive_request_people(drive_request_id, people_id) values(1, 5);
 
 insert into drive_request_drivers_that_rejected(drive_request_id, drivers_that_rejected_id) values(1, 2);
 insert into drive_request_drivers_that_rejected(drive_request_id, drivers_that_rejected_id) values(2, 2);
+
+insert into favorite_route(client_id) values (1);
+
+insert into favorite_route_locations(favorite_route_id, locations_id) values(1, 1);
+insert into favorite_route_locations(favorite_route_id, locations_id) values(1, 2);
+insert into favorite_route_locations(favorite_route_id, locations_id) values(1, 3);
+
+insert into client_favorite_routes(client_id, favorite_routes_id) values (1, 1);

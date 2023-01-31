@@ -38,6 +38,8 @@ public class ClientService {
 
     private final FavoriteRouteRepository favoriteRouteRepository;
 
+    private final MapSearchResultRepository mapSearchResultRepository;
+
     public double getTokensByEmail(String email){
         if(email.equals(""))
             throw new EmptyStringException("Empty string!");
@@ -211,23 +213,40 @@ public class ClientService {
         this.clientRepository.save(client);
     }
 
-    public boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
+    public Boolean addFavoriteRoute(FavoriteRouteDto favoriteRouteDto) {
         FavoriteRoute favoriteRoute = new FavoriteRoute();
-        favoriteRoute.setLocations(favoriteRouteDto.getLocations());
-        Optional<Client> client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail());
-        client.ifPresent(favoriteRoute::setClient);
-        if(client.isPresent()) {
-            for (FavoriteRoute clientsFavoriteRoute : client.get().getFavoriteRoutes()) {
-                if (favoriteRoute.equals(clientsFavoriteRoute)) {
-                    return false;
-                }
-            }
 
-            this.favoriteRouteRepository.save(favoriteRoute);
-            client.get().getFavoriteRoutes().add(favoriteRoute);
-            this.clientRepository.save(favoriteRoute.getClient());
-            return true;
+        for(MapSearchResultDto res : favoriteRouteDto.getLocations()){
+            if(res.getId() == null){
+                this.mapSearchResultRepository.save(res);
+            }
         }
-        throw new UsernameNotFoundException("User not found");
+
+        favoriteRoute.setLocations(favoriteRouteDto.getLocations());
+        Client client = this.clientRepository.findByEmail(favoriteRouteDto.getClientEmail()).orElseThrow(ClientNotFoundException::new);
+
+        favoriteRoute.setClient(client);
+
+        for (FavoriteRoute clientsFavoriteRoute : client.getFavoriteRoutes()) {
+            if (favoriteRoute.equals(clientsFavoriteRoute)) {
+                return false;
+            }
+        }
+
+        this.favoriteRouteRepository.save(favoriteRoute);
+        client.getFavoriteRoutes().add(favoriteRoute);
+        this.clientRepository.save(favoriteRoute.getClient());
+        return true;
+    }
+
+    public List<FavoriteRouteDto> getFavoriteRoutes(String clientEmail) {
+        List<FavoriteRoute> routes = this.clientRepository.getFavoriteRoutesByEmail(clientEmail);
+        List<FavoriteRouteDto> retVal = new ArrayList<>();
+
+        for(FavoriteRoute fr : routes){
+            retVal.add(new FavoriteRouteDto(fr));
+        }
+
+        return retVal;
     }
 }

@@ -26,9 +26,20 @@
                 {{option.displayName}}
               </mat-option>
             </mat-autocomplete>
-          </div>
-      <div>
-        <button mat-raised-button class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="next()">Next</button>
-        <button mat-raised-button color="accent" class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="createFavoriteRoute()">Add Route To Favorites<mat-icon>star</mat-icon></button>
-      </div>
+        </div>
+        <div class="favorite-routes">
+          <h3 class="display-2">Favorite routes</h3>
+          <mat-form-field appearance="fill">
+            <mat-label>Favorite route</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let route of favoriteRoutes" [value]="route" (click)="onSelectedRoute(route)">
+                  {{route.locations[0].displayName}} - {{route.locations[route.locations.length - 1].displayName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="next()">Next</button>
+          <button mat-raised-button color="accent" class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="createFavoriteRoute()">Add Route To Favorites<mat-icon>star</mat-icon></button>
+        </div>
 </div>
