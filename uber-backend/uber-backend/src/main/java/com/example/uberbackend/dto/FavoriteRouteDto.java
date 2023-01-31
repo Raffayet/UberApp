@@ -19,7 +19,7 @@ import java.util.List;
 public class FavoriteRouteDto {
 
     @NotNull(message = "Locations are mandatory!")
-    @Size(min = 2, message = "There must be at least 2 locations")
+    @Size(min = 2, message = "There must be at least 2 locations!")
     private List<MapSearchResultDto> locations;
 
     @NotNull(message = "Client email is mandatory!")

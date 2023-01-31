@@ -1,6 +1,7 @@
 package com.example.uberbackend.unit.repository;
 
 import com.example.uberbackend.model.Client;
+import com.example.uberbackend.model.FavoriteRoute;
 import com.example.uberbackend.model.RideInvite;
 import com.example.uberbackend.repositories.ClientRepository;
 import org.junit.jupiter.api.Assertions;
@@ -94,5 +95,30 @@ public class ClientRepositoryTests {
         Optional<Client> client = clientRepository.findByEmail(email);
 
         assertTrue(client.isEmpty());
+    }
+
+    // GetFavoriteRoutesByEmail - SW-1-2019
+    @Test
+    public void givenEmptyString_whenGetFavoriteRoutesByEmail_returnEmptyList(){
+        String email = "";
+        List<FavoriteRoute> routes = clientRepository.getFavoriteRoutesByEmail(email);
+
+        assertEquals(0, routes.size());
+    }
+
+    @Test
+    public void givenNonexistentClientEmail_whenGetFavoriteRoutesByEmail_returnEmptyList(){
+        String email = "client@gmail.com";
+        List<FavoriteRoute> routes = clientRepository.getFavoriteRoutesByEmail(email);
+
+        assertEquals(0, routes.size());
+    }
+
+    @Test
+    public void givenExistentClientEmail_whenGetFavoriteRoutesByEmail_returnListOfSizeOne(){
+        String email = "sasalukic@gmail.com";
+        List<FavoriteRoute> routes = clientRepository.getFavoriteRoutesByEmail(email);
+
+        assertEquals(1, routes.size());
     }
 }

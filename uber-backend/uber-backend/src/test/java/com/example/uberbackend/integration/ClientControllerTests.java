@@ -1,6 +1,7 @@
 package com.example.uberbackend.integration;
 
 import com.example.uberbackend.dto.*;
+import com.example.uberbackend.model.FavoriteRoute;
 import com.example.uberbackend.model.enums.RideInviteStatus;
 import com.example.uberbackend.util.TestUtil;
 import org.junit.Before;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -127,8 +129,6 @@ public class ClientControllerTests {
             .andExpect(status().isOk())
             .andExpect(content().string("Success!"));
     }
-
-
 
     @Test
     @WithMockUser(authorities = {"CLIENT"})
@@ -541,5 +541,125 @@ public class ClientControllerTests {
         MvcResult result = mockMvc.perform(post(URL_PREFIX + "/refund-tokens").contentType(contentType).content(json))
                 .andExpect(status().isNotAcceptable()).andReturn();
         Assertions.assertEquals("Drive request has not been found!", result.getResolvedException().getMessage());
+    }
+
+    // GetFavoriteRoutes - SW-1-2019
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenExistentClientEmail_whenGetFavoriteRoutes_thenReturnOK() throws Exception {
+        String email = "sasalukic@gmail.com";
+
+        mockMvc.perform(get(URL_PREFIX + "/get-favorite-routes").contentType(contentType)
+                .param("email",email))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenNonexistentClientEmail_whenGetFavoriteRoutes_thenReturnOK() throws Exception {
+        String email = "client@gmail.com";
+
+        mockMvc.perform(get(URL_PREFIX + "/get-favorite-routes").contentType(contentType)
+                        .param("email",email))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenEmptyString_whenGetFavoriteRoutes_thenReturnOK() throws Exception {
+        String email = "";
+
+        mockMvc.perform(get(URL_PREFIX + "/get-favorite-routes").contentType(contentType)
+                        .param("email",email))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    // AddFavoriteRoute - SW-1-2019
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenInvalidLocationsSize_whenAddFavoriteRoute_thenReturnBadRequest() throws Exception {
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00")
+        );
+        dto.setLocations(locations);
+        dto.setClientEmail("sasalukic@gmail.com");
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/add-favorite-route").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).
+                andExpect(jsonPath("$.[*].defaultMessage").value(contains("There must be at least 2 locations!")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenInvalidLocations_whenAddFavoriteRoute_thenReturnBadRequest() throws Exception {
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00")
+        );
+        dto.setClientEmail("sasalukic@gmail.com");
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/add-favorite-route").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).
+                andExpect(jsonPath("$.[*].defaultMessage").value(contains("Locations are mandatory!")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenInvalidClientEmail_whenAddFavoriteRoute_thenReturnBadRequest() throws Exception {
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        dto.setLocations(locations);
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/add-favorite-route").contentType(contentType).content(json))
+                .andExpect(status().isBadRequest()).
+                andExpect(jsonPath("$.[*].defaultMessage").value(contains("Client email is mandatory!")));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void whenAddFavoriteRoute_thenReturnOk() throws Exception {
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        dto.setLocations(locations);
+        dto.setClientEmail("sasalukic@gmail.com");
+
+        String json = TestUtil.json(dto);
+
+        mockMvc.perform(post(URL_PREFIX + "/add-favorite-route").contentType(contentType).content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CLIENT"})
+    public void givenNonexistentClientEmail_whenAddFavoriteRoute_thenReturnNotAcceptable() throws Exception {
+        FavoriteRouteDto dto = new FavoriteRouteDto();
+        List<MapSearchResultDto> locations = Arrays.asList(
+                new MapSearchResultDto("Rumenacka", "45.11", "19.00"),
+                new MapSearchResultDto("Futoska", "45.11", "19.00")
+        );
+        dto.setLocations(locations);
+        dto.setClientEmail("client@gmail.com");
+
+        String json = TestUtil.json(dto);
+
+        MvcResult result = mockMvc.perform(post(URL_PREFIX + "/add-favorite-route").contentType(contentType).content(json))
+                .andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertEquals("Client has not been found!", result.getResolvedException().getMessage());
     }
 }
