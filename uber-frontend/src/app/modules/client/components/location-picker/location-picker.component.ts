@@ -49,15 +49,17 @@ export class LocationPickerComponent implements OnInit{
 
   ngOnInit(): void {
     this.loggedUser = this.tokenUtilsService.getUserFromToken();  
-    this.clientService.getFavoriteRoutes(this.loggedUser?.email as string).subscribe({
-      next: data => {
-          this.favoriteRoutes = data;
-      },
-      error: error => {
-        console.log(error);
-          
-      }
-    });
+    if(this.loggedUser != null){
+      this.clientService.getFavoriteRoutes(this.loggedUser?.email as string).subscribe({
+        next: data => {
+            this.favoriteRoutes = data;
+        },
+        error: error => {
+          console.log(error);
+            
+        }
+      });
+    }
   }
   
   changePageNumber(){
