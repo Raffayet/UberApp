@@ -1,0 +1,9 @@
+<h1 class="mainH">Dashboard</h1>
+<div class="containerForm">
+    <div *ngFor="let item of navbarItems" class="block" (click)="goToPage(item)">
+        <p>
+            <mat-icon>{{item.icon}}</mat-icon>
+        </p>
+        <h1>{{item.label}}</h1>
+    </div>
+</div>

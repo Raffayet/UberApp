@@ -1,0 +1,9 @@
+<div class="notification-container">
+    <button mat-mini-fab class="notification" color="warn" (click)="openDialog(0)" *ngIf="reservedRidesToTake.length === 0 && ridesToTake.length !== 0">
+        <mat-icon>plus_one</mat-icon>    
+    </button>
+
+    <button *ngIf="reservedRidesToTake.length !== 0" mat-mini-fab class="notification" color="warn" (click)="openDialog(0)">
+        <mat-icon>plus_one</mat-icon>    
+    </button>
+</div>

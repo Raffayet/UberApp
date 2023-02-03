@@ -1,0 +1,18 @@
+<app-navbar [navbarLabels]="navbarLabels" [navbarPaths]="navbarPaths" (chosenOption)="changeOption($event)"></app-navbar>
+<router-outlet name="ClientRouter">
+</router-outlet>
+
+<button mat-fab color="accent" aria-label="Example icon button with a home icon" class="chat-button" (click)="toggleChat()">
+    <mat-icon>chat</mat-icon>
+</button>
+
+<div class="notification-container">
+    <button mat-mini-fab class="notification" color="warn" (click)="openDialog(rideInvite, i)" *ngFor="let rideInvite of rideInvites; let i = index">
+        <mat-icon>plus_one</mat-icon>
+    </button>
+</div>
+
+<button mat-fab aria-label="Example icon button with a home icon" class="logout-button" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+</button>
+<app-livechat *ngIf="chatHidden"></app-livechat>

@@ -1,0 +1,30 @@
+<div class="backgroundDiv">
+    <div class="container">
+        <h1 class="header">Additional Info</h1>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="formDiv" *ngIf="form">
+
+                <mat-form-field class="formField" >
+                    <mat-label>City</mat-label>
+                    <input matInput placeholder="Ex. Novi Sad" formControlName="city">
+                    <mat-error *ngIf="city && city.errors?.['required'] && (city.touched || city.dirty|| form.invalid)">
+                        This field is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="formField" >
+                    <mat-label>Telephone</mat-label>
+                    <input type="tel" matInput placeholder="555-555-1234" formControlName="telephone">
+                    <mat-error *ngIf="telephone && telephone.errors?.['required'] && (telephone.touched || telephone.dirty|| form.invalid)">
+                        This field is required
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="buttonDiv">
+                    <button mat-raised-button type="submit" class="button">Submit</button>
+                    <button mat-raised-button color="warn" type="button" class="button" (click)="goToLogin()">Back to Home Page</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

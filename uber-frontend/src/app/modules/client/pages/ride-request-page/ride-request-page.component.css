@@ -1,0 +1,39 @@
+.upperContainer{
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    background-image: url("../../../../resources/images/home-page-bg.webp");
+    background-size: cover;
+    background-repeat: no-repeat;    
+}
+
+.vertical-container{
+    width: 35%;
+    height: 70%;    
+    margin-top: 10%;
+    background-color: #F9F9F9;
+    padding: 3%;
+    overflow-y: auto;
+}
+
+#map1{
+    width: 35%;
+    height: 70%;
+    margin-top: 10%;
+    background-color: #F9F9F9;
+    border: 3px solid white;
+}
+
+#map3{
+    width: 35%;
+    height: 70%;
+    margin-top: 10%;
+    background-color: #F9F9F9;
+    border: 3px solid white;
+}
+
+.back-button{
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+}

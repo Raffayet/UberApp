@@ -1,0 +1,9 @@
+<div class="rejection-dialog-container">
+    <h1 mat-dialog-title>Reason for rejection</h1>
+    <mat-form-field class="rejection-textarea">
+        <mat-label>Reason for rejection...</mat-label>
+        <textarea matInput [(ngModel)]="reasonForRejection"></textarea>
+    </mat-form-field>
+    <div></div>
+    <button class="confirm-button" mat-button (click)="onConfirmClick()">Confirm</button>
+</div>

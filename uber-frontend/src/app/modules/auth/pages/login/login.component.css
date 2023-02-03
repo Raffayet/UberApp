@@ -1,0 +1,232 @@
+.login-form{
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    padding-top: 12%;
+    padding-bottom: 15%;
+    background-image: url("../../../../resources/images/login-background.jpg");
+}
+
+.login-window{
+    background-color: white;
+    width: 500px;
+    height: 500px;
+    justify-content: center;
+    display: flex;
+}
+
+.login-container{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    height: 100%;
+}
+
+.login-window .login-container #float-input{
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 20px;
+    font-size: 16px;
+    background-color: rgb(243, 241, 241);
+    border: 0;
+}
+
+.login-window .login-container #float-input:focus{
+    outline: 3px solid rgb(192, 215, 255);
+}
+
+.login-window .login-container .password-field{
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 40px;
+    border-radius: 0 !important;
+    background-color: rgb(243, 241, 241);
+    border: 0;
+}
+
+.login-window .login-container .username-label{
+    margin-top: 40px;
+    margin-bottom: 10px;
+    text-align: left;
+    color: black;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.login-window .login-container .password-label{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-align: left;
+    color: black;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.login-window .login-container .button-container .login-button{
+    margin-bottom: 160px;
+    background-color: black;
+    color: white;
+    font-weight: 800;
+    font-size: 20px;
+    width: 70%;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    min-height: 45px;
+}
+
+.login-window .login-container .button-container .login-button:disabled{
+    background-color: rgb(104, 104, 104);
+    cursor: default;
+}
+
+
+.login{
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding-bottom: 0px;
+    font-size: 50px;
+    font-weight: 700;
+}
+
+.alternative-login-container{
+    background-color: black;
+    width: 500px;
+    height: 500px;
+}
+
+.alternative-login-container .alternative-button{
+    background-color: white;
+    border-radius: 5px;
+    width: 60%;
+    height: 45px !important;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    cursor: pointer;
+}
+
+.alternative-button .google-label{
+    font-size: 24px;
+    font-weight: 600;
+    color: black;
+    cursor: pointer;
+}
+
+.alternative-button .pi-google{
+    color: black;
+    text-align: left;
+    font-size: 24px;
+    margin-left: -20px;
+    margin-right: 20px;
+}
+
+.alternative-button .facebook-label{
+    font-size: 24px;
+    font-weight: 600;
+    color: black;
+    cursor: pointer;
+}
+
+.alternative-button .pi-facebook{
+    color: black;
+    text-align: left;
+    font-size: 24px;
+    margin-right: 20px;
+}
+
+.google-login-header{
+    margin-top: 40px;
+    margin-bottom: 65px;
+    padding-bottom: 0px;
+    font-size: 50px;
+    font-weight: 700;
+    color: white;
+}
+
+.alternative-login-container .alternative-button:hover{
+    background-color: rgb(196, 196, 212);
+}
+
+.link-container-register{
+    margin-top: 70px;
+}
+
+.register-link{
+    color:white;
+}
+
+.forgot-password-link{
+    color:black;
+    text-decoration: underline black;
+}
+
+.link-container-forgot-password{
+    margin-bottom: 30px;
+}
+
+
+/* 
+pogresan unos */
+
+.login-window .login-container .password-field-error{
+    border: 1px solid red;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 40px;
+    border-radius: 0 !important;
+    background-color: rgb(243, 241, 241);
+}
+
+.login-window .login-container #float-input-error{
+    border: 1px solid red;
+    padding: 12px;
+    height: 60px !important;
+    margin-bottom: 20px;
+    font-size: 16px;
+    background-color: rgb(243, 241, 241);
+}
+
+.alternative-login-container #google-button{
+    justify-content: center;
+}
+
+.asl-button-container{
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    margin-bottom: 50px;
+}
+
+#facebook-button{
+    background-color: white;
+    border-radius: 5px;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    border: 0;
+    margin-left: 50px;
+}
+
+#facebook-button :hover{
+    background-color: antiquewhite;
+}
+
+
+#facebook-button .pi-facebook{
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+#continue-button{
+    margin-top: 60px;
+    background-color: white;
+    color: black;
+    font-weight: 800;
+    font-size: 20px;
+    width: 40%;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    min-height: 45px;
+}

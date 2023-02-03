@@ -1,0 +1,144 @@
+.container{
+    background-image: linear-gradient(to right, #1c00f2, #453f96);
+    height: 70vh;
+    position: fixed;
+    bottom: 5.5rem;
+    right: 5.5rem;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.4);
+    border-radius: 10px;
+    /* overflow-y: scroll; */
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+    z-index: 999;
+}
+
+.container2{
+    width: 50%;
+}
+
+.container > div.chatbox > div:last-child {
+    scroll-snap-align: end;
+}
+
+.chatbox{
+    background-color: #1d61c2;
+    min-width: 250px;
+    display: flex;
+    border-radius: 10px;
+    height: 100%;
+}
+
+.col-1{
+    flex: 1;
+    height: 100%;
+    overflow:auto;
+    display:flex;
+    flex-direction:column-reverse;
+}
+
+.col-2{
+    flex-basis: 15rem;
+    background: #3874c9;
+}
+
+.col2-scroll{
+    overflow-y: auto;
+    height: 100%;
+}
+
+.msg-row{
+    display: flex;
+    align-items: center;
+    margin: 2rem;
+}
+
+.msg-text{
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px 40px;
+    border-radius: 8px;
+    flex-basis: 70%;
+    font-weight: 300;
+}
+
+.msg-text h2{
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color:rgb(211, 211, 211);
+}
+
+.msg-img{
+    width: 50px;
+    border-radius: 50%;
+    margin: 0 20px;
+}
+
+.msg-row2{
+    /* justify-content: flex-end; */
+    flex-direction: row-reverse !important;
+}
+
+.col-1 input{
+    border: 0;
+    outline: none;
+    padding: 20px 40px;
+    background-color: #3874c9;
+    color: #fff;
+    width: 75%;
+    font-size: 1rem;
+    font-weight: 300;
+    position: sticky;
+    bottom: 0;
+    border-radius: 10px;
+}
+
+.col-1 button{
+    border: 1px outset #0a438c;
+    outline: none;
+    padding: 20px 20px;
+    background-color: #1d5cae;
+    color: #fff;
+    width: 25%;
+    font-size: 1rem;
+    font-weight: 300;
+    position: sticky;
+    bottom: 0;
+    border-radius: 10px;
+}
+
+.col-1 button:hover{
+    background-color: #3874c0;
+}
+
+::placeholder{
+    color: #fff;
+}
+
+.col-2 h3{
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 400;
+}
+
+.col-2 ul{
+    list-style: none;
+    padding: 1rem;
+}
+
+.col2-scroll mat-icon{
+    display: inline-block;
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgb(24, 20, 20);
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.col-2 ul li{
+    padding: 5px 0;
+}

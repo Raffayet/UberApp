@@ -1,0 +1,3 @@
+env/
+locust/__pycache__
+locust/.idea

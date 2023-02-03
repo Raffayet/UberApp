@@ -1,0 +1,44 @@
+.formContainer{
+    width: 110%;
+    background-color: #F9F9F9;
+    padding: 5%;
+    overflow: auto;
+}
+
+.vertical-container .example-list button{
+    margin-left: 1rem;
+}
+
+.vertical-container .next-button:disabled{
+    background-color: darkgrey;
+}
+
+.display-1{
+    font-size: 2.5rem;
+    margin-top: -1rem;
+    margin-bottom: 3rem;
+    font-weight: bold;
+}
+
+.display-2{
+    font-size: 1.5rem;
+    margin-top: -1rem;
+    margin-bottom: 3rem;
+    font-weight: bold;
+}
+
+.add-location-button{
+    margin-left: 1rem;
+}
+
+.delete-location-button{
+    margin-left: 1rem;
+}
+
+.next-button{
+    margin-top: 2rem;
+}
+
+.favorite-routes{
+    margin-top: 2rem;
+}

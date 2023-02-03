@@ -1,22 +1,28 @@
 package com.example.uberbackend.model;
+import com.example.uberbackend.model.enums.Provider;
 import com.example.uberbackend.model.enums.AccountStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.example.uberbackend.model.enums.DrivingStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name="my_user")
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User {
+public class User implements UserDetails {
     @Id
-    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String email;
     private String password;
     private String name;
@@ -28,48 +34,49 @@ public class User {
     private String profileImage;
     private DrivingStatus drivingStatus;
     private AccountStatus accountStatus;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Role role;
 
-    public User(String email, String password, String name, String surname, String city, String phoneNumber, Boolean activeAccount, Boolean blocked, String profileImage, DrivingStatus drivingStatus, AccountStatus accountStatus) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.city = city;
-        this.phoneNumber = phoneNumber;
-        this.activeAccount = activeAccount;
-        this.blocked = blocked;
-        this.profileImage = profileImage;
-        this.drivingStatus = drivingStatus;
-        this.accountStatus = accountStatus;
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(city, user.city) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(activeAccount, user.activeAccount) && Objects.equals(blocked, user.blocked) && Objects.equals(profileImage, user.profileImage) && drivingStatus == user.drivingStatus && accountStatus == user.accountStatus;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        return authorities;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(email, password, name, surname, city, phoneNumber, activeAccount, blocked, profileImage, drivingStatus, accountStatus);
+    public String getUsername() {
+        return email;
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", city='" + city + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", activeAccount=" + activeAccount +
-                ", blocked=" + blocked +
-                ", profileImage='" + profileImage + '\'' +
-                ", drivingStatus=" + drivingStatus +
-                ", accountStatus=" + accountStatus +
-                '}';
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return activeAccount;
     }
 }

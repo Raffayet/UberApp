@@ -1,0 +1,45 @@
+<div class="formContainer">
+    <h1 class="display-1">Request a ride now</h1>
+      <h2 class="display-1" *ngIf="stateManagement.rideRequest.locations.length == 0">Pick locations for your ride</h2>
+      <div
+          cdkDropList
+          [cdkDropListData]="stateManagement.rideRequest.locations"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let item of stateManagement.rideRequest.locations; index as i;" cdkDrag>
+            <mat-form-field class="example-full-width" [style.width.rem]=20>
+              <mat-label>Enter location</mat-label>
+              <input [disabled]="i < stateManagement.rideRequest.locations.length - 1" matInput [(ngModel)]='this.stateManagement.inputValues[i]' placeholder="Enter location" [matAutocomplete]="auto"
+                    (input)="searchOptions(i)">
+            </mat-form-field>
+
+            <button class="delete-location-button" *ngIf="stateManagement.rideRequest.locations.length > 1" mat-mini-fab color="warn" (click)="deleteLocation(i)">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+
+            <button class="add-location-button" *ngIf="i == stateManagement.rideRequest.locations.length - 1 && i != 4" mat-mini-fab color="primary" (click)="addLocation(i)">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let option of options[i] | async" [value]="option.displayName" (click)="pinLocation(option, i)">
+                {{option.displayName}}
+              </mat-option>
+            </mat-autocomplete>
+        </div>
+        <div class="favorite-routes" *ngIf="loggedUser">
+          <h3 class="display-2">Favorite routes</h3>
+          <mat-form-field appearance="fill">
+            <mat-label>Favorite route</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let route of favoriteRoutes" [value]="route" (click)="onSelectedRoute(route)">
+                  {{route.locations[0].displayName}} - {{route.locations[route.locations.length - 1].displayName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="next()">Next</button>
+          <button mat-raised-button color="accent" class="next-button" [disabled]="stateManagement.rideRequest.totalDistance == 0" style="margin-right:2rem;" (click)="createFavoriteRoute()">Add Route To Favorites<mat-icon>star</mat-icon></button>
+        </div>
+</div>

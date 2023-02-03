@@ -1,0 +1,7 @@
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <a *ngFor="let label of navbarLabels; index as i;" (click)="changeOption(navbarPaths[i])">{{label}}</a>
+    </div>
+  </div>
+</nav>

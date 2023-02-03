@@ -1,0 +1,32 @@
+<div [ngClass]=" loggedUser?.role !== 'ADMIN' ? 'container' : 'container container2'">
+    <div class="chatbox">
+        <div class="col-1">
+            <div class="wrapper">
+                <div class="col1-scroll">
+                    <div *ngFor="let message of userChat;" [ngClass]=" (loggedUser?.email === message.senderEmail || (loggedUser?.role === 'ADMIN' && message.senderEmail === 'support')) ? 'msg-row msg-row2' : 'msg-row'">
+                        <!-- <img [src]="loggedUser?.email === message.senderEmail ? profilePicture : (message.senderImage == null ? customerSupportProfileImage : (userToChatPicture?userToChatPicture:message.senderImage))" class="msg-img"> -->
+                        <img [src]="loggedUser?.role === 'CLIENT'?  ((message.senderEmail === loggedUser?.email)?profilePicture:customerSupportProfileImage):(message.senderEmail==='support'?customerSupportProfileImage:userToChatPicture)" class="msg-img">
+                        <div class="msg-text">
+                            <h2>{{message.senderFirstName}} {{message.senderLastName}}</h2>
+                            <p>{{message.content}}</p>
+                        </div>
+                    </div>               
+    
+                    <input  [readonly]="userEmailToSend==='' && loggedUser?.role === 'ADMIN'" type="text" placeholder="Type your message here..." [(ngModel)]="messageToSend">
+                    <button (click)="loggedUser?.role === 'ADMIN' ? sendPrivateMessage() : sendPublicMessage() ">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="loggedUser?.role === 'ADMIN'" class="col-2">       
+            <div class="col2-scroll">
+                <h3>Users</h3>     
+                <mat-divider></mat-divider>
+                <mat-nav-list>
+                        <a mat-list-item *ngFor="let user of allUsersFromMessages" (click)="selectUserToChat(user.email)"> <mat-icon></mat-icon> {{user.name}} {{user.surname}}</a>
+                        <mat-divider></mat-divider>
+                </mat-nav-list>
+            </div>
+        </div>       
+    </div>
+</div> 
