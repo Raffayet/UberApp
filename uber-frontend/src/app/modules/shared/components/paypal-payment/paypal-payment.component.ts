@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 export class PaypalPaymentComponent implements OnInit{
 
   @Input() loggedUser : User | null; 
+  @Output() tokenReceivedEvent = new EventEmitter<number>();
   currentAmount : number;
   tokens: number | string;
   
@@ -46,6 +47,7 @@ export class PaypalPaymentComponent implements OnInit{
               next: (data) => {
                   that.currentAmount = data as number;
                   that.toastService.success("Successfully added tokens!");
+                  that.tokenReceivedEvent.emit(data as number);
               },
               error: (err) => {
                 that.toastService.warning("Something went wrong with payment!");

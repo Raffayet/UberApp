@@ -1,5 +1,8 @@
 package com.example.uberbackend.model;
 
+import com.example.uberbackend.model.enums.AccountStatus;
+import com.example.uberbackend.model.enums.DrivingStatus;
+import com.example.uberbackend.model.enums.Provider;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

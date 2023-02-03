@@ -40,6 +40,7 @@ import java.util.*;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
     private final PasswordMatchValidator passwordMatchValidator;
     private final MapErrorService mapErrorService;
     private final RoleRepository roleRepository;
@@ -83,7 +84,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Failed Registration due to database problem");
         }
 
-        User user = new User();
+        Client user = new Client();
         user.setName(registerDto.getFirstName());
         user.setSurname(registerDto.getLastName());
         user.setEmail(registerDto.getEmail());
@@ -97,7 +98,9 @@ public class UserService implements UserDetailsService {
         user.setProfileImage(null);
         user.setProvider(Provider.valueOf(registerDto.getProvider().toUpperCase()));
         user.setRole(optionalRole.get());
-        userRepository.save(user);
+
+        user.setTokens(0);
+        clientRepository.save(user);
 
         this.sendAccountActivationEmail(user);
 
@@ -146,7 +149,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Failed social login due to database problem");
         }
 
-        User user = new User();
+        Client user = new Client();
         user.setName(socialLoginDto.getFirstName());
         user.setSurname(socialLoginDto.getLastName());
         user.setEmail(socialLoginDto.getEmail());
@@ -161,7 +164,9 @@ public class UserService implements UserDetailsService {
         user.setProfileImage(socialLoginDto.getPhotoUrl());
         user.setProvider(Provider.valueOf(socialLoginDto.getProvider().toUpperCase()));
         user.setRole(roleRepository.findByName("CLIENT").get());
-        userRepository.save(user);
+
+        user.setTokens(0);
+        clientRepository.save(user);
 
         return "Success";
     }

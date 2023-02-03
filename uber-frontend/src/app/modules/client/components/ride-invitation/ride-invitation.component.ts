@@ -256,4 +256,8 @@ export class RideInvitationComponent implements OnInit{
     });
   }
 
+  changeAmountOfCurrentTokens(event: number): void {
+      this.currentAmount = event;
+  }
+
 }

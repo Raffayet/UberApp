@@ -5,7 +5,7 @@
       <mat-chip class="final-price-failure" style="background-color: #B22222">{{stateManagement.rideRequest.pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
       <mat-icon class="price-icon-failure">report_problem</mat-icon>
       <label class="failure-label">Not enough tokens!</label>
-      <app-paypal-payment *ngIf="loggedUser?.role == 'CLIENT'" [loggedUser]="loggedUser"></app-paypal-payment>
+      <app-paypal-payment *ngIf="loggedUser?.role == 'CLIENT'" [loggedUser]="loggedUser" (tokenReceivedEvent)="changeAmountOfCurrentTokens($event)"></app-paypal-payment>
     </div>
     <div *ngIf="stateManagement.rideRequest.vehicleType && currentAmount >= stateManagement.rideRequest.pricePerPassenger">
       <mat-chip class="final-price-success" style="background-color: #228B22">{{stateManagement.rideRequest.pricePerPassenger.toFixed(2)}} Tokens</mat-chip>
