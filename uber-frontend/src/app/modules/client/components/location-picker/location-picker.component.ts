@@ -110,6 +110,10 @@ export class LocationPickerComponent implements OnInit{
   }
 
   addLocation(index: number) : void { 
+    console.log(this.stateManagement.rideRequest);
+    console.log(this.stateManagement.inputValues);
+    console.log(this.stateManagement.mapa.locations);
+    
     this.stateManagement.rideRequest.locations.length < 5 ? (this.stateManagement.rideRequest.locations[index].displayName === "") ?  this.toastr.warning('Choose location for current stop!') : 
     this.stateManagement.rideRequest.locations.push({
     displayName: this.stateManagement.rideRequest.locations.length + "",

@@ -11,7 +11,7 @@
       <br>
       <span *ngIf="loggedUser?.role == 'DRIVER'">
         <mat-label>Driving status: </mat-label>
-        <mat-slide-toggle class="payment-info-button" [checked]="driverIsOnline" disabled="true" (toggleChange)="changeDriverStatus()">{{ driverIsOnline ? 'ACTIVE' : 'BUSY' }}</mat-slide-toggle>
+        <mat-slide-toggle class="payment-info-button" [checked]="driverIsOnline" (toggleChange)="changeDriverStatus()">{{ driverIsOnline ? 'ACTIVE' : 'BUSY' }}</mat-slide-toggle>
       </span>
     </div>
   </span>

@@ -77,8 +77,9 @@ export class MapComponent implements AfterViewInit, OnInit {
   constructor(private mapService: MapService, protected stateManagement: RideRequestStateService, private toaster:ToastrService, private tokenUtilsService: TokenUtilsService, public dialog: MatDialog, private driverService:DriverService) {}
 
   public reset(){
-    this.map.remove();
-    this.initMap();
+    if(!this.map){
+      this.removePreviousRoute();
+    }
   }
 
 

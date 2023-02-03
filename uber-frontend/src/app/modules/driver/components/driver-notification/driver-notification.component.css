@@ -1,0 +1,6 @@
+.notification {
+    cursor: pointer;
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+  }
