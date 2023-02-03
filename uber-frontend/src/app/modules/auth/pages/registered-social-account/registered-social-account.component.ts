@@ -13,8 +13,17 @@ export class RegisteredSocialAccountComponent {
   constructor(private router:Router, private loginService: LoginService, private route: ActivatedRoute){}
 
   goToClientDashboard(){
-    console.log(this.route.snapshot.paramMap.get("email"))
     this.loginService.socialLogIn(String(this.route.snapshot.paramMap.get("email")))
-    this.router.navigateByUrl('/client-dashboard');
+    .subscribe({
+      next: (res) => {
+        
+        localStorage.setItem("user", res.accessToken);
+        this.router.navigate(['/client', {outlets: {'ClientRouter': ['request-ride-page']}}]);
+      },
+      error: (err) => {
+        console.log("Greskaa");
+        console.log(err);
+      }
+    });
   }
 }

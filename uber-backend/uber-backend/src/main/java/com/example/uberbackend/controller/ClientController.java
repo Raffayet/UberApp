@@ -60,11 +60,11 @@ public class ClientController {
         }
     }
 
-    @PostMapping("add-tokens")
-    public ResponseEntity<?> addTokens(@RequestBody String email){
+    @GetMapping("add-tokens")
+    public ResponseEntity<?> addTokens(@RequestParam String email, @RequestParam Double amount){
         try{
-            double amount = clientService.getTokensByEmail(email);
-            return ResponseEntity.ok(amount);
+            double tokens = clientService.addTokens(email, amount);
+            return ResponseEntity.ok(tokens);
         }catch(Exception ex){
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

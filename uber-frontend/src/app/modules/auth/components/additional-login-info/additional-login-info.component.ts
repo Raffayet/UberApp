@@ -37,7 +37,7 @@ export class AdditionalLoginInfoComponent {
   }
 
   goToLogin(){
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/');
   }
 
   onSubmit(){
@@ -63,7 +63,6 @@ export class AdditionalLoginInfoComponent {
       this.additionalLoginInfoService.loginSocialUser(socialLoginData)
         .subscribe({
           next: () => {
-            console.log("USpeh")
             this.router.navigate(['authenticatedSocialAccount', {
               email: this.route.snapshot.paramMap.get("email")}]);
           },

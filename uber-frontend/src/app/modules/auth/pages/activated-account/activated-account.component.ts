@@ -13,6 +13,6 @@ export class ActivatedAccountComponent {
 
 
   goToLogin(){
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/');
   }
 }

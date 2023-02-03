@@ -12,6 +12,6 @@ export class RegisteredAccountPageComponent {
   constructor(private router:Router){}
 
   goToLogin(){
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/');
   }
 }

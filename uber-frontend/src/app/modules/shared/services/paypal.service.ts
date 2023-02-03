@@ -16,4 +16,13 @@ export class PaypalService {
 
     return this.http.get<number>(environment.apiURL+"/client/get-tokens", {params:queryParams});
   }
+
+  addAmountOfTokens(email: string, amount: number): Observable<number | string>{
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("email", email);
+    queryParams = queryParams.append("amount", amount);
+
+    return this.http.get<number | string>(environment.apiURL+"/client/add-tokens", {params:queryParams});
+  }
+
 }

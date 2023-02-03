@@ -82,7 +82,7 @@ public class AuthController {
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }
 
-    @PostMapping("socialLogin")
+    @PostMapping("social-login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody String email){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, "social-password"));
 

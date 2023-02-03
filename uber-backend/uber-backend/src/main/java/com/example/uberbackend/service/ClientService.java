@@ -249,4 +249,12 @@ public class ClientService {
 
         return retVal;
     }
+
+    public double addTokens(String email, Double amount) {
+        Client client = this.clientRepository.findByEmail(email).orElseThrow(ClientNotFoundException::new);
+        double currentAmount = client.getTokens();
+        client.setTokens(currentAmount + amount);
+        clientRepository.save(client);
+        return client.getTokens();
+    }
 }

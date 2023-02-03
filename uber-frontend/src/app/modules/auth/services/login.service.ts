@@ -27,7 +27,6 @@ export class LoginService {
   socialLogIn(email: string) : Observable<any> {
 
     let result = undefined;
-    console.log(email)
-    return this.http.post("http://localhost:8081/api/auth/socialLogin", email)
+    return this.http.post("http://localhost:8081/api/auth/social-login", email);
   }
 }

@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { User } from 'src/app/model/User';
 import { PaypalService } from '../../services/paypal.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-paypal-payment',
@@ -13,13 +14,14 @@ export class PaypalPaymentComponent implements OnInit{
   currentAmount : number;
   tokens: number | string;
   
-  constructor(private paypalService: PaypalService){}
+  constructor(private paypalService: PaypalService, private toastService: ToastrService){}
 
   @ViewChild('paypalRef', { static: true }) private paypalRef: ElementRef;
   
   ngOnInit(): void {
     this.getAmountOfTokens();
 
+    let that = this;
     window.paypal.Buttons({
       style: {
         color: 'blue',
@@ -40,12 +42,19 @@ export class PaypalPaymentComponent implements OnInit{
 
       onApprove: (data: any, actions: any) => {
           return actions.order.capture().then(function(details: any){
-            console.log(details);
-            
+            that.paypalService.addAmountOfTokens(that.loggedUser?.email as string, that.tokens as number).subscribe({
+              next: (data) => {
+                  that.currentAmount = data as number;
+                  that.toastService.success("Successfully added tokens!");
+              },
+              error: (err) => {
+                that.toastService.warning("Something went wrong with payment!");
+              },
+            });
           })
       },
 
-      onError: (error: any) => {console.log(error);}
+      onError: (error: any) => {that.toastService.warning("Something went wrong with payment!");}
       
 
     }).render(this.paypalRef.nativeElement);

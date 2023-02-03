@@ -27,7 +27,7 @@
               </mat-option>
             </mat-autocomplete>
         </div>
-        <div class="favorite-routes">
+        <div class="favorite-routes" *ngIf="loggedUser">
           <h3 class="display-2">Favorite routes</h3>
           <mat-form-field appearance="fill">
             <mat-label>Favorite route</mat-label>

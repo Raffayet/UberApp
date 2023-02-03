@@ -14,7 +14,7 @@ export class AdditionalLoginInfoService {
   loginSocialUser(socialLoginData: SocialLoginData):Observable<String>{
     console.log(socialLoginData);
 
-    return this.http.post<String>(environment.apiURL + "/user/socialLogin", socialLoginData)
+    return this.http.post<String>(environment.apiURL + "/user/social-login", socialLoginData)
             .pipe(
               catchError(this.handleError<String>('getHeroes', ""))
             );;

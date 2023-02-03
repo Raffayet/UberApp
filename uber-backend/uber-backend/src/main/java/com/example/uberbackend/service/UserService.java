@@ -150,16 +150,17 @@ public class UserService implements UserDetailsService {
         user.setName(socialLoginDto.getFirstName());
         user.setSurname(socialLoginDto.getLastName());
         user.setEmail(socialLoginDto.getEmail());
-        user.setPassword("social-password");
-        user.setAccountStatus(AccountStatus.INACTIVE);
+        user.setPassword(passwordEncoder.encode("social-password"));
+        user.setAccountStatus(AccountStatus.ACTIVE);
         user.setActiveAccount(false);
         user.setBlocked(false);
+        user.setActiveAccount(true);
         user.setDrivingStatus(DrivingStatus.OFFLINE);
         user.setCity(socialLoginDto.getCity());
         user.setPhoneNumber(socialLoginDto.getTelephone());
         user.setProfileImage(socialLoginDto.getPhotoUrl());
         user.setProvider(Provider.valueOf(socialLoginDto.getProvider().toUpperCase()));
-        user.setRole(optionalRole.get());
+        user.setRole(roleRepository.findByName("CLIENT").get());
         userRepository.save(user);
 
         return "Success";
@@ -227,7 +228,7 @@ public class UserService implements UserDetailsService {
         String uniqueTime = LocalDateTime.now().toString().split("T")[0];
         String photoName = "//" +uniqueTime + generateRandomString() + "profilePicture.jpg";
 
-        File currDir = new File("src//main//resources//data//");
+        File currDir = new File("uber-backend//src//main//resources//data//");
         String path = currDir.getAbsolutePath();
 
         return new Pair<String, String>(Paths.get(path + photoName).toString(), photoName.substring(1));
@@ -237,7 +238,7 @@ public class UserService implements UserDetailsService {
         Optional<User> u = userRepository.findByEmail(email);
         if(u.isPresent()){
 
-            File currDir = new File("src//main//resources//data//");
+            File currDir = new File("uber-backend//src//main//resources//data//");
             String path = currDir.getAbsolutePath();
             String photoName = u.get().getProfileImage();
 

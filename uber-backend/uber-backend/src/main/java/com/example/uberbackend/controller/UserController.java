@@ -41,7 +41,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/socialLogin")
+    @PostMapping("/social-login")
     public ResponseEntity<?> loginSocialUser(@Valid @RequestBody SocialLoginDto socialLoginDto, BindingResult result){
         try{
             String message = userService.loginSocialUser(socialLoginDto, result);
